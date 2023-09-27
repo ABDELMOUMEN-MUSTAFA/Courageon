@@ -2,28 +2,16 @@
 
 use App\Models\Formateur;
 use App\Models\Etudiant;
-use App\Models\Formation;
-use App\Models\Video;
-use App\Models\Inscription;
-use App\Models\Commentaire;
 
 class AjaxController
 {
     private $formateurModel;
     private $etudiantModel;
-    private $formationModel;
-    private $videoModel;
-    private $inscriptionModel;
-    private $commentaireModel;
 
     public function __construct()
     {
         $this->formateurModel = new Formateur;
-        $this->etudiantModel = new Etudiant;
-        $this->formationModel = new Formation;
-        $this->videoModel = new Video;
-        $this->inscriptionModel = new Inscription;
-        $this->commentaireModel = new Commentaire;    
+        $this->etudiantModel = new Etudiant; 
     }
 
     public function checkEmail()
