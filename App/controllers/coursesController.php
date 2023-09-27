@@ -10,7 +10,7 @@ use App\Libraries\Request;
 use App\Libraries\Response;
 use App\Libraries\Validator;
 
-class coursesController
+class CoursesController
 {
     private $stockedModel;
     private $previewModel;
