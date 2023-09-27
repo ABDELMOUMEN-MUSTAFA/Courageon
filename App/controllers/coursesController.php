@@ -176,31 +176,16 @@ class CoursesController
         return Response::json(null, 500, "Something went wrong.");
     }
 
-    private function strip_critical_tags($text)
-    {
-        $dom = new DOMDocument();
-        $dom->loadHTML($text);
-        $tags_to_remove = ['script', 'style', 'iframe', 'link', 'video', 'img'];
-        foreach($tags_to_remove as $tag){
-            $element = $dom->getElementsByTagName($tag);
-            foreach($element as $item){
-                $item->parentNode->removeChild($item);
-            }
-        }
-
-        $body = $dom->getElementsByTagName('body')->item(0);
-        $cleanedHtml = '';
-
-        if ($body) {
-            foreach ($body->childNodes as $childNode) {
-                $cleanedHtml .= $dom->saveHTML($childNode);
-            }
-        }
-        return $cleanedHtml; 
-    }
-
     public function sortVideos($id_formation = null)
     {
+        if(!auth()){
+            return Response::json(null, 401);
+        }
+
+        if(session('user')->get()->type !== 'formateur'){
+           return Response::json(null, 403); 
+        }
+
         $request = new Request;
         if($request->getMethod() !== 'POST'){
             return Response::json(null, 405, "Method Not Allowed");
@@ -236,6 +221,14 @@ class CoursesController
 
     public function setVideoToPreview($id_formation = null)
     {
+        if(!auth()){
+            return Response::json(null, 401);
+        }
+
+        if(session('user')->get()->type !== 'formateur'){
+           return Response::json(null, 403); 
+        }
+
         $request = new Request;
         if($request->getMethod() !== 'POST'){
             return Response::json(null, 405, "Method Not Allowed");
@@ -253,7 +246,17 @@ class CoursesController
         ]);
 
         // CHECK IF THE VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
-        $validator->checkPermissionsFormateur('formations', 'videos', 'id_formation', ['id_video' => $id_video]);
+        $relationship = [
+            "from" => "formations",
+            "join" => "videos",
+            "using" => "id_formation",
+            "where" => [
+                "id_video" => $id_video,
+                "id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         if($this->previewModel->update($id_video, $id_formation)){
             return Response::json(null, 200, 'Updated successfuly.');

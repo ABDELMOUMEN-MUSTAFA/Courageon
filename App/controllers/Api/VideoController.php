@@ -63,7 +63,17 @@ class VideoController extends ApiController
         ]);
 
     	// CHECK IF THE VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
-        $validator->checkPermissionsFormateur('formations', 'videos', 'id_formation', ['id_video' => $id]);
+        $relationship = [
+            "from" => "formations",
+            "join" => "videos",
+            "using" => "id_formation",
+            "where" => [
+                "id_video" => $id,
+                "id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         $validator->validate([
             'nom' => 'required|min:3|max:80',
@@ -115,7 +125,18 @@ class VideoController extends ApiController
         ]);
 
     	// CHECK IF THE VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
-        $validator->checkPermissionsFormateur('formations', 'videos', 'id_formation', ['id_video' => $id]);
+        $relationship = [
+            "from" => "formations",
+            "join" => "videos",
+            "using" => "id_formation",
+            "where" => [
+                "id_video" => $id,
+                "id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
+        
         $video = $this->videoModel->find($id);
 
         if($this->videoModel->delete($id)){

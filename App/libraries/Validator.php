@@ -287,26 +287,6 @@ class Validator
         return $this->data;
     }
 
-    public function checkPermissionsFormateur($from, $join, $joinColumn, $condition)
-    {
-        $field = array_keys($condition)[0];
-        $query = "
-            SELECT 
-                COUNT(*)
-            FROM {$from}
-            JOIN {$join} USING ($joinColumn)
-            WHERE {$field} = :value AND id_formateur = :id_formateur
-        ";
-        $statement = Database::getConnection()->prepare($query);
-        $statement->bindValue(':value', $condition[$field]);
-        $statement->bindValue(':id_formateur', session('user')->get()->id_formateur);
-        $statement->execute();
-        $count = $statement->fetchColumn();
-        if($count < 1){
-            return Response::json(null, 403, "Insufficient permissions.");
-        }
-    }
-
     public function checkPermissions(Array $relationship)
     {
         extract($relationship);
