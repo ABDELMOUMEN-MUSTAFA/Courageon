@@ -94,6 +94,7 @@ class Etudiant
 				email, 
 				prenom,
 				email_verified_at,
+				slug,
 				'etudiant' AS `type`
 			FROM etudiants 
 			WHERE email = :email
@@ -225,10 +226,34 @@ class Etudiant
 				email,
 				is_active
 			FROM etudiants
-			WHERE id_etudiant = :id;
+			WHERE id_etudiant = :id
 		");
 
 		$query->bindParam(':id', $id);
+		$query->execute();
+
+		$etudiant = $query->fetch(\PDO::FETCH_OBJ);
+		if ($query->rowCount() > 0) {
+			return $etudiant;
+		}
+		return false;
+	}
+
+	public function whereSlug($slug)
+	{
+		$query = $this->connect->prepare("
+			SELECT 
+				id_etudiant,
+				nom,
+				prenom,
+				img,
+				email,
+				is_active
+			FROM etudiants
+			WHERE slug = :slug
+		");
+
+		$query->bindValue(':slug', $slug);
 		$query->execute();
 
 		$etudiant = $query->fetch(\PDO::FETCH_OBJ);

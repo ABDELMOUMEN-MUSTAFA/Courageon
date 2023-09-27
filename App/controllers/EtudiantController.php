@@ -179,13 +179,13 @@ class EtudiantController
 	public function messages($slug = null)
     {
 		$messageModel = new Message;
-		$conversations = $messageModel->conversations($slug, $this->id_etudiant);
+		$conversations = $messageModel->conversations(session("user")->get()->slug, $slug);
 		$myFormateurs = $messageModel->myFormateurs($this->id_etudiant);
-		$slugs = [];
-		foreach($myFormateurs as $formateur) array_push($slugs, $formateur->slug);
+		$allowedFormateurs = [];
+		foreach($myFormateurs as $formateur) array_push($allowedFormateurs, $formateur->slug);
 		
 		// Prevent getting conversations that user not allowed to
-		if($slug && !in_array($slug, $slugs)){
+		if($slug && !in_array($slug, $allowedFormateurs)){
 			return Response::json(null, 403, "Something went wrong!");
 		}
 
@@ -201,7 +201,6 @@ class EtudiantController
 
 		$formateurModel = new Formateur;
 		$formateur = $formateurModel->whereSlug($slug);
-		
         return view('etudiants/messages', compact('conversations', 'formateur', 'myFormateurs'));
     }
 

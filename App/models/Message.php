@@ -62,7 +62,7 @@ class Message
 		return false;
 	}
 
-	public function conversations($slug, $id_etudiant)
+	public function conversations($slugEtudiant, $slugFormateur)
 	{
 		$query = $this->connect->prepare("
 			SELECT
@@ -73,12 +73,12 @@ class Message
 			FROM messages m
 			JOIN formateurs AS f ON m.`to` = f.id_formateur OR m.`from` = f.id_formateur
 			JOIN etudiants AS e ON m.`to` = e.id_etudiant OR m.`from` = e.id_etudiant
-			WHERE slug = :slug AND id_etudiant = :id_etudiant
-			ORDER BY sent_at
+			WHERE e.slug = :slugEtudiant AND f.slug = :slugFormateur
+			ORDER BY sent_at 
 		");
 
-		$query->bindValue(':slug', $slug);
-		$query->bindValue(':id_etudiant', $id_etudiant);
+		$query->bindValue(':slugEtudiant', $slugEtudiant);
+		$query->bindValue(':slugFormateur', $slugFormateur);
 		$query->execute();
 
 		$conversations = $query->fetchAll(\PDO::FETCH_OBJ);
@@ -126,9 +126,10 @@ class Message
 				nom,
 				prenom,
 				img,
-				is_active
+				is_active,
+				e.slug
 			FROM inscriptions i
-			JOIN etudiants AS f USING (id_etudiant)
+			JOIN etudiants AS e USING (id_etudiant)
 			WHERE id_formateur = :id_formateur
 		");
 
@@ -141,35 +142,4 @@ class Message
 		}
 		return [];
 	}
-
-	public function conversationsForFormateur($id_formateur, $id_etudiant)
-	{
-		$query = $this->connect->prepare("
-			SELECT
-				`from`,
-				`to`,
-				message,
-				sent_at
-			FROM messages m
-			JOIN formateurs AS f ON m.`to` = f.id_formateur OR m.`from` = f.id_formateur
-			JOIN etudiants AS e ON m.`to` = e.id_etudiant OR m.`from` = e.id_etudiant
-			WHERE id_formateur = :id_formateur AND id_etudiant = :id_etudiant
-			ORDER BY sent_at
-		");
-
-		$query->bindValue(':id_formateur', $id_formateur);
-		$query->bindValue(':id_etudiant', $id_etudiant);
-		$query->execute();
-
-		$conversations = $query->fetchAll(\PDO::FETCH_OBJ);
-		if ($query->rowCount() > 0) {
-			foreach ($conversations as $conversation) {
-				$datetime = new Carbon($conversation->sent_at);
-				$conversation->sent_at = $datetime->diffForHumans();
-			}
-			return $conversations;
-		}
-		return [];
-	}
 }
-

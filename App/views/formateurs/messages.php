@@ -204,8 +204,8 @@
                                                 <div class="sidebar-heading">Etudiants</div>
                                                 <ul class="list-group list-group-fit mb-3">
                                                     <?php foreach($myEtudiants as $etudiant) : ?>
-                                                    <li title="<?= $etudiant->nom ?> <?= $etudiant->prenom ?>" class="etudiant list-group-item px-4 py-3 <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/{strtolower(SITENAME)}/formateur/messages/'.$etudiant->id_etudiant ? 'bg-light' : '' ?>">
-                                                        <a href="<?= URLROOT ?>/formateur/messages/<?= $etudiant->id_etudiant  ?>"
+                                                    <li title="<?= $etudiant->nom ?> <?= $etudiant->prenom ?>" class="etudiant list-group-item px-4 py-3 <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/{strtolower(SITENAME)}/formateur/messages/'.$etudiant->slug ? 'bg-light' : '' ?>">
+                                                        <a href="<?= URLROOT ?>/formateur/messages/<?= $etudiant->slug  ?>"
                                                         class="d-flex align-items-center position-relative">
                                                             <span class="avatar avatar-sm <?= $etudiant->is_active ? 'avatar-online' : 'avatar-offline' ?> mr-3 flex-shrink-0">
                                                                 <img src="<?= IMAGEROOT ?>/<?= $etudiant->img ?>"

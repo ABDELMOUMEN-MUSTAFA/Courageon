@@ -504,22 +504,22 @@ class FormateurController
         return Response::json(null, 400, "You must provide a social profil link (facebook, linkedin, twitter).");
     }
 
-	public function messages($id_etudiant = null)
+	public function messages($slug = null)
     {
 		$messageModel = new Message;
-		$videoModel = new Video;
-		$conversations = $messageModel->conversationsForFormateur($this->id_formateur, $id_etudiant);
-		// print_r2($conversations);
+		$conversations = $messageModel->conversations($slug, session('user')->get()->slug);
+		//print_r2($conversations);
 		$myEtudiants = $messageModel->myEtudiants($this->id_formateur);
 		$allowedEtudiants = [];
-		foreach($myEtudiants as $etudiant) array_push($allowedEtudiants, $etudiant->id_etudiant);
+		foreach($myEtudiants as $etudiant) array_push($allowedEtudiants, $etudiant->slug);
 		
 		// Prevent getting conversations that user not allowed to
-		if($id_etudiant && !in_array($id_etudiant, $allowedEtudiants)){
+		if($slug && !in_array($slug, $allowedEtudiants)){
 			return Response::json(null, 403, "Something went wrong!");
 		}
 
 		// Match video name with its formation
+		$videoModel = new Video;
 		foreach ($conversations as $conversation) {
 			if (preg_match('/@([^@]+)@/', $conversation->message, $matches)) {
 				$nomVideo = $matches[1];
@@ -530,7 +530,7 @@ class FormateurController
 		}
 
 		$etudiantModel = new Etudiant;
-		$etudiant = $etudiantModel->find($id_etudiant);
+		$etudiant = $etudiantModel->whereSlug($slug);
 		
         return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants'));
     }
