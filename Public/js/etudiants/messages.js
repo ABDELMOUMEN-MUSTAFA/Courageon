@@ -1,6 +1,8 @@
 $(function(){
     $(".ps--active-y").animate({ scrollTop: 999999999 }, 'slow');
 
+    const audio = new Audio(`${URLROOT}/public/audios/message_sent.mp3`);
+
     $("#message-reply").submit(function(e){
         e.preventDefault();
 
@@ -22,6 +24,7 @@ $(function(){
                     </li>
                 `);
 
+                audio.play();
                 $('[name="message"]').val('');
                 $(".ps--active-y").animate({ scrollTop: 999999999 }, 'slow');
             },

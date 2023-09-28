@@ -1,6 +1,8 @@
 $(function(){
     $(".ps--active-y").animate({ scrollTop: 999999999 }, 'slow');
 
+    const audio = new Audio(`${URLROOT}/public/audios/message_sent.mp3`);
+
     $("#message-reply").submit(function(e){
         e.preventDefault();
 
@@ -8,7 +10,7 @@ $(function(){
             url: `${URLROOT}/api/messages`, 
             type: 'POST',
             data: $(this).serialize(),
-            success: function({data, messages}) {
+            success: function({data}) {
                 $('#messages').append(`
                     <li class="message d-inline-flex me">
                         <div class="message__body card">
@@ -22,12 +24,12 @@ $(function(){
                     </li>
                 `);
 
+                audio.play();
                 $('[name="message"]').val('');
                 $(".ps--active-y").animate({ scrollTop: 999999999 }, 'slow');
             },
             error: function({responseJSON: {messages}}) {
-                console.log(messages)
-                // alert(messages);
+                alert(messages);
             },
         });
     });

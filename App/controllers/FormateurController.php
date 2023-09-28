@@ -507,8 +507,6 @@ class FormateurController
 	public function messages($slug = null)
     {
 		$messageModel = new Message;
-		$conversations = $messageModel->conversations($slug, session('user')->get()->slug);
-		//print_r2($conversations);
 		$myEtudiants = $messageModel->myEtudiants($this->id_formateur);
 		$allowedEtudiants = [];
 		foreach($myEtudiants as $etudiant) array_push($allowedEtudiants, $etudiant->slug);
@@ -517,6 +515,15 @@ class FormateurController
 		if($slug && !in_array($slug, $allowedEtudiants)){
 			return Response::json(null, 403, "Something went wrong!");
 		}
+
+		if(is_null($slug)){
+			$conversations = false;
+			$etudiant = false;
+
+			return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants'));
+		}
+		
+		$conversations = $messageModel->conversations($slug, session('user')->get()->slug);
 
 		// Match video name with its formation
 		$videoModel = new Video;
@@ -528,10 +535,13 @@ class FormateurController
 				}
 			}
 		}
-
+		
 		$etudiantModel = new Etudiant;
 		$etudiant = $etudiantModel->whereSlug($slug);
+		$last_message = $messageModel->getLastMessage($etudiant->id_etudiant, $this->id_formateur);
+		$last_message_time = $last_message->unix_timestamp ?? '00000000';
 		
-        return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants'));
+
+        return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants', 'last_message_time'));
     }
 }

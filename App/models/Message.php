@@ -142,4 +142,28 @@ class Message
 		}
 		return [];
 	}
+
+	public function getLastMessage($id_user_from, $id_user_to)
+	{
+		$query = $this->connect->prepare("
+			SELECT 
+				message,
+				UNIX_TIMESTAMP(sent_at) AS unix_timestamp,
+				'1 second ago' AS sent_time
+			FROM messages
+			WHERE `to` = :id_user_to AND `from` = :id_user_from
+			ORDER BY sent_at 
+			DESC LIMIT 1
+		");
+
+		$query->bindValue(':id_user_to', $id_user_to);
+        $query->bindValue(':id_user_from', $id_user_from);
+		$query->execute();
+
+		$lastmessage = $query->fetch(\PDO::FETCH_OBJ);
+		if ($query->rowCount() > 0) {
+			return $lastmessage;
+		}
+		return null;
+	}
 }

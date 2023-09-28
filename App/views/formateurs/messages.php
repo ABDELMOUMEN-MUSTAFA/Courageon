@@ -141,7 +141,7 @@
                                                             </div>
                                                         </li>
                                                     <?php else: ?>
-                                                        <li class="message d-inline-flex contact my-3">
+                                                        <li class="message d-inline-flex contact">
                                                             <div class="message__body card">
                                                                 <div class="card-body px-2 py-1"">
                                                                     <span><?= $conversation->message ?></span>
@@ -171,6 +171,7 @@
                                             </div>
                                             <input type="hidden" name="to" value="<?= $etudiant->id_etudiant ?>" />
                                             <input type="hidden" name="sender" value="formateur" />
+                                            <input type="hidden" name="last_message_time" value="<?= $last_message_time ?>" />
                                         </form>
                                     </div>
                                     <?php endif ?>
@@ -178,9 +179,9 @@
                             </div>
 
                             <div class="mdk-drawer js-mdk-drawer"
-                                data-align="end"
+                            data-align="end"
                                 id="messages-drawer">
-                                <div class="mdk-drawer__content top-0">
+                                <div class="mdk-drawer__content top-0" style="<?= !$etudiant ? "width: 100%" : "" ?>">
                                     <div class="sidebar sidebar-right sidebar-light bg-white o-hidden">
                                         <div class="d-flex flex-column h-100">
                                             <div class="d-flex flex-column justify-content-center navbar-height">
@@ -203,18 +204,18 @@
                                                 data-perfect-scrollbar>
                                                 <div class="sidebar-heading">Etudiants</div>
                                                 <ul class="list-group list-group-fit mb-3">
-                                                    <?php foreach($myEtudiants as $etudiant) : ?>
-                                                    <li title="<?= $etudiant->nom ?> <?= $etudiant->prenom ?>" class="etudiant list-group-item px-4 py-3 <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/{strtolower(SITENAME)}/formateur/messages/'.$etudiant->slug ? 'bg-light' : '' ?>">
-                                                        <a href="<?= URLROOT ?>/formateur/messages/<?= $etudiant->slug  ?>"
+                                                    <?php foreach($myEtudiants as $etu) : ?>
+                                                    <li title="<?= $etu->nom ?> <?= $etu->prenom ?>" class="etudiant list-group-item px-4 py-3 <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/{strtolower(SITENAME)}/formateur/messages/'.$etu->slug ? 'bg-light' : '' ?>">
+                                                        <a href="<?= URLROOT ?>/formateur/messages/<?= $etu->slug  ?>"
                                                         class="d-flex align-items-center position-relative">
-                                                            <span class="avatar avatar-sm <?= $etudiant->is_active ? 'avatar-online' : 'avatar-offline' ?> mr-3 flex-shrink-0">
-                                                                <img src="<?= IMAGEROOT ?>/<?= $etudiant->img ?>"
+                                                            <span class="avatar avatar-sm <?= $etu->is_active ? 'avatar-online' : 'avatar-offline' ?> mr-3 flex-shrink-0">
+                                                                <img src="<?= IMAGEROOT ?>/<?= $etu->img ?>"
                                                                     alt="Avatar"
                                                                     class="avatar-img rounded-circle">
                                                             </span>
                                                             <span class="flex d-flex flex-column"
                                                                 style="max-width: 175px;">
-                                                                <strong class="text-body"><?= $etudiant->nom ?> <?= $etudiant->prenom ?></strong>
+                                                                <strong class="text-body"><?= $etu->nom ?> <?= $etu->prenom ?></strong>
                                                             </span>
                                                         </a>
                                                     </li>
@@ -256,5 +257,19 @@
 
         <script> const URLROOT = `<?= URLROOT ?>`; </script>
         <script src="<?= JSROOT ?>/formateurs/messages.js"></script>
+        <?php if($etudiant): ?>
+            <script src="<?= JSROOT ?>/common/realtimeChat.js"></script>
+        <?php else: ?>
+            <script>
+                // Handle Hide Contacts
+                $("#messages-drawer").attr('data-persistent', true).attr('data-opened', true);
+                
+                $(window).resize(function(){
+                    if($(window).width() <= 768){
+                        $("#messages-drawer").attr('data-persistent', true).attr('data-opened', true);
+                    } 
+                });
+            </script>
+        <?php endif ?>
     </body>
 </html>

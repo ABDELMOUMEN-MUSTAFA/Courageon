@@ -179,7 +179,6 @@ class EtudiantController
 	public function messages($slug = null)
     {
 		$messageModel = new Message;
-		$conversations = $messageModel->conversations(session("user")->get()->slug, $slug);
 		$myFormateurs = $messageModel->myFormateurs($this->id_etudiant);
 		$allowedFormateurs = [];
 		foreach($myFormateurs as $formateur) array_push($allowedFormateurs, $formateur->slug);
@@ -188,6 +187,15 @@ class EtudiantController
 		if($slug && !in_array($slug, $allowedFormateurs)){
 			return Response::json(null, 403, "Something went wrong!");
 		}
+
+		if(is_null($slug)){
+			$conversations = false;
+			$formateur = false;
+
+			return view('etudiants/messages', compact('conversations', 'formateur', 'myFormateurs'));
+		}
+
+		$conversations = $messageModel->conversations(session("user")->get()->slug, $slug);
 
 		// Match video name with its formation
 		foreach ($conversations as $conversation) {
@@ -201,7 +209,11 @@ class EtudiantController
 
 		$formateurModel = new Formateur;
 		$formateur = $formateurModel->whereSlug($slug);
-        return view('etudiants/messages', compact('conversations', 'formateur', 'myFormateurs'));
+
+		$last_message = $messageModel->getLastMessage($formateur->id_formateur, $this->id_etudiant);
+		$last_message_time = $last_message->unix_timestamp ?? '00000000';
+
+        return view('etudiants/messages', compact('conversations', 'formateur', 'myFormateurs', 'last_message_time'));
     }
 
 	public function edit()

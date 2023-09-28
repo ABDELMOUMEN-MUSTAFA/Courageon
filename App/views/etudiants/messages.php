@@ -143,7 +143,7 @@
                                                             </div>
                                                         </li>
                                                     <?php else: ?>
-                                                        <li class="message d-inline-flex contact my-3">
+                                                        <li class="message d-inline-flex contact">
                                                             <div class="message__body card">
                                                                 <div class="card-body px-2 py-1"">
                                                                     <span><?= $conversation->message ?></span>
@@ -173,6 +173,7 @@
                                             </div>
                                             <input type="hidden" name="sender" value="etudiant" />
                                             <input type="hidden" name="to" value="<?= $formateur->id_formateur ?>" />
+                                            <input type="hidden" name="last_message_time" value="<?= $last_message_time ?>" />
                                         </form>
                                     </div>
                                     <?php endif ?>
@@ -182,7 +183,7 @@
                             <div class="mdk-drawer js-mdk-drawer"
                                 data-align="end"
                                 id="messages-drawer">
-                                <div class="mdk-drawer__content top-0">
+                                <div class="mdk-drawer__content top-0" style="<?= !$formateur ? "width: 100%" : "" ?>">
                                     <div class="sidebar sidebar-right sidebar-light bg-white o-hidden">
                                         <div class="d-flex flex-column h-100">
                                             <div class="d-flex flex-column justify-content-center navbar-height">
@@ -205,19 +206,19 @@
                                                 data-perfect-scrollbar>
                                                 <div class="sidebar-heading">Formateurs</div>
                                                 <ul class="list-group list-group-fit mb-3">
-                                                    <?php foreach($myFormateurs as $formateur) : ?>
-                                                    <li title="<?= $formateur->nom ?> <?= $formateur->prenom ?>" class="formateur list-group-item px-4 py-3 <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === "/{strtolower(SITENAME)}/etudiant/messages/".$formateur->slug ? 'bg-light' : '' ?>">
-                                                        <a href="<?= URLROOT ?>/etudiant/messages/<?= $formateur->slug  ?>"
+                                                    <?php foreach($myFormateurs as $for) : ?>
+                                                    <li title="<?= $for->nom ?> <?= $for->prenom ?>" class="formateur list-group-item px-4 py-3 <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === "/{strtolower(SITENAME)}/etudiant/messages/".$for->slug ? 'bg-light' : '' ?>">
+                                                        <a href="<?= URLROOT ?>/etudiant/messages/<?= $for->slug  ?>"
                                                         class="d-flex align-items-center position-relative">
-                                                            <span class="avatar avatar-sm <?= $formateur->is_active ? 'avatar-online' : 'avatar-offline' ?> mr-3 flex-shrink-0">
-                                                                <img src="<?= IMAGEROOT ?>/<?= $formateur->img ?>"
+                                                            <span class="avatar avatar-sm <?= $for->is_active ? 'avatar-online' : 'avatar-offline' ?> mr-3 flex-shrink-0">
+                                                                <img src="<?= IMAGEROOT ?>/<?= $for->img ?>"
                                                                     alt="Avatar"
                                                                     class="avatar-img rounded-circle">
                                                             </span>
                                                             <span class="flex d-flex flex-column"
                                                                 style="max-width: 175px;">
-                                                                <strong class="text-body"><?= $formateur->nom ?> <?= $formateur->prenom ?></strong>
-                                                                <span class="text-muted text-ellipsis"><?= $formateur->specialite ?></span>
+                                                                <strong class="text-body"><?= $for->nom ?> <?= $for->prenom ?></strong>
+                                                                <span class="text-muted text-ellipsis"><?= $for->specialite ?></span>
                                                             </span>
                                                         </a>
                                                     </li>
@@ -259,5 +260,19 @@
 
         <script> const URLROOT = `<?= URLROOT ?>`; </script>
         <script src="<?= JSROOT ?>/etudiants/messages.js"></script>
+        <?php if($formateur): ?>
+            <script src="<?= JSROOT ?>/common/realtimeChat.js"></script>
+        <?php else: ?>
+            <script>
+                // Handle Hide Contacts
+                $("#messages-drawer").attr('data-persistent', true).attr('data-opened', true);
+                
+                $(window).resize(function(){
+                    if($(window).width() <= 768){
+                        $("#messages-drawer").attr('data-persistent', true).attr('data-opened', true);
+                    } 
+                });
+            </script>
+        <?php endif ?>
     </body>
 </html>
