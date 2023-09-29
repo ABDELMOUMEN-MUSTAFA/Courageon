@@ -177,6 +177,6 @@
     <script src="<?= JSROOT ?>/plugins/icheck.min.js"></script>
     <script>const URLROOT = `<?= URLROOT ?>`;</script>
     <script src="<?= JSROOT ?>/courses/index.js"></script>
-    <script src="<?= JSROOT ?>/common.js"></script>
+    <script src="<?= JSROOT ?>/common/publicNavbar.js"></script>
 </body>
 </html>

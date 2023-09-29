@@ -171,7 +171,7 @@
     <script src="<?= JSROOT ?>/plugins/theia-sticky-sidebar.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.mmenu.js"></script>
     <script src="<?= JSROOT ?>/plugins/sticky-kit.min.js"></script>
-    <script src="<?= JSROOT ?>/common.js"></script>
+    <script src="<?= JSROOT ?>/common/publicNavbar.js"></script>
     <script src="<?= JSROOT ?>/courses/show.js"></script>
 </body>
 </html>

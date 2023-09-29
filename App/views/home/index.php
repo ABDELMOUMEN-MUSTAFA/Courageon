@@ -299,7 +299,7 @@
     <script src="<?= JSROOT ?>/plugins/classie.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.validate.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/wow.min.js"></script>
-    <script src="<?= JSROOT ?>/common.js"></script>
+    <script src="<?= JSROOT ?>/common/publicNavbar.js"></script>
     <script>const URLROOT = `<?= URLROOT ?>`;</script>
     <script src="<?= JSROOT ?>/home.js"></script>
 </body>

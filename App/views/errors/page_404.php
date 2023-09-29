@@ -145,6 +145,6 @@
     <script src="<?= JSROOT ?>/plugins/jquery-3.6.3.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/theia-sticky-sidebar.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.mmenu.js"></script>
-    <script src="<?= JSROOT ?>/common.js"></script>
+    <script src="<?= JSROOT ?>/common/publicNavbar.js"></script>
 </body>
 </html>
