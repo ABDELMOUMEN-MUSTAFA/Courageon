@@ -13,5 +13,9 @@ including seamless media storage, integrated payment options and more.
 ## :camera: SCREENSHOTS
 
 ![Screenshot 1](./Public/images/github_images/screen1.png)
+
+
 ![Screenshot 2](./Public/images/github_images/screen2.png)
+
+
 ![Screenshot 3](./Public/images/github_images/screen3.png)
