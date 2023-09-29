@@ -17,4 +17,5 @@ function csrf_token($token = null) {
 
     session('csrf_token')->set($token);
     session('expired_at')->set($expired_at);
+    return $token;
 }
