@@ -100,7 +100,6 @@
 
     <script src="<?= JSROOT ?>/plugins/jquery-3.6.3.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.validate.min.js"></script>
-    <script src="<?= JSROOT ?>/plugins/jquery-ui-1.8.22.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/quill.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.wizard.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.selectric.js"></script>
