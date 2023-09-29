@@ -64,6 +64,11 @@ class EtudiantController
 			return Response::json(null, 405, "Method Not Allowed");
 		}
 
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+
 		$validator = new Validator([
 			'code' => strip_tags(trim($request->post('code')))
 		]);
@@ -237,6 +242,11 @@ class EtudiantController
 
 	private function _editAccountTab($request)
     {
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+
     	$validator = new Validator([
             'nom' => strip_tags(trim($request->post("nom"))),
             'prenom' => strip_tags(trim($request->post("prenom"))),
@@ -279,6 +289,11 @@ class EtudiantController
 
 	private function _editPrivateTab($request)
     {
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+
     	$validator = new Validator([
             'cmdp' => $request->post("cmdp"),
             'password' => $request->post("mdp"),
@@ -301,6 +316,11 @@ class EtudiantController
     {
     	$request = new Request;
     	if ($request->getMethod() === 'PUT') {
+			// Check CSRF token
+            if(!csrf_token($request->post('_token'))){
+                return Response::json(null, 498, "Invalid Token");
+            }
+			
 			$validator = new Validator([
             	'email' => strip_tags(trim($request->post("email"))),
 	        ]);

@@ -216,6 +216,8 @@
 
                             <!-- input hidden ID formation -->
                             <input type="hidden" name="id_formation" value="<?= $videos[0]->id_formation ?>" />
+
+                            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                         </form>
                     </div>
                 </div>
@@ -295,6 +297,8 @@
                             <input type="hidden" name="id_video" />
                             <!-- PUT method -->
                             <input type="hidden" name="method" value="PUT" />
+
+                            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                         </form>
                     </div>
                 </div>

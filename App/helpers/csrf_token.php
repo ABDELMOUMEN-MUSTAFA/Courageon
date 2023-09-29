@@ -8,6 +8,9 @@ function csrf_token($token = null) {
             session('expired_at')->remove();
             return false;
         }
+        
+        session('csrf_token')->remove();
+        session('expired_at')->remove();
         return true;
     }
 

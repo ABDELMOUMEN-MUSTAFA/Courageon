@@ -37,6 +37,11 @@ class MessageController extends ApiController
 
     private function _storeEtudiantMsg($request)
     {
+        // Check CSRF token
+        if(!csrf_token($request->post('_token'))){
+            return Response::json(null, 498, "Invalid Token");
+        }
+
         $validator = new Validator([
             'from' => session('user')->get()->id_etudiant,
             'id_formateur' => strip_tags(trim($request->post('to'))),
@@ -82,6 +87,11 @@ class MessageController extends ApiController
 
     private function _storeFormateurMsg($request)
     {
+        // Check CSRF token
+        if(!csrf_token($request->post('_token'))){
+            return Response::json(null, 498, "Invalid Token");
+        }
+        
         $validator = new Validator([
             'from' => session('user')->get()->id_formateur,
             'id_etudiant' => strip_tags(trim($request->post('to'))),

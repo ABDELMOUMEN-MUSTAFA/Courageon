@@ -122,6 +122,11 @@ class CourseController extends ApiController
            return Response::json(null, 403); 
         }
 
+        // Check CSRF token
+        if(!csrf_token($request->post('_token'))){
+            return Response::json(null, 498, "Invalid Token");
+        }
+
         $validator = new Validator([
             'nom' => strip_tags(trim($request->post('nom'))),
             'description' => $this->strip_critical_tags($request->post("description")),
@@ -222,6 +227,11 @@ class CourseController extends ApiController
            return Response::json(null, 403); 
         }
 
+        // Check CSRF token
+        if(!csrf_token($request->post('_token'))){
+            return Response::json(null, 498, "Invalid Token");
+        }
+        
         $validator = new Validator([
             'id_formation' => strip_tags(trim($id_formation)),
             'nom' => strip_tags(trim($request->post('nom'))),
@@ -303,13 +313,15 @@ class CourseController extends ApiController
             $video['url'] = uploader($request->file('preview'), "videos/formations");
             $video['thumbnail'] = $this->getThumbnail('videos/'.$video['url']);
 
-            $id_video = $this->previewModel->getPreviewOfFormation($id_formation)->id_video;
-            $oldVideo = $this->videoModel->find($id_video);
+            $previewModel = new Preview;
+            $videoModel = new Video;
+            $id_video = $previewModel->getPreviewOfFormation($id_formation)->id_video;
+            $oldVideo = $videoModel->find($id_video);
             // Remove old files (video and thumbnail)
             unlink('videos/'.$oldVideo->url);
             unlink('images/'.$oldVideo->thumbnail);
             unset($oldVideo);
-            $this->videoModel->update($video, $id_video);
+            $videoModel->update($video, $id_video);
         }
 
         // update image

@@ -69,6 +69,7 @@
                 </div>
                 <button id="btn-login" class="btn_1 rounded full-width">Se connecter</button>
                 <div class="text-center mt-3">Vous n'avez pas de compte? <strong><a href="<?= URLROOT ?>/user/register">Inscrivez-vous</a></strong></div>
+                <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
             </form>
             <div class="copy">© 2023 <?= SITENAME ?></div>
         </aside>

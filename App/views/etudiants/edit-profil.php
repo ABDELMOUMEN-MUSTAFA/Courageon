@@ -142,6 +142,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                         </form>
                                     </div>
 
@@ -167,6 +168,7 @@
                                                        />
                                                 <button id="send-email" class="btn btn-primary ml-2"><i class="material-icons">send</i></button>
                                               </div>
+                                              <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                             </form>
                                             <small class="form-text text-muted">Note that if you change your email, you will have to confirm it again.</small>
                                         </div>
@@ -254,6 +256,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                       </form>
                                     </div>
                                 </div>

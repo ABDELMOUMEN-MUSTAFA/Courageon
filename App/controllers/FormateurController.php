@@ -219,6 +219,11 @@ class FormateurController
 
     private function _editAccountTab($request)
     {
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+		
     	$validator = new Validator([
             'nom' => strip_tags(trim($request->post("nom"))),
             'prenom' => strip_tags(trim($request->post("prenom"))),
@@ -308,6 +313,11 @@ class FormateurController
 
     private function _editPublicTab($request)
     {
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+		
     	$validator = new Validator([
             'id_categorie' => strip_tags(trim($request->post("categorie"))),
             'specialite' => strip_tags(trim($request->post("speciality"))),
@@ -353,6 +363,11 @@ class FormateurController
 
 	private function _editPrivateTab($request)
     {
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+
     	$validator = new Validator([
             'cmdp' => $request->post("cmdp"),
             'password' => $request->post("mdp"),
@@ -375,6 +390,11 @@ class FormateurController
     {
     	$request = new Request;
     	if ($request->getMethod() === 'PUT') {
+			// Check CSRF token
+            if(!csrf_token($request->post('_token'))){
+                return Response::json(null, 498, "Invalid Token");
+            }
+
 			$validator = new Validator([
             	'email' => strip_tags(trim($request->post("email"))),
 	        ]);
@@ -452,6 +472,11 @@ class FormateurController
 
     private function _editSocialTab($request)
     {
+		// Check CSRF token
+		if(!csrf_token($request->post('_token'))){
+			return Response::json(null, 498, "Invalid Token");
+		}
+
     	// update Facebook
     	if($request->post('facebook')){
         	$validator = new Validator([

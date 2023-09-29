@@ -71,6 +71,11 @@ class UserController
 
         $request = new App\Libraries\Request;
         if ($request->getMethod() === 'POST') {
+            // Check CSRF token
+            if(!csrf_token($request->post('_token'))){
+                return view("errors/token_expired");
+            }
+            
             $validator = new Validator([
                 'email' => strip_tags(trim($request->post('email'))),
                 'password' => $request->post('mdp'),
@@ -223,6 +228,11 @@ class UserController
         
         $request = new App\Libraries\Request;
         if ($request->getMethod() === 'POST') {
+            // Check CSRF token
+            if(!csrf_token($request->post('_token'))){
+                return Response::json(null, 498, "Invalid Token");
+            }
+
             $validator = new Validator([
                 'nom' => strip_tags(trim($request->post("nom"))),
                 'prenom' => strip_tags(trim($request->post("prenom"))),
@@ -383,6 +393,11 @@ class UserController
 
         $request = new App\Libraries\Request;
         if ($request->getMethod() === 'POST') {
+            // Check CSRF token
+            if(!csrf_token($request->post('_token'))){
+                return view("errors/token_expired");
+            }
+
             $validator = new Validator([
                 'email' => strip_tags(trim($request->post("email"))),
             ]);
@@ -486,6 +501,11 @@ class UserController
             return view('auth/reset');
 
         }elseif ($request->getMethod() === 'POST') {
+            // Check CSRF token
+            if(!csrf_token($request->post('_token'))){
+                return view("errors/token_expired");
+            }
+            
            $validator = new Validator([
                 'password' => $request->post("password"),
                 'password_confirmation' => $request->post("password_confirmation"),
@@ -600,6 +620,11 @@ class UserController
             $request = new App\Libraries\Request;
             if(session('user')->get()->is_all_info_present == false) {
                 if($request->getMethod() === 'POST') {
+                    // Check CSRF token
+                    if(!csrf_token($request->post('_token'))){
+                        return view("errors/token_expired");
+                    }
+
                     $validator = new Validator([
                         'biographie' => $this->_strip_critical_tags($request->post("biography")),
                         'id_categorie' => strip_tags(trim($request->post("categorie"))),

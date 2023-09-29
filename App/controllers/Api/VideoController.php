@@ -30,6 +30,11 @@ class VideoController extends ApiController
 
 	public function store($request)
     {
+        // Check CSRF token
+        if(!csrf_token($request->post('_token'))){
+            return Response::json(null, 498, "Invalid Token");
+        }
+
         $validator = new Validator([
             'nom' => strip_tags(trim($request->post('v_title'))),
             'description' => strip_tags($request->post("v_description")),
@@ -56,6 +61,11 @@ class VideoController extends ApiController
 
     public function update($request, $id)
     {
+        // Check CSRF token
+        if(!csrf_token($request->post('_token'))){
+            return Response::json(null, 498, "Invalid Token");
+        }
+        
     	$validator = new Validator([
             'nom' => strip_tags(trim($request->post('v_title'))),
             'description' => strip_tags($request->post("v_description")),
