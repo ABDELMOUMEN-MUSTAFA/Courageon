@@ -5,6 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="<?= IMAGEROOT ?>/favicon.ico" />
+    <link rel="canonical" href="<?= URLROOT ?>">
+    <meta name="description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
+    <meta property="og:title" content="Cours en ligne - Apprenez ce que vous voulez, à votre rythme | <?= SITENAME ?>">
+    <meta property="og:type" content="video_lecture">
+    <meta property="og:image" content="<?= IMAGEROOT ?>/logo.png">
+    <meta property="og:url" content="<?= URLROOT ?>/courses/search">
+    <meta property="og:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
+    <meta property="og:site_name" content="<?= SITENAME ?>">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ..." />
+    <meta name="twitter:title" content="Cours en ligne - Apprenez ce que vous voulez, à votre rythme | <?= SITENAME ?>" />
+    <meta name="twitter:site" content="<?= URLROOT ?>/courses/search" />
+    <meta name="twitter:image" content="<?= IMAGEROOT ?>/logo.png" />
     <title>Cours en ligne - Apprenez ce que vous voulez, à votre rythme | <?= SITENAME ?></title>
     <!-- Font Icons -->
     <link href="<?= CSSROOT ?>/icons/all.min.css" rel="stylesheet" />
@@ -80,8 +93,8 @@
                                         </li>
                                         <?php foreach ($categories as $categorie) : ?>
                                         <li>
-                                            <label for="categorie-<?= $categorie->nom ?>">
-                                                <input id="categorie-<?= $categorie->nom ?>" name="categorie" type="radio" value="<?= strtolower($categorie->nom) ?>" class="icheck"><?= $categorie->nom ?> <small>(<?= $categorie->total_formations ?>)</small>
+                                            <label for="categorie-<?= str_replace(" ", "-", $categorie->nom) ?>">
+                                                <input id="categorie-<?= str_replace(" ", "-", $categorie->nom) ?>" name="categorie" type="radio" value="<?= strtolower($categorie->nom) ?>" class="icheck"><?= $categorie->nom ?> <small>(<?= $categorie->total_formations ?>)</small>
                                             </label>
                                         </li>
                                         <?php endforeach ?>

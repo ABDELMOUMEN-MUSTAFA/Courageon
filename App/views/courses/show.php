@@ -4,6 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="<?= IMAGEROOT ?>/favicon.ico" />
+    <link rel="canonical" href="<?= URLROOT ?>">
+    <meta name="description" content="<?= $formation->description ?>">
+    <meta property="og:title" content="<?= $formation->nomFormation ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="<?= IMAGEROOT ?>/<?= $formation->imgFormation ?>">
+    <meta property="og:url" content="<?= URLROOT ?>/courses/<?= $formation->slugFormation ?>">
+    <meta property="og:description" content="<?= $formation->description ?>">
+    <meta property="og:site_name" content="<?= SITENAME ?>">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="<?= $formation->description ?>" />
+    <meta name="twitter:title" content="<?= $formation->nomFormation ?>" />
+    <meta name="twitter:site" content="<?= URLROOT ?>/courses/<?= $formation->slugFormation ?>" />
+    <meta name="twitter:image" content="<?= IMAGEROOT ?>/<?= $formation->imgFormation ?>" />
     <title><?= $formation->nomFormation ?> | <?= SITENAME ?></title>
     <!-- GOOGLE WEB FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -106,7 +119,7 @@
                         <aside class="col-lg-5 col-xl-4" id="sidebar-course">
                             <div class="box_detail shadow">
                                 <figure id="show-preview" >
-                                    <a href="javascript:void(0)" class="video"><i style="color:#FFC107;" class="fa-solid fa-play fs-2"></i><img src="<?= IMAGEROOT ?>/<?= $formation->imgFormation ?>" alt="course image" class="img-fluid"><span>Voir l'aperçu du cours</span></a>
+                                    <a href="javascript:void(0)" rel="noindex" class="video"><i style="color:#FFC107;" class="fa-solid fa-play fs-2"></i><img src="<?= IMAGEROOT ?>/<?= $formation->imgFormation ?>" alt="course image" class="img-fluid"><span>Voir l'aperçu du cours</span></a>
                                 </figure>
                                 <div class="price-wrapper d-flex justify-content-between">
                                     <span class="price">$<?= $formation->prix ?></span>
@@ -116,8 +129,8 @@
                                     </div>
                                     <?php endif ?>
                                 </div>
-                                <a href="<?= URLROOT ?>/paypal/payment/<?= $formation->id_formation ?>" class="btn-paypal d-flex align-items-center justify-content-center gap-2"><span>Payer avec </span><i class="fa-brands fa-cc-paypal" style="color: white;font-size: 34px;"></i></a>
-                                <a href="<?= URLROOT ?>/stripe/payment/<?= $formation->id_formation ?>" class="btn-stripe d-flex align-items-center justify-content-center gap-2"><span>Payer avec </span><i class="fa-brands fa-cc-stripe" style="color: white;font-size: 34px;"></i></a>
+                                <a rel="noindex" href="<?= URLROOT ?>/paypal/payment/<?= $formation->id_formation ?>" class="btn-paypal d-flex align-items-center justify-content-center gap-2"><span>Payer avec </span><i class="fa-brands fa-cc-paypal" style="color: white;font-size: 34px;"></i></a>
+                                <a rel="noindex" href="<?= URLROOT ?>/stripe/payment/<?= $formation->id_formation ?>" class="btn-stripe d-flex align-items-center justify-content-center gap-2"><span>Payer avec </span><i class="fa-brands fa-cc-stripe" style="color: white;font-size: 34px;"></i></a>
                                 <div id="list_feat">
                                     <ul>
                                         <li><i class="fa-solid fa-clock"></i> <?= explode(':', $formation->mass_horaire)[0] ?>h

@@ -6,6 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="<?= IMAGEROOT ?>/favicon.ico" />
+    <link rel="canonical" href="<?= URLROOT ?>">
+    <meta name="description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
+    <meta property="og:title" content="Connectez-vous et commencez à apprendre | <?= SITENAME ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="<?= IMAGEROOT ?>/logo.png">
+    <meta property="og:url" content="<?= URLROOT ?>/user/login">
+    <meta property="og:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
+    <meta property="og:site_name" content="<?= SITENAME ?>">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ..." />
+    <meta name="twitter:title" content="Connectez-vous et commencez à apprendre | <?= SITENAME ?>" />
+    <meta name="twitter:site" content="<?= URLROOT ?>/user/login" />
+    <meta name="twitter:image" content="<?= IMAGEROOT ?>/logo.png" />
     <title>Connectez-vous et commencez à apprendre | <?= SITENAME ?></title>
     <!-- GOOGLE WEB FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />

@@ -498,6 +498,8 @@ class Formation
                 f.prix,
                 f.description,
                 f.jaimes,
+                f.background_img AS bgImg,
+                f.slug AS slugFormation,
                 fo.id_formateur,
                 fo.nom AS nomFormateur,
                 fo.prenom,
@@ -509,8 +511,7 @@ class Formation
                 f.id_langue AS langue,
                 l.nom AS nomLangue,
                 n.nom AS nomNiveau,
-                n.icon AS iconNiveau,
-                f.background_img AS bgImg
+                n.icon AS iconNiveau
             FROM formations f
             JOIN formateurs fo ON f.id_formateur = fo.id_formateur
             JOIN categories cf ON cf.id_categorie = f.id_categorie

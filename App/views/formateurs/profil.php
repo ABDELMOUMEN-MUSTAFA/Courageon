@@ -4,6 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="<?= IMAGEROOT ?>/favicon.ico" />
+    <link rel="canonical" href="<?= URLROOT ?>">
+    <meta name="description" content="<?= strip_tags($formateur->biographie) ?>">
+    <meta property="og:title" content="<?= $formateur->prenom . ' ' . $formateur->nomFormateur ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="<?= strpos($formateur->img, 'users') === 0 ? IMAGEROOT.'/'.$formateur->img : $formateur->img ?>">
+    <meta property="og:url" content="<?= URLROOT ?>/user/<?= $formateur->slug ?>">
+    <meta property="og:description" content="<?= strip_tags($formateur->biographie) ?>">
+    <meta property="og:site_name" content="<?= SITENAME ?>">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="<?= strip_tags($formateur->biographie) ?>" />
+    <meta name="twitter:title" content="<?= $formateur->prenom . ' ' . $formateur->nomFormateur ?>" />
+    <meta name="twitter:site" content="<?= URLROOT ?>/user/<?= $formateur->slug ?>" />
+    <meta name="twitter:image" content="<?= strpos($formateur->img, 'users') === 0 ? IMAGEROOT.'/'.$formateur->img : $formateur->img ?>" />
     <title><?= $formateur->prenom . ' ' . $formateur->nomFormateur ?> | <?= SITENAME ?></title>
     <!-- GOOGLE WEB FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -96,7 +109,7 @@
                                 <p><?= $formateur->nomCategorie ?></p>
                             </div>
                             <div class="wrapper_indent ql-editor">
-                                <p><?= $formateur->biographie ?></p>
+                                <?= $formateur->biographie ?>
                             </div>
                         </div>
                         <hr style="background-color: #662d91;height: 5px;margin: 50px auto;width: 200px" />
