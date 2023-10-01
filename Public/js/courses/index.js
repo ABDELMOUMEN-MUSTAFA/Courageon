@@ -32,17 +32,17 @@ $(function(){
                 if(pageNumber === 1) {
                     $courses.html(`
                         <div id="course-loading" class="text-center my-5">
-                        <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
+                            <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
                     `);
                 }else{
                     $courses.append(`
                         <div id="course-loading" class="text-center my-5">
-                        <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
+                            <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
                     `);
                 }
@@ -88,7 +88,7 @@ $(function(){
         for(let course of courses){
             $courses.append(`
                 <div class="col-md-6">
-                    <div class="box_grid wow">
+                    <article class="box_grid wow">
                         <figure class="block-reveal">
                             <div class="block-horizzontal"></div>
                             <span class="langue">
@@ -121,7 +121,7 @@ $(function(){
                             <li><i class="fa-solid fa-user"></i> ${course.total_inscriptions}</li>
                             <li><a href="${URLROOT}/paypal/payment/${course.id_formation}">Acheter</a></li>
                         </ul>
-                    </div>
+                    </article>
                 </div>
             `);
         }

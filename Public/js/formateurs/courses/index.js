@@ -27,9 +27,9 @@ $(function () {
             beforeSend: function () {
                 $courses.append(`
                     <div id="course-loading" class="text-center my-5">
-                    <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+                        <div class="spinner-grow text-warning" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
                     </div>
                 `);
             },
@@ -75,7 +75,7 @@ $(function () {
         courses.forEach((course) => {
             $courses.append(`
                 <div class="col-md-6" data-course="${course.id_formation}">
-                    <div class="card">
+                    <article class="card">
                         <div class="card-body">
                             <div class="d-flex flex-column flex-sm-row">
                                 <a href="${URLROOT}/courses/${course.id_formation}/videos"
@@ -126,7 +126,7 @@ $(function () {
                                    href="javascript:void(0)" data-id="${course.id_formation}" >Delete course</a>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             `);
         });

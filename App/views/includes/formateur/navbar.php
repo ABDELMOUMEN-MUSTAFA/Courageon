@@ -1,5 +1,5 @@
 <!-- Header -->
-<div id="header"
+<header id="header"
      data-fixed
      class="mdk-header js-mdk-header mb-0">
     <div class="mdk-header__content">
@@ -193,5 +193,5 @@
         <!-- // END Navbar -->
 
     </div>
-</div>
+</header>
 <!-- // END Header -->

@@ -1,5 +1,5 @@
 <?php $sitename = strtolower(SITENAME) ?>
-<div class="mdk-drawer js-mdk-drawer" id="default-drawer" style="z-index: 999;">
+<aside class="mdk-drawer js-mdk-drawer" id="default-drawer" style="z-index: 999;">
     <div class="mdk-drawer__content ">
         <div class="sidebar sidebar-left sidebar-dark bg-dark o-hidden"
              data-perfect-scrollbar>
@@ -58,4 +58,4 @@
             </div>
         </div>
     </div>
-</div>
+</aside>
