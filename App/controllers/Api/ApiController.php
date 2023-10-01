@@ -18,6 +18,11 @@ class ApiController extends Api {
     {
         $request = new Request;
         $params = $request->getParams();
+        $this->router($request, $params);
+    }
+
+    private function router($request, $params)
+    {
         switch ($request->getMethod()) {
             case 'GET':
                 if (count($params) === 0) {
