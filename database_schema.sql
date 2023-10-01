@@ -168,7 +168,6 @@ CREATE TABLE IF NOT EXISTS `formations` (
   `id_formateur` varchar(255) DEFAULT NULL,
   `id_categorie` int(11) DEFAULT NULL,
   `slug` varchar(200) NOT NULL,
-  `is_published` datetime DEFAULT NULL,
   PRIMARY KEY (`id_formation`),
   UNIQUE KEY `slug` (`slug`),
   KEY `fk_langues_formations` (`id_langue`),

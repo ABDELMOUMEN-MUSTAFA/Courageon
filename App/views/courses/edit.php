@@ -291,14 +291,6 @@
                                                         <?php endforeach ?>
                                                 </select>
                                             </div>
-                                            <div class="flex">
-                                            <label class="form-label" for="is_published">IS PUBLISHED</label><br>
-                                            <div class="custom-control custom-checkbox-toggle custom-control-inline mr-1">
-                                                <input <?= !is_null($formation->is_published) ? 'checked' : '' ?> type="checkbox" id="is_published" class="custom-control-input" name="is_published">
-                                                <label class="custom-control-label" for="is_published">NO</label>
-                                            </div>
-                                            <label class="form-label mb-0" for="is_published">YES</label>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

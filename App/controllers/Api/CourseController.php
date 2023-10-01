@@ -156,8 +156,7 @@ class CourseController extends ApiController
         $formation['image'] = uploader($request->file('image'), 'images/formations');
         $formation['masse_horaire'] = $formation['duration'];
         $formation['id_formateur'] = session('user')->get()->id_formateur;
-        $formation['is_published'] = $request->post('is_published');
-
+        
         // background
         if($request->file('background')){
             unset($validator);
@@ -256,7 +255,6 @@ class CourseController extends ApiController
 
         $formation = $validator->validated();
         unset($formation['type']);
-        $formation['is_published'] = $request->post('is_published') ? date('Y-m-d H:i:s') : null;
 
         $video = [];
 
