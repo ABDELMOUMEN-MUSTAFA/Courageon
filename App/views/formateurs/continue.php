@@ -89,7 +89,7 @@
                     <button type="submit" class="submit">Soumettre</button>
                 </div>
                 <!-- /bottom-wizard -->
-                <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
+                <input type="hidden" name="_token" value="<?= $token ?>" />
             </form>
         </div>
         <!-- /Wizard container -->

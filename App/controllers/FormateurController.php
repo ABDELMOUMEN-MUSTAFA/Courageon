@@ -177,6 +177,7 @@ class FormateurController
 			$data = [
 				'formateur' => $this->formateurModel->formateur($this->id_formateur),
 				'categories' => $this->stockedModel->getAllCategories(),
+				'token' => csrf_token()
 			];
 
 			return view('formateurs/edit-profil', $data);

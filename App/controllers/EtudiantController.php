@@ -42,7 +42,7 @@ class EtudiantController
 
 	public function index()
 	{
-		return view("etudiants/index");
+		return view("etudiants/index", ['token' => csrf_token()]);
 	}
 
 	public function inscriptions()
@@ -225,7 +225,7 @@ class EtudiantController
 	{
 		$request = new Request;
 		if($request->getMethod() === 'GET'){
-			return view('etudiants/edit-profil', ['etudiant' => $this->etudiantModel->find($this->id_etudiant)]);
+			return view('etudiants/edit-profil', ['etudiant' => $this->etudiantModel->find($this->id_etudiant), 'token' => csrf_token()]);
 		}
 
 		$tabs = ["AccountTab", "PrivateTab"];

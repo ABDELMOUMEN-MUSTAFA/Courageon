@@ -214,7 +214,6 @@
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" id="close-modal">Close</button>
                             <button type="submit" class="btn btn-primary btn-sm"><i class="material-icons mr-2">send</i> Send</button>
                         </div>
-                        <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                     </form>
                 </div>
             </div>

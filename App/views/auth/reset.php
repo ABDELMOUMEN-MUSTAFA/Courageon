@@ -40,7 +40,7 @@
             </div>
             <input type="hidden" name="token" value="<?= $_GET['token'] ?>"  />
             <button class="btn_1 full-width" id="reset" type="submit">Confirmer</button>
-            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
+            <input type="hidden" name="_token" value="<?= $token ?>" />
         </form>
     </div>
     <script src="<?= JSROOT ?>/plugins/jquery-3.6.3.min.js"></script>

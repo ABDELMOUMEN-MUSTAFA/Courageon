@@ -41,7 +41,7 @@
                 <input type="email" id="email" name="email" class="form-control" placeholder="Adresse e-mail" />
             </div>
             <button class="btn_1 full-width" id="reset" type="submit">Envoyer le lien de réinitialisation</button>
-            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
+            <input type="hidden" name="_token" value="<?= $token ?>" />
         </form>
     </div>
     <script src="<?= JSROOT ?>/plugins/jquery-3.6.3.min.js"></script>

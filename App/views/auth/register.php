@@ -129,7 +129,7 @@
 
                 <button id="register-btn" class="btn_1 rounded full-width">S'inscrire</button>
                 <div class="text-center mt-3">Vous avez déjà un compte? <strong><a href="<?= URLROOT ?>/user/login">Se connecter</a></strong></div>
-                <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
+                <input type="hidden" name="_token" value="<?= $token ?>" />
             </form>
             <div class="copy">© 2023 <?= SITENAME ?></div>
         </aside>

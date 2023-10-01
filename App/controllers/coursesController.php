@@ -63,7 +63,8 @@ class CoursesController
 
 
             $videos = $this->videoModel->getVideosOfFormation($search);
-            return view('videos/index', compact('videos'));
+            $token = csrf_token();
+            return view('videos/index', compact('videos', 'token'));
         }
 
         if(!is_null($search)){
@@ -91,7 +92,7 @@ class CoursesController
     public function add()
     {
         if(!auth()){
-            return Response::json(null, 401);
+            return redirect('user/login');
         }
 
         if(session('user')->get()->type !== 'formateur'){
@@ -107,7 +108,8 @@ class CoursesController
         $niveaux = $this->stockedModel->getAllLevels();
         $langues = $this->stockedModel->getAllLangues();
 
-        return view("courses/add", compact('categories', 'niveaux', 'langues'));
+        $token = csrf_token();
+        return view("courses/add", compact('categories', 'niveaux', 'langues', 'token'));
     }
 
     public function edit($id_formation = null)
@@ -138,7 +140,8 @@ class CoursesController
         $niveaux = $this->stockedModel->getAllLevels();
         $langues = $this->stockedModel->getAllLangues();
 
-        return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues')); 
+        $token = csrf_token();
+        return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues', 'token')); 
     }
 
     public function removeAttachedFile($id_formation)
