@@ -91,13 +91,8 @@ class CourseController extends ApiController
         }
 
         $sort = htmlspecialchars(strip_tags($request->get('sort')));
-        $sorts = ['nom' => 'fore.nom', 'likes' => 'fore.jaimes DESC', 'newest' => 'fore.date_creation DESC'];
-
-        if(array_key_exists($sort, $sorts)){
-            $sort = ','.$sorts[$sort];
-        }else{
-            $sort = '';
-        }
+        $sorts = ['nom' => 'fore.nom', 'likes' => 'fore.jaimes', 'newest' => 'fore.date_creation'];
+        $sort = array_key_exists($sort, $sorts) ? $sorts[$sort] : 'insc.total_inscriptions';
 
         $id_formateur = 'AND f.id_formateur = "'.session('user')->get()->id_formateur.'"';
         $totalFiltred = $this->formationModel->countFiltred($filterQuery, $id_formateur);
