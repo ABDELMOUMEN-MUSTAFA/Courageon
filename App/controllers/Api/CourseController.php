@@ -67,10 +67,7 @@ class CourseController extends ApiController
 
         $sort = htmlspecialchars(strip_tags($request->get('sort')));
         $sorts = ['newest' => 'fore.date_creation', 'mostLiked' => 'fore.jaimes'];
-
-        if(array_key_exists($sort, $sorts)){
-            $sort = ','.$sorts[$sort];
-        }
+        $sort = array_key_exists($sort, $sorts) ? $sorts[$sort] : 'insc.total_inscriptions';
 
         $totalFiltred = $this->formationModel->countFiltred($filterQuery);
         return paginator($totalFiltred, 10, 'courses', $this->formationModel, 'filter', [
@@ -255,7 +252,6 @@ class CourseController extends ApiController
 
         $formation = $validator->validated();
         unset($formation['type']);
-
         $video = [];
 
         // update background

@@ -575,7 +575,7 @@ class Formation
             WHERE
             {$filter}
             {$id_formateur}
-            ORDER BY insc.total_inscriptions DESC {$sort}
+            ORDER BY {$sort} DESC
             LIMIT {$offset}, {$numberRecordsPerPage}
         ");
 
