@@ -572,6 +572,7 @@ class UserController
 
     private function _createUserSession($user)
     {
+        session_regenerate_id(true);
         session('user')->set($user);
         $this->{$user->type.'Model'}->update(['is_active' => true], $user->{'id_'.$user->type});
         if ($user->type === 'formateur') {
