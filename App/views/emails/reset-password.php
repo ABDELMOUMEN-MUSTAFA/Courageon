@@ -81,8 +81,8 @@
             }
         </style>
     </head>
-    <body style="background-color: #d9dffa; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
-        <table cellpadding="0" cellspacing="0" class="nl-container" role="presentation" style="--mso-table-lspace: 0pt;--mso-table-rspace: 0pt;background-color: #d9dffa;width: 600px;margin: 50px auto;" width="100%">
+    <body style="background-color: #252424; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+        <table cellpadding="0" cellspacing="0" class="nl-container" role="presentation" style="--mso-table-lspace: 0pt;--mso-table-rspace: 0pt;background-color: #252424;width: 600px;margin: 50px auto;" width="100%">
             <tbody>
                 <tr>
                     <td>
@@ -159,7 +159,7 @@
                                                                 <td class="pad" style="padding-bottom:20px;padding-left:10px;padding-right:10px;padding-top:20px;text-align:center;">
                                                                     <div align="center" class="alignment">
                                                                         <!--[if --mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://www.example.com/" style="height:46px;width:308px;v-text-anchor:middle;" arcsize="35%" stroke="false" fillcolor="#506bec"><w:anchorlock/><v:textbox inset="5px,0px,0px,0px"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:15px"><![endif]-->
-                                                                        <a href="::tokenLink" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#506bec;border-radius:16px;width:auto;border-top:0px solid TRANSPARENT;font-weight:undefined;border-right:0px solid TRANSPARENT;border-bottom:0px solid TRANSPARENT;border-left:0px solid TRANSPARENT;padding-top:8px;padding-bottom:8px;font-family:Helvetica Neue, Helvetica, Arial, sans-serif;font-size:15px;text-align:center;--mso-border-alt:none;word-break:keep-all;" target="_blank">
+                                                                        <a href="::tokenLink" style="text-decoration:none;display:inline-block;color:#000;background-color:#ffc106;border-radius:16px;width:auto;border-top:0px solid TRANSPARENT;font-weight:undefined;border-right:0px solid TRANSPARENT;border-bottom:0px solid TRANSPARENT;border-left:0px solid TRANSPARENT;padding-top:8px;padding-bottom:8px;font-family:Helvetica Neue, Helvetica, Arial, sans-serif;font-size:15px;text-align:center;--mso-border-alt:none;word-break:keep-all;" target="_blank">
                                                                             <span style="padding-left:25px;padding-right:20px;font-size:15px;display:inline-block;letter-spacing:normal;">
                                                                                 <span style="word-break:break-word;">
                                                                                     <span data-mce-style="" style="line-height: 30px;">
@@ -209,12 +209,12 @@
                                         <table align="center" cellpadding="0" cellspacing="0" class="row-content stack" role="presentation" style="--mso-table-lspace: 0pt; --mso-table-rspace: 0pt; color: #000; width: 600px; margin: 0 auto;" width="600">
                                             <tbody>
                                                 <tr>
-                                                    <td class="column column-1" style="--mso-table-lspace: 0pt; --mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 20px; padding-left: 10px; padding-right: 10px; padding-top: 10px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;background-color: #d9dffa" width="100%">
+                                                    <td class="column column-1" style="--mso-table-lspace: 0pt; --mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 20px; padding-left: 10px; padding-right: 10px; padding-top: 10px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;background-color: #252424" width="100%">
                                                         <table cellpadding="10" cellspacing="0" class="paragraph_block block-4" role="presentation" style="--mso-table-lspace: 0pt; --mso-table-rspace: 0pt; word-break: break-word;" width="100%">
                                                             <tr>
                                                                 <td class="pad">
                                                                     <div style="color:#97a2da;font-family:Helvetica Neue, Helvetica, Arial, sans-serif;font-size:14px;line-height:120%;text-align:center;--mso-line-height-alt:16.8px;">
-                                                                        <p style="margin: 0; word-break: break-word;">
+                                                                        <p style="margin: 0; word-break: break-word;color:#fff;">
                                                                             Ce lien expirera dans les prochaines ::expirationTime.<br/>N'hésitez pas à nous contacter à abdelmoumen.mustafa@gmail.com.
                                                                         </p>
                                                                     </div>
@@ -225,8 +225,8 @@
                                                             <tr>
                                                                 <td class="pad">
                                                                     <div style="color:#97a2da;font-family:Helvetica Neue, Helvetica, Arial, sans-serif;font-size:12px;line-height:120%;text-align:center;--mso-line-height-alt:14.399999999999999px;">
-                                                                        <p style="margin: 0; word-break: break-word;">
-                                                                            <span>Copyright© 2023 <?= SITENAME ?>.</span>
+                                                                        <p style="margin: 0; word-break: break-word;color:#fff;">
+                                                                            <strong>Copyright© 2023 <?= SITENAME ?></strong>
                                                                         </p>
                                                                     </div>
                                                                 </td>
