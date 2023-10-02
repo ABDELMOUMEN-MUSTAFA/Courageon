@@ -565,7 +565,7 @@ class FormateurController
 		$etudiantModel = new Etudiant;
 		$etudiant = $etudiantModel->whereSlug($slug);
 		$last_message = $messageModel->getLastMessage($etudiant->id_etudiant, $this->id_formateur);
-		$last_message_time = $last_message->unix_timestamp ?? '00000000';
+		$last_message_time = $last_message->unix_timestamp ?? '0000000000';
 		
 
         return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants', 'last_message_time'));

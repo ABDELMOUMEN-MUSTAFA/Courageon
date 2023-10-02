@@ -9,8 +9,6 @@ use App\Models\Message;
 
 class ChatController
 {
-    private $connect;
-
     public function __construct()
     {
         if(!auth()){
@@ -20,8 +18,6 @@ class ChatController
         if(!session('user')->get()->email_verified_at) {
             return redirect('user/verify');
         }
-
-        $this->connect = Database::getConnection();
     }
 
     public function index($from_user = null)
@@ -36,10 +32,12 @@ class ChatController
         }
         
         $last_message_time = $request->get('last_time');
-        if ($last_message_time !== '') {
-            if(!is_numeric($last_message_time) || strlen($last_message_time) !== 10){
-                return Response::json(null, 412, "Invalid unix timestamp format.");
-            }
+        if(!is_numeric($last_message_time)){
+            return Response::json(null, 412, "Invalid unix timestamp format.");
+        }
+
+        if(strlen($last_message_time) !== 10){
+            return Response::json(null, 412, "Invalid unix timestamp format.");
         }
 
         $user = session('user')->get()->type === 'formateur' ? 'etudiant' : 'formateur';
