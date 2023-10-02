@@ -352,7 +352,6 @@ class Formation
                 f.description,
                 f.jaimes,
                 f.etat,
-                f.is_published,
                 ft.id_formateur,
                 ft.nom AS nomFormateur,
                 ft.prenom,

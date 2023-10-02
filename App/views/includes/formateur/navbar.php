@@ -22,10 +22,11 @@
                 </a>
 
                 <!-- Search -->
-                <form class="search-form d-none d-md-flex">
+                <form action="<?= URLROOT ?>/courses" class="search-form d-none d-md-flex">
                     <input type="text"
                            class="form-control"
-                           placeholder="Search">
+                           placeholder="Search"
+                           name="q">
                     <button class="btn"
                             type="button"><i class="material-icons font-size-24pt">search</i></button>
                 </form>

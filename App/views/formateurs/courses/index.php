@@ -98,7 +98,7 @@
                                             <div class="dropdown-menu">
                                                 <div class="dropdown-item d-flex flex-column">
                                                     <div class="form-group">
-                                                        <label for="custom-select"
+                                                        <label for="categories"
                                                                class="form-label">Category</label><br>
                                                         <select name="categorie" id="categories"
                                                                 class="form-control custom-select"
