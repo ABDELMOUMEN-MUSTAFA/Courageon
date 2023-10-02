@@ -116,7 +116,7 @@ class CourseController extends ApiController
 
         // Check CSRF token
         if(!csrf_token($request->post('_token'))){
-            return Response::json(null, 498, "Invalid Token");
+            return Response::json(null, 403, "Invalid Token");
         }
 
         $validator = new Validator([
@@ -197,10 +197,13 @@ class CourseController extends ApiController
         $video['duration'] = $formation['duration'];
 
 
-        $video['thumbnail'] = $this->getThumbnail('videos/'.$video['url']);
+        $video['thumbnail'] = $this->_getThumbnail('videos/'.$video['url']);
+        // $video['thumbnail'] = "dsqdqsdsqdqsd";
         $videoModel = new Video;
+        
         $id_video = $videoModel->create($video);
 
+        
         // Create Preview
         $previewModel = new Preview;
         $previewModel->insertPreviewVideo($id_video, $id_formation);
@@ -300,7 +303,7 @@ class CourseController extends ApiController
             ]);
 
             $video['url'] = uploader($request->file('preview'), "videos/formations");
-            $video['thumbnail'] = $this->getThumbnail('videos/'.$video['url']);
+            $video['thumbnail'] = $this->_getThumbnail('videos/'.$video['url']);
 
             $previewModel = new Preview;
             $videoModel = new Video;
@@ -383,11 +386,11 @@ class CourseController extends ApiController
         return $cleanedHtml; 
     }
 
-    private function getThumbnail($video)
+    private function _getThumbnail($video)
     {
         $ffmpeg = FFMpeg::create([
             'ffmpeg.binaries'  => 'c:\ffmpeg\bin\ffmpeg.exe',
-            'ffprobe.binaries' => 'c:\ffmpeg\bin\ffprobe.exe' 
+            'ffprobe.binaries' => 'c:\ffmpeg\bin\ffprobe.exe',
         ]);
 
         $video = $ffmpeg->open($video);

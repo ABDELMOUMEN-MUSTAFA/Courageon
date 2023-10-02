@@ -160,6 +160,7 @@ $(function(){
   			const progressBar = $('.progress-bar');
         	const formData = new FormData(form);
         	$(form).serializeArray().forEach((field) => formData.append(field.name, field.value))
+			console.log(formData)
         	// Display the progress bar
 		    progressWrapper.show();
 		    // loading button
@@ -186,13 +187,15 @@ $(function(){
 		      },
 		      success: function({data}) {
 		      	window.location.href = `${URLROOT}/courses/${data.id_formation}/videos`;
-
-		        progressWrapper.hide(); // Hide the progress bar
 		      },
 		      error: function({responseJSON: {messages}}) {
-		        // alert(messages);
-                console.log(messages);
+		        alert(messages);
+				
 		        progressWrapper.hide(); // Hide the progress bar
+				// loading button
+				$addCousesBtn.removeClass('is-loading is-loading-sm').prop('disabled', false);
+				// Disable all inputs within the form.
+				$('#add-course-form :input').prop('disabled', false);
 		      },
 		    });
         }
