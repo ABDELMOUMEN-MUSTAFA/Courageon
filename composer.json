@@ -7,7 +7,7 @@
         "vlucas/phpdotenv": "^5.5",
         "james-heinrich/getid3": "^1.9",
         "nesbot/carbon": "^2.69",
-        "php-ffmpeg/php-ffmpeg": "^0.19.0",
+        "php-ffmpeg/php-ffmpeg": "1.0.1",
         "intervention/image": "^2.7",
         "stripe/stripe-php": "^12.3"
     },
