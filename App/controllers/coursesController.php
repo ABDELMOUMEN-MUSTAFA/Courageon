@@ -63,8 +63,7 @@ class CoursesController
 
 
             $videos = $this->videoModel->getVideosOfFormation($search);
-            $token = csrf_token();
-            return view('videos/index', compact('videos', 'token'));
+            return view('videos/index', compact('videos'));
         }
 
         if(!is_null($search)){
@@ -108,8 +107,7 @@ class CoursesController
         $niveaux = $this->stockedModel->getAllLevels();
         $langues = $this->stockedModel->getAllLangues();
 
-        $token = csrf_token();
-        return view("courses/add", compact('categories', 'niveaux', 'langues', 'token'));
+        return view("courses/add", compact('categories', 'niveaux', 'langues'));
     }
 
     public function edit($id_formation = null)
@@ -140,8 +138,7 @@ class CoursesController
         $niveaux = $this->stockedModel->getAllLevels();
         $langues = $this->stockedModel->getAllLangues();
 
-        $token = csrf_token();
-        return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues', 'token')); 
+        return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues')); 
     }
 
     public function removeAttachedFile($id_formation)

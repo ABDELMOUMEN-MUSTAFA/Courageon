@@ -297,7 +297,7 @@
                             </div>
                         </div>
                         <input type="hidden" value="<?= $formation->id_formation ?>" id="id_formation" />
-                        <input type="hidden" name="_token" value="<?= $token ?>" />
+                        <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                         </form>
                     </div>
 

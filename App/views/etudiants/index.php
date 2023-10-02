@@ -108,7 +108,7 @@
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary btn-sm">Join Now</button>
                         </div>
-                        <input type="hidden" name="_token" value="<?= $token ?>" />
+                        <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                     </form>
                 </div>
             </div>

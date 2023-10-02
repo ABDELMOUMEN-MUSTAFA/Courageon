@@ -221,7 +221,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="_token" value="<?= $token ?>" />
+                                            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                         </form>
                                     </div>
 
@@ -287,7 +287,7 @@
                                                        class="btn btn-success"> Save changes</button>
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="_token" value="<?= $token ?>" />
+                                            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                         </form>
                                     </div>
 
@@ -400,7 +400,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="hidden" name="_token" value="<?= $token ?>" />
+                                        <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                       </form>
                                     </div>
 
@@ -493,7 +493,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="_token" value="<?= $token ?>" />
+                                            <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                                         </form>
                                     </div>
                                 </div>

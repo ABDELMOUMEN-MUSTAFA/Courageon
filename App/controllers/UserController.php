@@ -171,7 +171,7 @@ class UserController
             return redirect(session('user')->get()->type);
         }
 
-        return view("auth/login", ['token' => csrf_token()]);
+        return view("auth/login");
     }
 
     private function _revokeToken($provider, $accessToken)
@@ -270,7 +270,7 @@ class UserController
             // send email verification to the authenticated user.
             $this->sendEmailVerification();
         }elseif ($request->getMethod() === 'GET') {
-            return view("auth/register", ['token' => csrf_token()]);   
+            return view("auth/register");   
         }
 
         return Response::json(null, 405, "Method Not Allowed");
@@ -460,7 +460,7 @@ class UserController
             }
         }
 
-        return view("auth/forgot", ['token' => csrf_token()]);
+        return view("auth/forgot");
     }
 
     public function reset()
@@ -498,7 +498,7 @@ class UserController
                 return view('errors/token_expired');
             }
 
-            return view('auth/reset', ['token' => csrf_token()]);
+            return view('auth/reset');
 
         }elseif ($request->getMethod() === 'POST') {
             // Check CSRF token
@@ -649,7 +649,7 @@ class UserController
                     return Response::json(null, 500, "Something went wrong, please try again later!");
                 }
 
-                return view('formateurs/continue', ['categories' => $this->stockedModel->getAllCategories(), 'token' => csrf_token()]);
+                return view('formateurs/continue', ['categories' => $this->stockedModel->getAllCategories()]);
             }
 
             return redirect('formateur');
