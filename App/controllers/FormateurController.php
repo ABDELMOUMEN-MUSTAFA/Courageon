@@ -488,7 +488,7 @@ class FormateurController
 	            'facebook' => 'min:5|max:50',
 	        ]);
 
-	        $updatedData["facebook_profil"] = "https://www.facebook.com/".$validator->validated()['facebook'];
+	        $updatedData["facebook_profil"] = $validator->validated()['facebook'];
         }
 
         // update Twitter
@@ -503,7 +503,7 @@ class FormateurController
 	            'twitter' => 'min:5|max:50',
 	        ]);
 
-	        $updatedData['twitter_profil'] = "https://www.twitter.com/".$validator->validated()['twitter'];
+	        $updatedData['twitter_profil'] = $validator->validated()['twitter'];
         }
 
         // update LinkedIn
@@ -518,7 +518,7 @@ class FormateurController
 	            'linkedin' => 'min:5|max:50',
 	        ]);
 
-	        $updatedData['linkedin_profil'] = "https://www.linkedin.com/".$validator->validated()['linkedin'];
+	        $updatedData['linkedin_profil'] = $validator->validated()['linkedin'];
         }
 
         if(isset($updatedData)) {

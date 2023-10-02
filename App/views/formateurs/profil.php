@@ -69,11 +69,11 @@
                         <div class="profile">
                             <figure><img id="avatar-formateur" src="<?= strpos($formateur->img, 'users') === 0 ? IMAGEROOT.'/'.$formateur->img : $formateur->img ?>" alt="Formateur avatar" class="rounded-circle"></figure>
                             <ul class="d-flex fs-5">
-                                <?= $formateur->linkedin_profil ? "<li class='flex-fill text-center'><a target='_blank' href='{$formateur->linkedin_profil}'><i class='fa-brands fa-linkedin'></i></a></li>" : "" ?>
+                                <?= $formateur->linkedin_profil ? '<li class="flex-fill text-center"><a target="_blank" href="https://www.linkedin.com/in/{$formateur->linkedin_profil}"><i class="fa-brands fa-linkedin"></i></a></li>' : "" ?>
 
-                                <?= $formateur->facebook_profil ? "<li class='flex-fill text-center'><a target='_blank' href='{$formateur->facebook_profil}'><i class='fa-brands fa-facebook'></i></a></li>" : "" ?>
+                                <?= $formateur->facebook_profil ? '<li class="flex-fill text-center"><a target="_blank" href="https://www.facebook.com/{$formateur->facebook_profil}"><i class="fa-brands fa-facebook"></i></a></li>' : "" ?>
 
-                                <?= $formateur->twitter_profil ? "<li class='flex-fill text-center'><a target='_blank' href='{$formateur->twitter_profil}'><i class='fa-brands fa-twitter'></i></a></li>" : "" ?>
+                                <?= $formateur->twitter_profil ? '<li class="flex-fill text-center"><a target="_blank" href="https://www.twitter.com/{$formateur->twitter_profil}"><i class="fa-brands fa-twitter"></i></a></li>' : '' ?>
                             </ul>
                             <ul>
                                 <li class="d-flex justify-content-between align-items-center">

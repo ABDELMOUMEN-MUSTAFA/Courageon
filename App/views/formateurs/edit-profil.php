@@ -419,7 +419,7 @@
                                                         <div class="input-group">
                                                           <div class="input-group-prepend">
                                                               <div class="input-group-text">
-                                                                https://www.linkedin.com/
+                                                                https://www.linkedin.com/in/
                                                               </div>
                                                           </div>
                                                           <input type="text"

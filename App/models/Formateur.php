@@ -163,9 +163,6 @@ class Formateur
 
 		$formateur = $query->fetch(\PDO::FETCH_OBJ);
 		if ($query->rowCount() > 0) {
-			$formateur->facebook_profil = explode(".com/", $formateur->facebook_profil)[1] ?? '';
-			$formateur->twitter_profil = explode(".com/", $formateur->twitter_profil)[1] ?? '';
-			$formateur->linkedin_profil = explode(".com/", $formateur->linkedin_profil)[1] ?? '';
 			return $formateur;
 		}
 		return false;
@@ -268,11 +265,10 @@ class Formateur
         $sql .= " WHERE id_formateur = :id";
         
         $query = $this->connect->prepare($sql);
-        
+
         foreach ($data as $field => $value) {
             $query->bindValue(":$field", $value);
         }
-
 
         $query->bindValue(':id', $id);
         $query->execute();
