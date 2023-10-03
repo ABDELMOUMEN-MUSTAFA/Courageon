@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Models\Formation;
 use App\Models\Video;
 use App\Models\Inscription;
@@ -334,7 +336,7 @@ class EtudiantController
 	        session('new_email')->set($validator->validated()['email']);
 
             try {
-                $mail = new App\Libraries\Mail;
+                $mail = new \App\Libraries\Mail;
                 $mail->to(session('new_email')->get())
                 ->subject("Vérification d'adresse e-mail")
                 ->body(null, 'verify-email.php', [
@@ -348,7 +350,7 @@ class EtudiantController
                 ->send();
 
                 return Response::json(null, 200, "Nous avons envoyé votre lien de vérification par e-mail.");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // echo json_encode($mail->ErrorInfo);
                 return Response::json(null, 500, "L'email n'a pas pu être envoyé.");
             }
@@ -368,7 +370,7 @@ class EtudiantController
             return view('errors/page_404');
         }
 
-		$statement = App\Libraries\Database::getConnection()->prepare("
+		$statement = \App\Libraries\Database::getConnection()->prepare("
             SELECT
                 verification_token,
                 expiration_token_at

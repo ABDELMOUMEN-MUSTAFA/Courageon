@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers\Api;
+
 use App\Controllers\Api\ApiController;
 
 use FFMpeg\FFMpeg;
@@ -365,7 +367,7 @@ class CourseController extends ApiController
 
     private function strip_critical_tags($text)
     {
-        $dom = new DOMDocument();
+        $dom = new \DOMDocument();
         $dom->loadHTML($text);
         $tags_to_remove = ['script', 'style', 'iframe', 'link', 'video', 'img'];
         foreach($tags_to_remove as $tag){

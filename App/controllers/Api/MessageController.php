@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers\Api;
+
 use App\Controllers\Api\ApiController;
 
 use App\Models\Message;

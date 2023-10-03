@@ -32,116 +32,105 @@ require_once '../App/helpers/csrf_token.php';
 
 class Router
 {
-    protected $currentController = "HomeController";
-    protected $currentMethod = "index";
-    protected $currentParams = [];
+    private $currentController = "HomeController";
+    private $currentMethod = "index";
+    private $url;
 
     public function __construct()
     {
-        // Get URL
-        $url = $this->getUrl();
-        // Default
-        if (!isset($url[0])) {
-            require '../app/Controllers/' . $this->currentController . '.php';
-            // initialize a contoller object
-            $this->currentController = new $this->currentController;
-            // getParams
-            $this->currentParams = $url ? array_values($url) : [];
+        // set current URL.
+        $this->_setUrl(); 
 
-            // call callback with the params
-            call_user_func_array([$this->currentController, $this->currentMethod], $this->currentParams);
-            return;
+        // if there is no URL, call default Controller and Method.
+        if(!$this->url){
+            $controller = $this->_getController();
+            $scope = $this->_getScopeMethod($controller, $this->currentMethod);
+            if($scope === 'private'){
+                return view("errors/page_404");
+            }
+            return call_user_func_array([$controller, $this->currentMethod], []);
+        }
+        
+        // Extract controller's name from the URL.
+        $this->_setController();
+
+        // Get the instince of that controller if exists, otherwise render NOT FOUND page.
+        $controller = $this->_getController();
+
+        /*
+          * Get the method of controller if exists, otherwise render NOT FOUND page
+          * PS: if the method doesn't exists, it will look for index method, if exists it calls it and 
+          * pass the value that used to check to index method, otherwise NOT FOUND page rendered
+        */
+
+        $method = $this->_getMethod($controller);
+        $scope = $this->_getScopeMethod($controller, $method);
+        if($scope === 'private'){
+            return view("errors/page_404");
         }
 
-        if ($url[0] === 'api') {
-            if (!isset($url[1])) {
-                Response::json(null, 404, "404 Route Not Found");
-            }
-            $this->isApiControllerExist($url[1]);
-            require '../app/Controllers/api/' . $this->currentController . '.php';
-            // initialize a contoller object
-            $this->currentController = new $this->currentController;
-        } else {
-            $this->isControllerExist($url[0]);
-            require '../app/Controllers/' . $this->currentController . '.php';
-            // initialize a contoller object
-            $this->currentController = new $this->currentController;
-            if (isset($url[1])) {
-                if(!$this->isMethodExist($url[1])){
-                    if(!$this->isMethodExist('index')){
-                        if ($this->getUrl()[0] !== "api") {
-                            require_once "../app/Views/errors/page_404.php";
-                        } else {
-                            Response::json(null, 404, "404 Route Not Found");
-                        }
-                        exit;
-                    }
-                }else{
-                    unset($url[1]);
-                }
-            }
-
-            // to keep only params
-            unset($url[0]);
-
-            // getParams
-            $this->currentParams = $url ? array_values($url) : [];
-
-            if($this->checkVisibility() === 'private'){
-                require_once "../app/Views/errors/page_404.php";
-                exit;
-            }
-
-            // call callback with the params
-            call_user_func_array([$this->currentController, $this->currentMethod], $this->currentParams);
-        }
+        $params = $this->_getParams();
+        
+        return call_user_func_array([$controller, $method], $params);
     }
 
-    private function checkVisibility()
+    private function _getParams()
+    {   
+        return $this->url ? array_values($this->url) : [];
+    }
+
+    private function _getScopeMethod($controller, $method)
     {
-        $reflectionMethod = new \ReflectionMethod($this->currentController, $this->currentMethod);
+        $reflectionMethod = new \ReflectionMethod($controller, $method);
         $visibility = \Reflection::getModifierNames($reflectionMethod->getModifiers());
         return $visibility[0];
     }
 
-    private function isControllerExist($controllerName)
+    private function _getMethod($controller)
     {
-        if (file_exists("../app/Controllers/" . ucwords($controllerName) . "Controller.php")) {
-            $this->currentController = ucwords($controllerName) . 'Controller';
-            return true;
+        $method = $this->url[1] ?? 'index';
+        if(!method_exists($controller, $method)){
+            if(method_exists($controller, 'index')){
+                $this->currentMethod = 'index';
+            }else{
+                return view('errors/page_404');
+            }
+        }else{
+            $this->currentMethod = $method;
+            unset($this->url[1]);
         }
 
-        require_once "../app/Views/errors/page_404.php";
-        exit;
+        return $this->currentMethod;
     }
 
-    private function isApiControllerExist($controllerName)
+    private function _setController()
     {
-        $controllerName = ucwords(substr($controllerName, 0, -1));
-        if (file_exists("../app/Controllers/api/" . $controllerName . "Controller.php")) {
-            $this->currentController = $controllerName . 'Controller';
-            return true;
+        if($this->url[0] === 'api'){
+            $this->currentController = "Api\\".trim(ucfirst($this->url[1]), 's')."Controller";
+            unset($this->url[1]);
+        }else{
+            $this->currentController = ucfirst($this->url[0])."Controller";
         }
-        Response::json(null, 404, "404 Route Not Found");
-        exit;
+        unset($this->url[0]);
     }
 
-    private function isMethodExist($methodName)
+    private function _getController()
     {
-        if (method_exists($this->currentController, $methodName)) {
-            $this->currentMethod = $methodName;
-            return true;
+        $controllerClassName = "\App\Controllers\\" . $this->currentController;
+        
+        if (!class_exists($controllerClassName)) {
+            return view("errors/page_404");
         }
-        return false;
+        return new $controllerClassName;
     }
 
-    private function getUrl()
+    private function _setUrl()
     {
         if (isset($_GET["url"])) {
             $url = rtrim($_GET["url"], "/");
             $url = filter_var($url, FILTER_SANITIZE_URL);
             $url = explode("/", $url);
-            return $url;
+            $this->url = $url;
         }
     }
 }

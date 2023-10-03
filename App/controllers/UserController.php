@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use PHPMailer\PHPMailer\Exception;
 
 use Hybridauth\Hybridauth;
@@ -8,6 +10,7 @@ use GuzzleHttp\Client;
 
 use App\Libraries\Response;
 use App\Libraries\Validator;
+use App\Libraries\Request;
 
 use App\Models\Formateur;
 use App\Models\Etudiant;
@@ -69,7 +72,7 @@ class UserController
             return redirect('user/verify');
         }
 
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
@@ -226,7 +229,7 @@ class UserController
             return redirect('user/verify');
         }
         
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
@@ -278,7 +281,7 @@ class UserController
 
     public function sendEmailVerification()
     {
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if($request->getMethod() === 'POST') {
             if(!session('user')->get() || session('user')->get()->email_verified_at){
                 Response::json(null, 404, "404 Route Not Found");
@@ -290,7 +293,7 @@ class UserController
             sleep(12);
 
             try {
-                $mail = new App\Libraries\Mail;
+                $mail = new \App\Libraries\Mail;
                 $mail->to(session('user')->get()->email)
                 ->subject("Vérification d'adresse e-mail")
                 ->body(null, 'verify-email.php', [
@@ -315,7 +318,7 @@ class UserController
 
     public function verify()
     {
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'GET') {
             if(!session('user')->get() || session('user')->get()->email_verified_at){
                 return view('errors/page_404');
@@ -329,7 +332,7 @@ class UserController
 
     public function confirm()
     {
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'GET') {
             if(!$request->get('token') || 
                 !session('user')->get() || 
@@ -337,7 +340,7 @@ class UserController
                 return view('errors/page_404');
             }
 
-            $statement = App\Libraries\Database::getConnection()->prepare("
+            $statement = \App\Libraries\Database::getConnection()->prepare("
                 SELECT
                     verification_token,
                     expiration_token_at
@@ -355,7 +358,7 @@ class UserController
             }
 
             if(strtotime($user->expiration_token_at) < time()) {
-                $statement = App\Libraries\Database::getConnection()->prepare("
+                $statement = \App\Libraries\Database::getConnection()->prepare("
                     DELETE FROM ".session('user')->get()->type."s
                     WHERE verification_token = :token
                 ");
@@ -368,7 +371,7 @@ class UserController
                 return view('errors/token_expired');
             }
 
-            $statement = App\Libraries\Database::getConnection()->prepare("
+            $statement = \App\Libraries\Database::getConnection()->prepare("
                 UPDATE ".session('user')->get()->type."s
                 SET email_verified_at = NOW()
                 WHERE verification_token = :token
@@ -391,7 +394,7 @@ class UserController
             return view('errors/page_404');
         }
 
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
@@ -408,7 +411,7 @@ class UserController
 
             $user = $validator->validated();
 
-            $statement = App\Libraries\Database::getConnection()->prepare("
+            $statement = \App\Libraries\Database::getConnection()->prepare("
                 UPDATE reinitialisations_de_mot_de_passe 
                 SET token = :token, 
                     expired_at = :expired_at
@@ -423,7 +426,7 @@ class UserController
             ]);
 
             if($statement->rowCount() < 1) {
-                $statement = App\Libraries\Database::getConnection()->prepare("
+                $statement = \App\Libraries\Database::getConnection()->prepare("
                     INSERT INTO reinitialisations_de_mot_de_passe 
                     VALUES (:email, :token, :expired_at, :type_utilisateur)
                 ");
@@ -440,7 +443,7 @@ class UserController
             sleep(17);
 
             try {
-                $mail = new App\Libraries\Mail;
+                $mail = new \App\Libraries\Mail;
                 $mail->to($user['email'])
                 ->subject('Réinitialiser le mot de passe')
                 ->body(null, 'reset-password.php', [
@@ -465,13 +468,13 @@ class UserController
 
     public function reset()
     {
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if($request->getMethod() === 'GET'){
             if(!$request->get('token')) {
                 return view('errors/page_404');
             }
 
-            $statement = App\Libraries\Database::getConnection()->prepare("
+            $statement = \App\Libraries\Database::getConnection()->prepare("
                 SELECT * FROM reinitialisations_de_mot_de_passe
                 WHERE token = :token
             ");
@@ -486,7 +489,7 @@ class UserController
             }
 
             if(strtotime($user->expired_at) < time()) {
-                $statement = App\Libraries\Database::getConnection()->prepare("
+                $statement = \App\Libraries\Database::getConnection()->prepare("
                     DELETE FROM reinitialisations_de_mot_de_passe
                     WHERE token = :token
                 ");
@@ -519,7 +522,7 @@ class UserController
 
             $validatedData = $validator->validated();
 
-            $statement = App\Libraries\Database::getConnection()->prepare("
+            $statement = \App\Libraries\Database::getConnection()->prepare("
                 SELECT * FROM reinitialisations_de_mot_de_passe
                 WHERE token = :token
             ");
@@ -534,7 +537,7 @@ class UserController
             }
 
             if(strtotime($user->expired_at) < time()) {
-                $statement = App\Libraries\Database::getConnection()->prepare("
+                $statement = \App\Libraries\Database::getConnection()->prepare("
                     DELETE FROM reinitialisations_de_mot_de_passe
                     WHERE token = :token
                 ");
@@ -552,7 +555,7 @@ class UserController
             ]);
 
             if($isUpdated){
-                $statement = App\Libraries\Database::getConnection()->prepare("
+                $statement = \App\Libraries\Database::getConnection()->prepare("
                     DELETE FROM reinitialisations_de_mot_de_passe
                     WHERE token = :token
                 ");
@@ -586,7 +589,7 @@ class UserController
 
     private function _strip_critical_tags($text)
     {
-        $dom = new DOMDocument();
+        $dom = new \DOMDocument();
         $dom->loadHTML($text);
         $tags_to_remove = ['script', 'style', 'iframe', 'link', 'video', 'img'];
         foreach($tags_to_remove as $tag){
@@ -618,7 +621,7 @@ class UserController
         }
 
         if(session('user')->get()->type === 'formateur'){
-            $request = new App\Libraries\Request;
+            $request = new Request;
             if(session('user')->get()->is_all_info_present == false) {
                 if($request->getMethod() === 'POST') {
                     // Check CSRF token
@@ -659,7 +662,7 @@ class UserController
 
     public function contactUs()
     {
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'POST') {
             $validator = new Validator([
                 'email' => strip_tags($request->post("email")),
@@ -678,7 +681,7 @@ class UserController
             extract($_POST);
 
             try {
-                $mail = new App\Libraries\Mail;
+                $mail = new \App\Libraries\Mail;
                 $mail->to($_ENV['MAIL_FROM_ADDRESS'])
                 ->subject("CONTACT US : $name ($email)")
                 ->body($message)
@@ -703,7 +706,7 @@ class UserController
 
     public function setUserType()
     {
-        $request = new App\Libraries\Request;
+        $request = new Request;
         if ($request->getMethod() === 'POST') {
             $validator = new Validator([
                 'user_type' => strip_tags(trim($request->post("user_type"))),

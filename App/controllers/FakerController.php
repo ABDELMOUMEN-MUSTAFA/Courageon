@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Seeders\CategorieSeeder;
 use App\Seeders\EtudiantSeeder;
 use App\Seeders\FormateurSeeder;

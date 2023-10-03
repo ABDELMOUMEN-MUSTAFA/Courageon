@@ -1,8 +1,9 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Libraries\Request;
 use App\Libraries\Response;
-use App\Libraries\Database;
 use App\Libraries\Validator;
 
 use App\Models\Message;

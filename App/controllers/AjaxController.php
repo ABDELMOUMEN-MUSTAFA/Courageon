@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Models\Formateur;
 use App\Models\Etudiant;
 
@@ -16,12 +18,12 @@ class AjaxController
 
     public function checkEmail()
     {
-        $request = new App\Libraries\Request;
+        $request = new \App\Libraries\Request;
         if($request->getMethod() === 'POST'){
             $isThisEmailNew  = true;
 
             if(!$request->post('email')){
-                return App\Libraries\Response::json(null, 400, "The email is field is requied.");
+                return \App\Libraries\Response::json(null, 400, "The email is field is requied.");
             }
 
             if ($this->etudiantModel->whereEmail($request->post('email'))) {
@@ -36,6 +38,6 @@ class AjaxController
             return;
         }
 
-        return App\Libraries\Response::json(null, 405, "Method Not Allowed");
+        return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
     }
 }

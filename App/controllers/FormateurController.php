@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Models\Formateur;
 use App\Models\Inscription;
 use App\Models\Stocked;
@@ -131,7 +133,7 @@ class FormateurController
         // Check if dates are not emty, because they aren't required.
         if($dates['end'] && $dates['start']){
         	foreach ($dates as $key => $date) {
-       			$isoDateTime = new DateTime($date);
+       			$isoDateTime = new \DateTime($date);
 				$dates[$key] = $isoDateTime->format("Y-m-d");
        		}
 
@@ -196,7 +198,7 @@ class FormateurController
 
 	private function _strip_critical_tags($text)
     {
-        $dom = new DOMDocument();
+        $dom = new \DOMDocument();
         $dom->loadHTML($text);
         $tags_to_remove = ['script', 'style', 'iframe', 'link', 'video', 'img'];
         foreach($tags_to_remove as $tag){
@@ -408,7 +410,7 @@ class FormateurController
 	        session('new_email')->set($validator->validated()['email']);
 
             try {
-                $mail = new App\Libraries\Mail;
+                $mail = new \App\Libraries\Mail;
                 $mail->to(session('new_email')->get())
                 ->subject("Vérification d'adresse e-mail")
                 ->body(null, 'verify-email.php', [
@@ -422,7 +424,7 @@ class FormateurController
                 ->send();
 
                 return Response::json(null, 200, "Nous avons envoyé votre lien de vérification par e-mail.");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // echo json_encode($mail->ErrorInfo);
                 return Response::json(null, 500, "L'email n'a pas pu être envoyé.");
             }
@@ -442,7 +444,7 @@ class FormateurController
             return view('errors/page_404');
         }
 
-		$statement = App\Libraries\Database::getConnection()->prepare("
+		$statement = \App\Libraries\Database::getConnection()->prepare("
             SELECT
                 verification_token,
                 expiration_token_at

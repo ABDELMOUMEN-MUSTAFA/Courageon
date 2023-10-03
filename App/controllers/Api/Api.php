@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers\Api;
+
 use App\Libraries\Response;
 
 class Api {

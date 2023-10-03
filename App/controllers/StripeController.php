@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Models\Formation;
 use App\Models\Inscription;
 use App\Models\Formateur;

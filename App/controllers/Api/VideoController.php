@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers\Api;
+
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use Intervention\Image\ImageManagerStatic as Image;

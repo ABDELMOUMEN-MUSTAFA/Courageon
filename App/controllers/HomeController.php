@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use App\Models\Formation;
 use App\Models\Formateur;
 use App\Models\Stocked;
