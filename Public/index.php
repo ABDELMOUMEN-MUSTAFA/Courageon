@@ -2,7 +2,7 @@
 
 session_start();
 
-use App\Libraries\Response;
+use App\Libraries\Request;
 use App\Libraries\ErrorHandler;
 
 // Composer autoload => composer dumpautoload
@@ -36,7 +36,7 @@ class Router
     private $currentMethod = "index";
     private $url;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
         // set current URL.
         $this->_setUrl(); 
@@ -46,9 +46,9 @@ class Router
             $controller = $this->_getController();
             $scope = $this->_getScopeMethod($controller, $this->currentMethod);
             if($scope === 'private'){
-                return view("errors/page_404");
+                return view("errors/page_404", [], 404);
             }
-            return call_user_func_array([$controller, $this->currentMethod], []);
+            return call_user_func_array([$controller, $this->currentMethod], [$request]);
         }
         
         // Extract controller's name from the URL.
@@ -66,11 +66,12 @@ class Router
         $method = $this->_getMethod($controller);
         $scope = $this->_getScopeMethod($controller, $method);
         if($scope === 'private'){
-            return view("errors/page_404");
+            return view("errors/page_404", [], 404);
         }
 
         $params = $this->_getParams();
         
+        array_unshift($params, $request);
         return call_user_func_array([$controller, $method], $params);
     }
 
@@ -93,7 +94,7 @@ class Router
             if(method_exists($controller, 'index')){
                 $this->currentMethod = 'index';
             }else{
-                return view('errors/page_404');
+                return view("errors/page_404", [], 404);
             }
         }else{
             $this->currentMethod = $method;
@@ -119,7 +120,10 @@ class Router
         $controllerClassName = "\App\Controllers\\" . $this->currentController;
         
         if (!class_exists($controllerClassName)) {
-            return view("errors/page_404");
+            if(str_contains($controllerClassName, "Api")){
+                return \App\Libraries\Response::json(null, 404, "Route not found ");
+            }
+            return view("errors/page_404", [], 404);
         }
         return new $controllerClassName;
     }
@@ -138,4 +142,4 @@ class Router
 set_exception_handler([ErrorHandler::class, 'handleException']);
 set_error_handler([ErrorHandler::class, 'handleError']);
 
-$init = new Router;
+$init = new Router(new Request);
