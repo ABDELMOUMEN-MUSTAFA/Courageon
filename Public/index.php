@@ -107,7 +107,10 @@ class Router
     private function _setController()
     {
         if($this->url[0] === 'api'){
-            $this->currentController = "Api\\".trim(ucfirst($this->url[1]), 's')."Controller";
+            // Check if there is a param after "api/???" (the param is a controller name)
+            if(isset($this->url[1])){
+                $this->currentController = "Api\\".trim(ucfirst($this->url[1]), 's')."Controller";
+            }
             unset($this->url[1]);
         }else{
             $this->currentController = ucfirst($this->url[0])."Controller";
