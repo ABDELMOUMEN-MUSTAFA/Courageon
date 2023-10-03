@@ -12,4 +12,5 @@ function view($view, $data = [])
     } else {
         require_once "../App/views/errors/page_404.php";
     }
+    exit;
 }
