@@ -3,7 +3,7 @@
 .icheckbox_square-yellow,
 .iradio_square-yellow {
     display: inline-block;
-    *display: inline;
+    display: inline;
     vertical-align: middle;
     margin: 0 10px 0 0;
     padding: 0;

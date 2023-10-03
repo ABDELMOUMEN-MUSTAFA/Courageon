@@ -7,7 +7,7 @@
 	<link rel="icon" type="image/x-icon" href="<?= IMAGEROOT ?>/favicon.ico" />
 	<title><?= SITENAME ?> | Congratulation</title>
 	<!-- Bootstrap Vapor -->
-	<link href="<?= CSSROOT ?>/vapor.min.css" rel="stylesheet" />
+	<link href="<?= CSSROOT ?>/payments/vapor.min.css" rel="stylesheet" />
 	<style>
 		body {
 			height: 100vh;

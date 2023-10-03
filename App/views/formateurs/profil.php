@@ -23,8 +23,8 @@
     <!-- BASE CSS -->
     <link href="<?= CSSROOT ?>/plugins/bootstrap.min.css" rel="stylesheet" />
     <link href="<?= CSSROOT ?>/formateurs/profil.css" rel="stylesheet" />
-    <link href="<?= CSSROOT ?>/common.css" rel="stylesheet" />
-    <link href="<?= CSSROOT ?>/vendors.css" rel="stylesheet" />
+    <link href="<?= CSSROOT ?>/common/publicNavbar.css" rel="stylesheet" />
+    <link href="<?= CSSROOT ?>/common/vendors.css" rel="stylesheet" />
     <link rel="stylesheet" href="<?= CSSROOT ?>/plugins/quill.snow.css" /> 
     <!-- font awesome -->
     <link href="<?= CSSROOT ?>/icons/all.min.css" rel="stylesheet" />

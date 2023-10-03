@@ -26,8 +26,8 @@
     <link href="<?= CSSROOT ?>/icons/elegant-icons.css" rel="stylesheet" />
     <!-- BASE CSS -->
     <link href="<?= CSSROOT ?>/plugins/bootstrap.min.css" rel="stylesheet" />
-    <link href="<?= CSSROOT ?>/vendors.css" rel="stylesheet" />
-    <link href="<?= CSSROOT ?>/common.css" rel="stylesheet" />
+    <link href="<?= CSSROOT ?>/common/vendors.css" rel="stylesheet" />
+    <link href="<?= CSSROOT ?>/common/publicNavbar.css" rel="stylesheet" />
     <link href="<?= CSSROOT ?>/courses/index.css" rel="stylesheet" />
     <!-- SPECIFIC CSS -->
     <link href="<?= CSSROOT ?>/skins/yellow.css" rel="stylesheet" />
