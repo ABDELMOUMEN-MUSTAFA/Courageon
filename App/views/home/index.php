@@ -27,7 +27,7 @@
     <!-- BASE CSS -->
     <link href="<?= CSSROOT ?>/plugins/bootstrap.min.css" rel="stylesheet" />
     <link href="<?= CSSROOT ?>/common.css" rel="stylesheet" />
-    <link href="<?= CSSROOT ?>/index.css" rel="stylesheet" />
+    <link href="<?= CSSROOT ?>/home/index.css" rel="stylesheet" />
     <link href="<?= CSSROOT ?>/vendors.css" rel="stylesheet" />
     <style>
         .hero_single.version_2 {
@@ -314,6 +314,6 @@
     <script src="<?= JSROOT ?>/plugins/wow.min.js"></script>
     <script src="<?= JSROOT ?>/common/publicNavbar.js"></script>
     <script>const URLROOT = `<?= URLROOT ?>`;</script>
-    <script src="<?= JSROOT ?>/home.js"></script>
+    <script src="<?= JSROOT ?>/home/index.js"></script>
 </body>
 </html>
