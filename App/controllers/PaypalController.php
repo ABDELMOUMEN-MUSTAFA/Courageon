@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\Formation;
-use App\Models\Inscription;
-use App\Models\Formateur;
+use App\Models\{
+    Formation,
+    Inscription,
+    Formateur
+};
 
 class PaypalController
 {
@@ -25,7 +27,6 @@ class PaypalController
 
 	private function _getAccessToken()
 	{
-
 		$client = new \GuzzleHttp\Client();
 		$url = 'https://api-m.sandbox.paypal.com/v1/oauth2/token';
 		$response = $client->request(
@@ -51,8 +52,12 @@ class PaypalController
 		return $paypalData->access_token;
 	}
 
-	public function payment($id_formation = null)
+	public function payment($request, $id_formation = null)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
 		$formation = $this->formationModel->select($id_formation, [
 			'id_formation', 
 			'prix',
@@ -165,8 +170,12 @@ class PaypalController
 		exit;
 	}
 
-	public function success($id_formation = null)
+	public function success($request, $id_formation = null)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
 		if (!auth() || !session('user')->get()->type === 'etudiant') {
 			return view('errors/page_404');
 		}
@@ -210,8 +219,12 @@ class PaypalController
 		return view('payments/paymentSuccess', ["id_formation" => $id_formation]);
 	}
 
-	public function cancel($id_formation = null)
+	public function cancel($request, $id_formation = null)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
 		if (!auth() || !session('user')->get()->type === 'etudiant') {
 			return view('errors/page_404');
 		}

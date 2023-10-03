@@ -2,23 +2,20 @@
 
 namespace App\Controllers;
 
-use App\Models\Formateur;
-use App\Models\Inscription;
-use App\Models\Stocked;
-use App\Models\Message;
-use App\Models\Video;
-use App\Models\Etudiant;
+use App\Models\{
+    Formateur,
+    Inscription,
+    Stocked,
+    Message,
+    Video,
+    Etudiant
+};
 
-use App\Libraries\Request;
-use App\Libraries\Response;
-use App\Libraries\Validator;
+use App\Libraries\{Response, Validator};
 
 class FormateurController
 {
 	private $id_formateur;
-	private $formateurModel;
-	private $inscriptionModel;
-	private $stockedModel;
 
 	public function __construct()
 	{
@@ -27,7 +24,7 @@ class FormateurController
 		}
 
 		if(session('user')->get()->type !== 'formateur'){
-			return view('errors/page_404');
+			return view('errors/page_404', [], 404);
 		}
 
 		if(!session('user')->get()->email_verified_at) {
@@ -39,30 +36,35 @@ class FormateurController
 		}
 
 		$this->id_formateur = session('user')->get()->id_formateur;
-		$this->formateurModel = new Formateur;
-		$this->inscriptionModel = new Inscription;
-		$this->stockedModel = new Stocked;
 	}
 
-	public function index()
+	public function index($request)
 	{
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
+		$inscriptionModel = new Inscription;
 		$data = [
-			'inscriptions' => json_encode($this->inscriptionModel->getLast7DaysRevenus($this->id_formateur)),
-			'latestTransactions' => $this->inscriptionModel->getTransactions($this->id_formateur),
-			'salesToday' => $this->inscriptionModel->getSalesToday($this->id_formateur)
+			'inscriptions' => json_encode($inscriptionModel->getLast7DaysRevenus($this->id_formateur)),
+			'latestTransactions' => $inscriptionModel->getTransactions($this->id_formateur),
+			'salesToday' => $inscriptionModel->getSalesToday($this->id_formateur)
 		];
 
 		return view('formateurs/index', $data);
 	}
 
-	public function earnings()
+	public function earnings($request)
 	{
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
 		return view('formateurs/earnings');
 	}
 
-	public function getEarnings()
+	public function getEarnings($request)
 	{
-		$request = new Request;
 		if($request->getMethod() !== 'GET'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
@@ -72,26 +74,27 @@ class FormateurController
 
 		if(!in_array($request->get('year'), $years)) Response::json(null, 400);
 
-		$earnings = $this->inscriptionModel->getEarningsThisYear($this->id_formateur, date("{$request->get('year')}-01-01"));
+		$inscriptionModel = new Inscription;
+		$earnings = $inscriptionModel->getEarningsThisYear($this->id_formateur, date("{$request->get('year')}-01-01"));
 		return Response::json($earnings);
 	}
 
-	public function getSalesOfAllTime()
+	public function getSalesOfAllTime($request)
 	{
-		$request = new Request;
 		if($request->getMethod() !== 'GET'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
 		
-		$total = $this->inscriptionModel->countAllCoursesThatHaveSubscribers($this->id_formateur);
+		$inscriptionModel = new Inscription;
+		$total = $inscriptionModel->countAllCoursesThatHaveSubscribers($this->id_formateur);
 		$totalPages = ceil($total / 4);
 
         $page = htmlspecialchars(strip_tags($request->get('page')));
         if(!isset($page) || $page < 1 || $page > $totalPages) $page = 1;
 
         $offset = ($page - 1) * 4;	
-        $formationsRevenue = $this->inscriptionModel->getSalesOfAllTime($this->id_formateur, $offset);
-        $totalRevenue = $this->inscriptionModel->getTotalRevenueFormateur($this->id_formateur);
+        $formationsRevenue = $inscriptionModel->getSalesOfAllTime($this->id_formateur, $offset);
+        $totalRevenue = $inscriptionModel->getTotalRevenueFormateur($this->id_formateur);
         
         $data = [
         	'formationsRevenue' => $formationsRevenue,
@@ -106,14 +109,17 @@ class FormateurController
         return Response::json($data);
 	}
 
-	public function transactions()
+	public function transactions($request)
 	{
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
 		return view('formateurs/transactions');
 	}
 
-	public function getTransactionsInSpecificDates()
+	public function getTransactionsInSpecificDates($request)
 	{
-		$request = new Request;
 		if($request->getMethod() !== 'GET'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
@@ -142,7 +148,8 @@ class FormateurController
         	$filter = "AND DATE(date_inscription) BETWEEN '".date('Y-m-d')."' - INTERVAL 1 YEAR AND '".date('Y-m-d')."'";
         }
         
-        $total = $this->inscriptionModel->countTransactionsOfFormateur($this->id_formateur, $filter);
+		$inscriptionModel = new Inscription;
+        $total = $inscriptionModel->countTransactionsOfFormateur($this->id_formateur, $filter);
 		$totalPages = ceil($total / 4);
 
         $page = htmlspecialchars(strip_tags($request->get('page')));
@@ -159,7 +166,7 @@ class FormateurController
         	$sort = 'date_inscription DESC';
         }
 
-        $transactions = $this->inscriptionModel->getTransactions($this->id_formateur, $offset, $sort, $filter);
+        $transactions = $inscriptionModel->getTransactions($this->id_formateur, $offset, $sort, $filter);
 
         $data = [
         	'transactions' => $transactions,
@@ -172,13 +179,15 @@ class FormateurController
 		return Response::json($data);
 	}
 
-	public function edit()
+	public function edit($request)
 	{
-		$request = new Request;
 		if($request->getMethod() === 'GET'){
+			$formateurModel = new Formateur;
+			$stockedModel = new Stocked;
+
 			$data = [
-				'formateur' => $this->formateurModel->formateur($this->id_formateur),
-				'categories' => $this->stockedModel->getAllCategories(),
+				'formateur' => $formateurModel->formateur($this->id_formateur),
+				'categories' => $stockedModel->getAllCategories(),
 			];
 
 			return view('formateurs/edit-profil', $data);
@@ -187,7 +196,7 @@ class FormateurController
 		$tabs = ["AccountTab", "PublicTab", "PrivateTab", "SocialTab"];
 		if($request->getMethod() === 'PUT'){
 			if(!in_array($request->post("tab"), $tabs)){
-				return Response::json(null, 400);
+				return Response::json(null, 400, "Bad Request");
 			}
 
 			return $this->{"_edit".$request->post('tab')}($request);
@@ -250,7 +259,8 @@ class FormateurController
 	            'img' => 'size:5|image',
 	        ]);
 
-	        $oldAvatar = $this->formateurModel->select($this->id_formateur, ['img']);
+			$formateurModel = new Formateur;
+	        $oldAvatar = $formateurModel->select($this->id_formateur, ['img']);
 
 	        if($oldAvatar !== 'users/avatars/default.png'){
 	        	unlink('images/'.$oldAvatar->img);
@@ -290,27 +300,28 @@ class FormateurController
 	        $updatedData['paypalMail'] = $request->post('paypalMail');	
         }
 
-        if($formateur = $this->formateurModel->update($updatedData, $this->id_formateur)){
+		$formateurModel = new Formateur;
+        if($formateur = $formateurModel->update($updatedData, $this->id_formateur)){
         	return Response::json($formateur, 200, 'Updated successfuly.');
         }
         return Response::json(null, 500, "Coudn't update your account, please try again later.");
     }
 
-    public function refreshCode()
+    public function refreshCode($request)
 	{
-		$request = new Request;
-		if ($request->getMethod() === 'PUT') {
-			$code = strtoupper(bin2hex(random_bytes(20)));
-            while ($this->formateurModel->isCodeExist($code)) {
-                $code = strtoupper(bin2hex(random_bytes(20)));      
-            }
-			if($this->formateurModel->update(['code' => $code], $this->id_formateur)){
-        		return Response::json($code, 200, "Your code updated successfuly.");
-	        }
-	        return Response::json(null, 500, "Coudn't update your account, please try again later.");
+		if($request->getMethod() !== 'PUT'){
+			return Response::json(null, 405, "Method Not Allowed");
 		}
 
-		return Response::json(null, 405, "Method Not Allowed");
+		$code = strtoupper(bin2hex(random_bytes(20)));
+		$formateurModel = new Formateur;
+		while ($formateurModel->isCodeExist($code)) {
+			$code = strtoupper(bin2hex(random_bytes(20)));      
+		}
+		if($formateurModel->update(['code' => $code], $this->id_formateur)){
+			return Response::json($code, 200, "Your code updated successfuly.");
+		}
+		return Response::json(null, 500, "Coudn't update your account, please try again later.");
 	}
 
     private function _editPublicTab($request)
@@ -347,7 +358,8 @@ class FormateurController
 	            'img' => 'size:10|image',
 	        ]);
 
-	        $oldBackground = $this->formateurModel->select($this->id_formateur, ['background_img']);
+			$formateurModel = new Formateur;
+	        $oldBackground = $formateurModel->select($this->id_formateur, ['background_img']);
 
 	        if($oldBackground !== 'users/background/default.png'){
 	        	unlink('images/'.$oldBackground->background_img);
@@ -357,7 +369,8 @@ class FormateurController
 	        $_SESSION['user']->background_img = $updatedData['background_img'];
         }
 
-        if($formateur = $this->formateurModel->update($updatedData, $this->id_formateur)){
+		$formateurModel = new Formateur;
+        if($formateur = $formateurModel->update($updatedData, $this->id_formateur)){
         	return Response::json($formateur, 200, 'Updated successfuly.');
         }
         return Response::json(null, 500, "Coudn't update your account, please try again later.");
@@ -381,16 +394,15 @@ class FormateurController
             'password' => 'required|confirm|min:10|max:50',
         ]);
 
-
-        if($this->formateurModel->update(['mot_de_passe' => $validator->validated()['password']], $this->id_formateur)){
+		$formateurModel = new Formateur;
+        if($formateurModel->update(['mot_de_passe' => $validator->validated()['password']], $this->id_formateur)){
         	return Response::json(null, 200, 'Updated successfuly.');
         }
         return Response::json(null, 500, "Coudn't update your password, please try again later.");
     }
 
-    public function changeEmail()
+    public function changeEmail($request)
     {
-    	$request = new Request;
     	if ($request->getMethod() === 'PUT') {
 			// Check CSRF token
             if(!csrf_token($request->post('_token'))){
@@ -406,7 +418,8 @@ class FormateurController
 	        ]);			
 
 	        $token = bin2hex(random_bytes(16));
-            $this->formateurModel->updateToken(session('user')->get()->email, hash('sha256', $token), 30);
+			$formateurModel = new Formateur;
+            $formateurModel->updateToken(session('user')->get()->email, hash('sha256', $token), 30);
 	        session('new_email')->set($validator->validated()['email']);
 
             try {
@@ -433,15 +446,14 @@ class FormateurController
 		return Response::json(null, 405, "Method Not Allowed");	
     }
 
-    public function confirmEmail()
+    public function confirmEmail($request)
     {
-    	$request = new Request;
     	if($request->getMethod() !== 'GET'){
     		return Response::json(null, 405, "Method Not Allowed");
     	}
 
     	if(!$request->get('token')){
-            return view('errors/page_404');
+            return view('errors/page_404', [], 404);
         }
 
 		$statement = \App\Libraries\Database::getConnection()->prepare("
@@ -458,14 +470,15 @@ class FormateurController
 
         $formateur = $statement->fetch(\PDO::FETCH_OBJ);
         if(!$formateur) {
-            return view('errors/page_404');
+            return view('errors/page_404', [], 404);
         }
 
         if(strtotime($formateur->expiration_token_at) < time()) {
             return view('errors/token_expired');
         }
 
-        $this->formateurModel->update(["email" => session('new_email')->get()], $this->id_formateur);
+		$formateurModel = new Formateur;
+        $formateurModel->update(["email" => session('new_email')->get()], $this->id_formateur);
         $_SESSION['user']->email = session('new_email')->get();
         session('email')->remove();
         flash("emailChanged", '<i class="material-icons text-success mr-3">check_circle</i><div class="text-body">You\'re email changed successfuly</div>', "alert alert-light border-1 border-left-3 border-left-success d-flex");
@@ -523,7 +536,8 @@ class FormateurController
         }
 
         if(isset($updatedData)) {
-        	if($formateur = $this->formateurModel->update($updatedData, $this->id_formateur)){
+			$formateurModel = new Formateur;
+        	if($formateur = $formateurModel->update($updatedData, $this->id_formateur)){
 	        	return Response::json(null, 200, 'Updated successfuly.');
 	        }
 	        return Response::json(null, 500, "Coudn't update your account, please try again later.");
@@ -531,8 +545,12 @@ class FormateurController
         return Response::json(null, 400, "You must provide a social profil link (facebook, linkedin, twitter).");
     }
 
-	public function messages($slug = null)
+	public function messages($request, $slug = null)
     {
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
 		$messageModel = new Message;
 		$myEtudiants = $messageModel->myEtudiants($this->id_formateur);
 		$allowedEtudiants = [];

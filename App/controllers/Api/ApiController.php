@@ -2,8 +2,7 @@
 
 namespace App\Controllers\Api;
 
-use App\Libraries\Request;
-use App\Libraries\Response;
+use App\Libraries\{Request, Response};
 
 /*
     GET /api/resource       // Get all resources

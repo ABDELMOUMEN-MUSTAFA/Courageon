@@ -8,60 +8,55 @@ use Hybridauth\Hybridauth;
 
 use GuzzleHttp\Client;
 
-use App\Libraries\Response;
-use App\Libraries\Validator;
-use App\Libraries\Request;
+use App\Libraries\{
+    Response,
+    Validator
+};
 
-use App\Models\Formateur;
-use App\Models\Etudiant;
-use App\Models\Stocked;
-use App\Models\Formation;
-use App\Models\Inscription;
+use App\Models\{
+    Formateur,
+    Etudiant,
+    Stocked,
+    Formation,
+    Inscription
+};
 
 class UserController
 {
-    private $formateurModel;
-    private $etudiantModel;
-    private $stockedModel;
-    private $formationModel;
-    private $inscriptionModel;
-
-    public function __construct()
+    public function index($request, $slug = null)
     {
-        $this->formateurModel = new Formateur;
-        $this->etudiantModel = new Etudiant;
-        $this->stockedModel = new Stocked;
-        $this->formationModel = new Formation;
-        $this->inscriptionModel = new Inscription;
-    }
+        if($request->getMethod() !== 'GET'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
 
-    public function index($slug = null)
-    {
         if(is_null($slug)){
-            return redirect();
+            return view('errors/page_404', [], 404);
         }
 
-        if(!$formateur = $this->formateurModel->whereSlug($slug)){
-            return view('errors/page_404');
+        $formateurModel = new Formateur;
+        if(!$formateur = $formateurModel->whereSlug($slug)){
+            return view('errors/page_404', [], 404);
         }
- 
-        $formations = $this->formationModel->getFormationsOfFormateur($formateur->id_formateur);
+        
+        $formationModel = new Formation;
+        $formations = $formationModel->getFormationsOfFormateur($formateur->id_formateur);
 
+        $inscriptionModel = new Inscription;
         foreach ($formations as $formation) {
-            $formation->inscriptions = $this->inscriptionModel->countApprenantsOfFormation($formateur->id_formateur, $formation->id_formation);
+            $formation->inscriptions = $inscriptionModel->countApprenantsOfFormation($formateur->id_formateur, $formation->id_formation);
         }
 
         $data = [
             'formateur' => $formateur,
             'formations' => $formations,
             'numberFormations' => count($formations),
-            'numberInscriptions' => $this->formateurModel->countPublicInscriptions($formateur->id_formateur),
+            'numberInscriptions' => $formateurModel->countPublicInscriptions($formateur->id_formateur),
         ];
 
         return view("formateurs/profil", $data);
     }
 
-    public function login()
+    public function login($request)
     {
         if (auth()) {
             return redirect(session('user')->get()->type);
@@ -72,11 +67,10 @@ class UserController
             return redirect('user/verify');
         }
 
-        $request = new Request;
         if ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
-                return view("errors/token_expired");
+                return view("errors/token_expired", [], 400);
             }
             
             $validator = new Validator([
@@ -89,8 +83,14 @@ class UserController
                 'password' => 'required'
             ], 'auth/login', true);
 
-            $credentials = $validator->validated(); 
-            $user = $this->{$credentials['type'].'Model'}->whereEmail($credentials['email']);
+            $credentials = $validator->validated();
+
+            $users = [
+                'etudiant' => new Etudiant,
+                'formateur' => new Formateur
+            ];
+            
+            $user = $users[$credentials['type']]->whereEmail($credentials['email']);
             return $this->_createUserSession($user);
         }
 
@@ -140,8 +140,10 @@ class UserController
             $this->_revokeToken(session('provider')->get(), $token['access_token']);
             $adapter->disconnect();
 
-            $formateur = $this->formateurModel->whereEmail($userProfile->email);
-            $etudiant = $this->etudiantModel->whereEmail($userProfile->email);
+            $formateurModel = new Formateur;
+            $formateur = $formateurModel->whereEmail($userProfile->email);
+            $etudiantModel = new Etudiant;
+            $etudiant = $etudiantModel->whereEmail($userProfile->email);
 
             if(!$formateur && !$etudiant) {
                 $newUser = [];
@@ -154,7 +156,7 @@ class UserController
 
                 if($newUser['type'] === 'formateur'){
                     $newUser['code_formateur'] = strtoupper(bin2hex(random_bytes(20)));
-                    while ($this->formateurModel->isCodeExist($newUser['code_formateur'])) {
+                    while ($formateurModel->isCodeExist($newUser['code_formateur'])) {
                         $newUser['code_formateur'] = strtoupper(bin2hex(random_bytes(20)));      
                     }
                 }
@@ -218,7 +220,7 @@ class UserController
         }
     }
 
-    public function register()
+    public function register($request)
     {
         if (auth()) {
             return redirect(session('user')->get()->type);
@@ -229,7 +231,6 @@ class UserController
             return redirect('user/verify');
         }
         
-        $request = new Request;
         if ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
@@ -256,7 +257,8 @@ class UserController
             $user = $validator->validated();
             if($user['type'] === 'formateur'){
                 $user['code_formateur'] = strtoupper(bin2hex(random_bytes(20)));
-                while ($this->formateurModel->isCodeExist($user['code_formateur'])) {
+                $formateurModel = new Formateur;
+                while ($formateurModel->isCodeExist($user['code_formateur'])) {
                     $user['code_formateur'] = strtoupper(bin2hex(random_bytes(20)));      
                 }
             }
@@ -271,7 +273,7 @@ class UserController
             session('user')->set($user);
 
             // send email verification to the authenticated user.
-            $this->sendEmailVerification();
+            $this->sendEmailVerification($request);
         }elseif ($request->getMethod() === 'GET') {
             return view("auth/register");   
         }
@@ -279,16 +281,21 @@ class UserController
         return Response::json(null, 405, "Method Not Allowed");
     } 
 
-    public function sendEmailVerification()
+    public function sendEmailVerification($request)
     {
-        $request = new Request;
         if($request->getMethod() === 'POST') {
             if(!session('user')->get() || session('user')->get()->email_verified_at){
-                Response::json(null, 404, "404 Route Not Found");
+                Response::json(null, 401, "Unauthorized");
             }
 
             $token = bin2hex(random_bytes(16));
-            $this->{session('user')->get()->type.'Model'}->updateToken(session('user')->get()->email, hash('sha256', $token));
+            
+            $users = [
+                'etudiant' => new Etudiant,
+                'formateur' => new Formateur
+            ];
+
+            $users[session('user')->get()->type]->updateToken(session('user')->get()->email, hash('sha256', $token));
 
             sleep(12);
 
@@ -316,28 +323,25 @@ class UserController
         return Response::json(null, 405, "Method Not Allowed");
     }
 
-    public function verify()
+    public function verify($request)
     {
-        $request = new Request;
         if ($request->getMethod() === 'GET') {
             if(!session('user')->get() || session('user')->get()->email_verified_at){
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
-
 
             return view('auth/verify');
         }
         return Response::json(null, 405, "Method Not Allowed");
     }
 
-    public function confirm()
+    public function confirm($request)
     {
-        $request = new Request;
         if ($request->getMethod() === 'GET') {
             if(!$request->get('token') || 
                 !session('user')->get() || 
                 session('user')->get()->email_verified_at){
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
 
             $statement = \App\Libraries\Database::getConnection()->prepare("
@@ -354,7 +358,7 @@ class UserController
 
             $user = $statement->fetch(\PDO::FETCH_OBJ);
             if(!$user) {
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
 
             if(strtotime($user->expiration_token_at) < time()) {
@@ -368,7 +372,7 @@ class UserController
                 ]);
 
                 session()->flush();
-                return view('errors/token_expired');
+                return view('errors/token_expired', [], 400);
             }
 
             $statement = \App\Libraries\Database::getConnection()->prepare("
@@ -381,24 +385,28 @@ class UserController
                 "token" => hash('sha256', $request->get('token')),
             ]);
 
-            $user = $this->{session('user')->get()->type.'Model'}->whereEmail(session('user')->get()->email);
+            $users = [
+                'etudiant' => new Etudiant,
+                'formateur' => new Formateur
+            ];
+
+            $user = $users[session('user')->get()->type]->whereEmail(session('user')->get()->email);
             session('user')->set($user);
             return view('auth/confirm');
         }
         return Response::json(null, 405, "Method Not Allowed");
     }
 
-    public function forgot()
+    public function forgot($request)
     {
         if(auth()){
-            return view('errors/page_404');
+            return view('errors/page_404', [], 404);
         }
 
-        $request = new Request;
         if ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
-                return view("errors/token_expired");
+                return view("errors/token_expired", [], 400);
             }
 
             $validator = new Validator([
@@ -466,12 +474,11 @@ class UserController
         return view("auth/forgot");
     }
 
-    public function reset()
+    public function reset($request)
     {
-        $request = new Request;
         if($request->getMethod() === 'GET'){
             if(!$request->get('token')) {
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
 
             $statement = \App\Libraries\Database::getConnection()->prepare("
@@ -485,7 +492,7 @@ class UserController
 
             $user = $statement->fetch(\PDO::FETCH_OBJ);
             if(!$user) {
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
 
             if(strtotime($user->expired_at) < time()) {
@@ -498,7 +505,7 @@ class UserController
                     "token" => hash('sha256', $request->get('token')),
                 ]);
 
-                return view('errors/token_expired');
+                return view('errors/token_expired', [], 400);
             }
 
             return view('auth/reset');
@@ -506,7 +513,7 @@ class UserController
         }elseif ($request->getMethod() === 'POST') {
             // Check CSRF token
             if(!csrf_token($request->post('_token'))){
-                return view("errors/token_expired");
+                return view("errors/token_expired", [], 400);
             }
             
            $validator = new Validator([
@@ -533,7 +540,7 @@ class UserController
 
             $user = $statement->fetch(\PDO::FETCH_OBJ);
             if(!$user) {
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
 
             if(strtotime($user->expired_at) < time()) {
@@ -546,10 +553,15 @@ class UserController
                     "token" => hash('sha256', $validatedData['token']),
                 ]);
 
-                return view('errors/token_expired');
+                return view('errors/token_expired', [], 400);
             }
 
-            $isUpdated = $this->{$user->type_utilisateur.'Model'}->updatePassword([
+            $users = [
+                'etudiant' => new Etudiant,
+                'formateur' => new Formateur
+            ];
+
+            $isUpdated = $users[$user->type_utilisateur]->updatePassword([
                 'mdp' => $validatedData['password'],
                 'email' => $user->email
             ]);
@@ -568,7 +580,7 @@ class UserController
                 return redirect('user/login');
             }
        
-            return view('error/page_500');
+            return view('error/page_500', [], 500);
         }
         return Response::json(null, 405, "Method Not Allowed");
     }
@@ -577,7 +589,14 @@ class UserController
     {
         session_regenerate_id(true);
         session('user')->set($user);
-        $this->{$user->type.'Model'}->update(['is_active' => true], $user->{'id_'.$user->type});
+
+        $users = [
+            'etudiant' => new Etudiant,
+            'formateur' => new Formateur
+        ];    
+        
+        $users[$user->type]->update(['is_active' => true], $user->{'id_'.$user->type});
+
         if ($user->type === 'formateur') {
             if($user->is_all_info_present) {
                 return redirect('formateur');
@@ -610,7 +629,7 @@ class UserController
         return $cleanedHtml; 
     }
 
-    public function continue()
+    public function continue($request)
     {
         if(!auth()){
             return redirect('user/login');
@@ -621,12 +640,11 @@ class UserController
         }
 
         if(session('user')->get()->type === 'formateur'){
-            $request = new Request;
             if(session('user')->get()->is_all_info_present == false) {
                 if($request->getMethod() === 'POST') {
                     // Check CSRF token
                     if(!csrf_token($request->post('_token'))){
-                        return view("errors/token_expired");
+                        return view("errors/token_expired", [], 400);
                     }
 
                     $validator = new Validator([
@@ -645,14 +663,16 @@ class UserController
                     unset($data["type"]);
                     $data['is_all_info_present'] = true;
 
-                    if($this->formateurModel->update($data, session('user')->get()->id_formateur)){
+                    $formateurModel = new Formateur;
+                    if($formateurModel->update($data, session('user')->get()->id_formateur)){
                         session('user')->get()->is_all_info_present = true;
                         return redirect('formateur');
                     }
                     return Response::json(null, 500, "Something went wrong, please try again later!");
                 }
 
-                return view('formateurs/continue', ['categories' => $this->stockedModel->getAllCategories()]);
+                $stockedModel = new Stocked;
+                return view('formateurs/continue', ['categories' => $stockedModel->getAllCategories()]);
             }
 
             return redirect('formateur');
@@ -660,9 +680,8 @@ class UserController
         return redirect();
     }
 
-    public function contactUs()
+    public function contactUs($request)
     {
-        $request = new Request;
         if ($request->getMethod() === 'POST') {
             $validator = new Validator([
                 'email' => strip_tags($request->post("email")),
@@ -697,16 +716,24 @@ class UserController
         return Response::json(null, 405, "Method Not Allowed");
     }
 
-    public function logout()
+    public function logout($request)
     {    
-        $this->{session('user')->get()->type.'Model'}->update(['is_active' => 0], session('user')->get()->{'id_'.session('user')->get()->type});
+        if($request->getMethod() !== 'GET'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
+        $users = [
+            'etudiant' => new Etudiant,
+            'formateur' => new Formateur
+        ];
+
+        $users[session('user')->get()->type]->update(['is_active' => 0], session('user')->get()->{'id_'.session('user')->get()->type});
         session()->flush();
         return redirect('user/login');
     }
 
-    public function setUserType()
+    public function setUserType($request)
     {
-        $request = new Request;
         if ($request->getMethod() === 'POST') {
             $validator = new Validator([
                 'user_type' => strip_tags(trim($request->post("user_type"))),

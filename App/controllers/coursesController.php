@@ -2,59 +2,54 @@
 
 namespace App\Controllers;
 
-use App\Models\Stocked;
-use App\Models\Preview;
-use App\Models\Formation;
-use App\Models\Video;
-use App\Models\Inscription;
+use App\Models\{
+    Stocked,
+    Preview,
+    Formation,
+    Video,
+    Inscription
+};
 
-use App\Libraries\Request;
-use App\Libraries\Response;
-use App\Libraries\Validator;
+use App\Libraries\{Response, Validator};
 
 class CoursesController
 {
-    private $stockedModel;
-    private $previewModel;
-    private $formationModel;
-    private $videoModel;
-    private $inscriptionModel;
-
-    public function __construct()
+    public function search($request)
     {
-        $this->stockedModel = new Stocked;
-        $this->previewModel = new Preview;
-        $this->formationModel = new Formation;
-        $this->videoModel = new Video;
-        $this->inscriptionModel = new Inscription;
+        if($request->getMethod() === 'GET'){
+            $formationModel = new Formation;
+
+            $data = [
+                'niveaux' => $formationModel->groupByNiveau(),
+                'langues' => $formationModel->groupByLangue(),
+                'categories' => $formationModel->groupByCategorie(),
+                'durations' => $formationModel->groupByDuration(),
+            ];
+
+            return view("courses/index", $data);
+        }
+
+        return Response::json(null, 405, "Method Not Allowed");
     }
 
-    public function search()
-    {
-        $data = [
-            'niveaux' => $this->formationModel->groupByNiveau(),
-            'langues' => $this->formationModel->groupByLangue(),
-            'categories' => $this->formationModel->groupByCategorie(),
-            'durations' => $this->formationModel->groupByDuration(),
-        ];
-
-        return view("courses/index", $data);
-    }
-
-    public function index($search = null, $relationship = null)
+    public function index($request, $search = null, $relationship = null)
     {  
+        if($request->getMethod() !== 'GET'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
         if(!is_null($relationship)){
         	if(!auth()){
-        		return view('errors/page_404');
+        		return redirect('user/login');
 	        }
 
 	        if(session('user')->get()->type !== 'formateur'){
-	           return view('errors/page_404');
+	           return view('errors/page_404', [], 404);
 	        }
 
             $formationRelationships = ['videos'];
             if(!in_array($relationship, $formationRelationships)){
-                return view('errors/page_404');
+                return view('errors/page_404', [], 404);
             }
 
             $validator = new Validator(['id_formation' => $search]);
@@ -64,67 +59,74 @@ class CoursesController
 	        ]);
 
 
-            $videos = $this->videoModel->getVideosOfFormation($search);
+            $videoModel = new Video;
+            $videos = $videoModel->getVideosOfFormation($search);
             return view('videos/index', compact('videos'));
         }
 
         if(!is_null($search)){
-        	$formation = $this->formationModel->whereSlug($search);
+            $formationModel = new Formation;
+        	$formation = $formationModel->whereSlug($search);
+
 	        if(!$formation){
 	            return redirect('courses/search');
 	        }
 
-			$videos = $this->videoModel->getVideosOfFormationPublic($formation->id_formation);
-			$formation->inscriptions = $this->inscriptionModel->countApprenantsOfFormation($formation->id_formateur, $formation->id_formation);
+            $videoModel = new Video;
+			$videos = $videoModel->getVideosOfFormationPublic($formation->id_formation);
+            $inscriptionModel = new Inscription;
+			$formation->inscriptions = $inscriptionModel->countApprenantsOfFormation($formation->id_formateur, $formation->id_formation);
+            
 
+            $previewModel = new Preview;
 			$data = [
 				'formation' => $formation,
 				'videos' => $videos,
 				'totalVideos' => count($videos),
-				'previewVideo' => $this->previewModel->getPreviewVideo($formation->id_formation),
+				'previewVideo' => $previewModel->getPreviewVideo($formation->id_formation),
 			];
 
 			return view("courses/show", $data);
         }
 
-        return view('formateurs/courses/index', ['categories' => $this->stockedModel->getAllCategories()]);
+        $stockedModel = new Stocked;
+        return view('formateurs/courses/index', ['categories' => $stockedModel->getAllCategories()]);
     }
 
-    public function add()
+    public function add($request)
     {
+        if($request->getMethod() !== 'GET'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
         if(!auth()){
             return redirect('user/login');
         }
 
         if(session('user')->get()->type !== 'formateur'){
-           return Response::json(null, 403); 
+           return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
-        $request = new Request;
-        if($request->getMethod() !== 'GET'){
-            return Response::json(null, 405, "Method Not Allowed");
-        }
-
-        $categories = $this->stockedModel->getAllCategories();
-        $niveaux = $this->stockedModel->getAllLevels();
-        $langues = $this->stockedModel->getAllLangues();
+        $stockedModel = new Stocked;
+        $categories = $stockedModel->getAllCategories();
+        $niveaux = $stockedModel->getAllLevels();
+        $langues = $stockedModel->getAllLangues();
 
         return view("courses/add", compact('categories', 'niveaux', 'langues'));
     }
 
-    public function edit($id_formation = null)
+    public function edit($request, $id_formation = null)
     {
+        if($request->getMethod() !== 'GET'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
         if(!auth()){
             return redirect('user/login');
         }
 
         if(session('user')->get()->type !== 'formateur'){
-           return Response::json(null, 403); 
-        }
-
-        $request = new Request;
-        if($request->getMethod() !== 'GET'){
-            return Response::json(null, 405, "Method Not Allowed");
+           return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
         $validator = new Validator([
@@ -135,27 +137,29 @@ class CoursesController
             'id_formation' => 'required|exists:formations|check:formations',
         ]);
 
-        $formation = $this->formationModel->find($id_formation);
-        $categories = $this->stockedModel->getAllCategories();
-        $niveaux = $this->stockedModel->getAllLevels();
-        $langues = $this->stockedModel->getAllLangues();
+        $formationModel = new Formation;
+        $stockedModel = new Stocked;
+
+        $formation = $formationModel->find($id_formation);
+        $categories = $stockedModel->getAllCategories();
+        $niveaux = $stockedModel->getAllLevels();
+        $langues = $stockedModel->getAllLangues();
 
         return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues')); 
     }
 
-    public function removeAttachedFile($id_formation)
+    public function removeAttachedFile($request, $id_formation)
     {
+        if($request->getMethod() !== 'DELETE'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
         if(!auth()){
-            return Response::json(null, 401);
+            return Response::json(null, 401, "Unauthorized");
         }
 
         if(session('user')->get()->type !== 'formateur'){
-           return Response::json(null, 403); 
-        }
-
-        $request = new Request;
-        if($request->getMethod() !== "DELETE"){
-            return Response::json(null, 405, "Method Not Allowed");
+           return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
         $validator = new Validator([
@@ -166,31 +170,31 @@ class CoursesController
             'id_formation' => 'required|exists:formations|check:formations',
         ]);
 
-        $file = $this->formationModel->select($id_formation, ['fichier_attache']);
+        $formationModel = new Formation;
+        $file = $formationModel->select($id_formation, ['fichier_attache']);
         if(!$file->fichier_attache){
-            return Response::json(null, 400);
+            return Response::json(null, 404, 'File not found');
         }
 
         unlink('files/'.$file->fichier_attache);
-        if($this->formationModel->setColumnToNull('fichier_attache', 'formations', 'id_formation', $id_formation)){
-            return Response::json(null, 200, "Remove successfuly.");
+        if($formationModel->setColumnToNull('fichier_attache', 'formations', 'id_formation', $id_formation)){
+            return Response::json(null, 200, "Remove Successfully.");
         }
         return Response::json(null, 500, "Something went wrong.");
     }
 
-    public function sortVideos($id_formation = null)
+    public function sortVideos($request, $id_formation = null)
     {
+        if($request->getMethod() !== 'POST'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
         if(!auth()){
-            return Response::json(null, 401);
+            return Response::json(null, 401, "Unauthorized");
         }
 
         if(session('user')->get()->type !== 'formateur'){
-           return Response::json(null, 403); 
-        }
-
-        $request = new Request;
-        if($request->getMethod() !== 'POST'){
-            return Response::json(null, 405, "Method Not Allowed");
+           return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
         $order = $request->post('order');
@@ -204,37 +208,37 @@ class CoursesController
             'id_formation' => 'required|exists:formations|check:formations',
         ]);
 
-        $this->validateArray($order);
+        $this->_validateArray($order);
 
-        $this->videoModel->sortVideos($order, $id_formation);
+        $videoModel = new Video;
+        $videoModel->sortVideos($order, $id_formation);
 
-        return Response::json(null, 200);
+        return Response::json(null, 200, "Sorted Successfully.");
     }
 
-    private function validateArray($array) {
+    private function _validateArray($array) {
         foreach ($array as $video) {
             foreach ($video as $key => $value) {
                 if (!is_numeric($value) || $key !== 'id') {
-                    return Response::json(null, 400);
+                    return Response::json(null, 400, "Bad Request");
                 }
             }
         }
     }
 
-    public function setVideoToPreview($id_formation = null)
+    public function setVideoToPreview($request, $id_formation = null)
     {
-        if(!auth()){
-            return Response::json(null, 401);
-        }
-
-        if(session('user')->get()->type !== 'formateur'){
-           return Response::json(null, 403); 
-        }
-
-        $request = new Request;
         if($request->getMethod() !== 'POST'){
             return Response::json(null, 405, "Method Not Allowed");
         }
+
+        if(!auth()){
+            return Response::json(null, 401, "Unauthorized");
+        }
+
+        if(session('user')->get()->type !== 'formateur'){
+           return Response::json(null, 403, "You don't have permission to access this resource."); 
+        }        
 
         $id_video = $request->post('id_video');
         $validator = new Validator([
@@ -260,8 +264,9 @@ class CoursesController
 
         $validator->checkPermissions($relationship);
 
-        if($this->previewModel->update($id_video, $id_formation)){
-            return Response::json(null, 200, 'Updated successfuly.');
+        $previewModel = new Preview;
+        if($previewModel->update($id_video, $id_formation)){
+            return Response::json(null, 200, 'Updated Successfully.');
         }
         return Response::json(null, 500, "Coudn't update the preview, please try again later.");
     }

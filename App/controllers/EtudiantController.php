@@ -2,24 +2,23 @@
 
 namespace App\Controllers;
 
-use App\Models\Formation;
-use App\Models\Video;
-use App\Models\Inscription;
-use App\Models\Etudiant;
-use App\Models\Message;
-use App\Models\Formateur;
+use App\Models\{
+    Formation,
+    Video,
+    Inscription,
+    Etudiant,
+    Message,
+    Formateur
+};
 
-use App\Libraries\Response;
-use App\Libraries\Request;
-use App\Libraries\Validator;
+use App\Libraries\{
+    Response,
+    Validator
+};
 
 class EtudiantController
 {
 	private $id_etudiant;
-	private $formationModel;
-	private $videoModel;
-	private $inscriptionModel;
-	private $etudiantModel;
 
 	public function __construct()
 	{
@@ -28,7 +27,7 @@ class EtudiantController
 		}
 
 		if(session('user')->get()->type !== 'etudiant'){
-			return view('errors/page_404');
+			return view('errors/page_404', [], 404);
 		}
 
 		if(!session('user')->get()->email_verified_at) {
@@ -36,32 +35,31 @@ class EtudiantController
 		}
 
 		$this->id_etudiant = session('user')->get()->id_etudiant;
-		$this->formationModel = new Formation;
-		$this->videoModel = new Video;
-		$this->inscriptionModel = new Inscription;
-		$this->etudiantModel = new Etudiant;
 	}
 
-	public function index()
+	public function index($request)
 	{
-		return view("etudiants/index");
-	}
-
-	public function inscriptions()
-	{
-		$request = new Request;
 		if($request->getMethod() !== 'GET'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
 
-		$totalInscriptions = $this->inscriptionModel->countInscriptionsOfEtudiant($this->id_etudiant);
-		$formations = paginator($totalInscriptions, 4, 'my_courses', $this->inscriptionModel, 'getFormationsOfEtudiant', ['id' => $this->id_etudiant]);
+		return view("etudiants/index");
+	}
+
+	public function inscriptions($request)
+	{
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
+		$inscriptionModel = new Inscription;
+		$totalInscriptions = $inscriptionModel->countInscriptionsOfEtudiant($this->id_etudiant);
+		$formations = paginator($totalInscriptions, 4, 'my_courses', $inscriptionModel, 'getFormationsOfEtudiant', ['id' => $this->id_etudiant]);
 		return Response::json($formations);
 	}
 
-	public function joinCourse()
+	public function joinCourse($request)
     {
-    	$request = new Request;
 		if($request->getMethod() !== 'POST'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
@@ -79,13 +77,15 @@ class EtudiantController
 			'code' => 'required|min:30|max:60|alphanum|exists:formateurs'
 		]);
 
-		$formations = $this->formationModel->getPrivateFormations($validator->validated()["code"]);
+		$formationModel = new Formation;
+		$formations = $formationModel->getPrivateFormations($validator->validated()["code"]);
 		if(!$formations){
 			return Response::json(null, 400, "Sorry! this instractor doesn't have any courses yet.");
 		}
 
+		$inscriptionModel = new Inscription;
         foreach ($formations as $formation) {
-            $inscription = $this->inscriptionModel->checkIfAlready($this->id_etudiant, $formation->id_formation);
+            $inscription = $inscriptionModel->checkIfAlready($this->id_etudiant, $formation->id_formation);
             if (!$inscription) {
                 $inscriptionData = [
                     "id_formation" => $formation->id_formation,
@@ -99,16 +99,15 @@ class EtudiantController
                     "approval_url" => 0
                 ];
 
-                $this->inscriptionModel->create($inscriptionData);
+                $inscriptionModel->create($inscriptionData);
             }
         }
 
         return Response::json(null, 200, "Congrats! vous avez rejoindre toutes les formations de formateur <strong>{$formations[0]->nom} {$formations[0]->prenom}</strong>.");
     }
 
-    public function formation($id_formation = null)
+    public function formation($request, $id_formation = null)
     {
-    	$request = new Request;
 		if($request->getMethod() !== 'GET'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
@@ -117,24 +116,30 @@ class EtudiantController
 			return view("errors/page_404");
 		}
 
-		$formation = $this->inscriptionModel->getMyCourse($this->id_etudiant, $id_formation);
+		$inscriptionModel = new Inscription;
+		$formation = $inscriptionModel->getMyCourse($this->id_etudiant, $id_formation);
 		if(!$formation){
 			return view("errors/page_404");
 		}
 
-		$videos = $this->videoModel->getVideosOfFormation($id_formation);
+		$videoModel = new Video;
+		$videos = $videoModel->getVideosOfFormation($id_formation);
 		return view('etudiants/formation', compact('formation', 'videos'));
     }
 
-	public function bookmarks()
+	public function bookmarks($request)
 	{
-		$bookmarks = $this->videoModel->getMyBookmarks($this->id_etudiant);
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
+		$videoModel = new Video;
+		$bookmarks = $videoModel->getMyBookmarks($this->id_etudiant);
 		return view("etudiants/bookmarks", compact('bookmarks'));
 	}
 
-    public function toggleLikeFormation($id_formation = null)
+    public function toggleLikeFormation($request, $id_formation = null)
     {
-    	$request = new Request;
 		if($request->getMethod() !== 'POST'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
@@ -147,14 +152,14 @@ class EtudiantController
 			'id_formation' => 'required|numeric|exists:formations|check_etudiant:inscriptions'
 		]);
 
-		$isLiked = $this->formationModel->toggleLike($this->id_etudiant, $id_formation);
-        $newLikes = $this->formationModel->getLikes($id_formation);
+		$formationModel = new Formation;
+		$isLiked = $formationModel->toggleLike($this->id_etudiant, $id_formation);
+        $newLikes = $formationModel->getLikes($id_formation);
         return Response::json(array_merge($newLikes, $isLiked));
     }
 
-    public function toggleBookmarkVideo($id_video = null)
+    public function toggleBookmarkVideo($request, $id_video = null)
     {
-    	$request = new Request;
 		if($request->getMethod() !== 'POST'){
 			return Response::json(null, 405, "Method Not Allowed");
 		}
@@ -179,12 +184,17 @@ class EtudiantController
 
 		$validator->checkPermissions($relationship);
 
-        $response = $this->videoModel->toggleBookmark($this->id_etudiant, $id_video);
+		$videoModel = new Video;
+        $response = $videoModel->toggleBookmark($this->id_etudiant, $id_video);
         return Response::json($response);
     }
 
-	public function messages($slug = null)
+	public function messages($request, $slug = null)
     {
+		if($request->getMethod() !== 'GET'){
+			return Response::json(null, 405, "Method Not Allowed");
+		}
+
 		$messageModel = new Message;
 		$myFormateurs = $messageModel->myFormateurs($this->id_etudiant);
 		$allowedFormateurs = [];
@@ -205,10 +215,11 @@ class EtudiantController
 		$conversations = $messageModel->conversations(session("user")->get()->slug, $slug);
 
 		// Match video name with its formation
+		$videoModel = new Video;
 		foreach ($conversations as $conversation) {
 			if (preg_match('/@([^@]+)@/', $conversation->message, $matches)) {
 				$nomVideo = $matches[1];
-				if($video = $this->videoModel->whereNom($nomVideo)){
+				if($video = $videoModel->whereNom($nomVideo)){
 					$conversation->message = preg_replace('/@([^@]+)@/', "<div class=\"pb-2\"><a target=\"_blank\" href=\"".URLROOT."/etudiant/formation/{$video->id_formation}\">{$nomVideo}</a></div>", $conversation->message, 1);
 				}
 			}
@@ -223,17 +234,17 @@ class EtudiantController
         return view('etudiants/messages', compact('conversations', 'formateur', 'myFormateurs', 'last_message_time'));
     }
 
-	public function edit()
+	public function edit($request)
 	{
-		$request = new Request;
 		if($request->getMethod() === 'GET'){
-			return view('etudiants/edit-profil', ['etudiant' => $this->etudiantModel->find($this->id_etudiant)]);
+			$etudiantModel = new Etudiant;
+			return view('etudiants/edit-profil', ['etudiant' => $etudiantModel->find($this->id_etudiant)]);
 		}
 
 		$tabs = ["AccountTab", "PrivateTab"];
 		if($request->getMethod() === 'PUT'){
 			if(!in_array($request->post("tab"), $tabs)){
-				return Response::json(null, 400);
+				return Response::json(null, 400, "Bad Request");
 			}
 
 			return $this->{"_edit".$request->post('tab')}($request);
@@ -273,7 +284,8 @@ class EtudiantController
 	            'img' => 'size:5|image',
 	        ]);
 
-	        $oldAvatar = $this->etudiantModel->select($this->id_etudiant, ['img']);
+			$etudiantModel = new Etudiant;
+	        $oldAvatar = $etudiantModel->select($this->id_etudiant, ['img']);
 
 	        if($oldAvatar !== 'users/avatars/default.png'){
 	        	unlink('images/'.$oldAvatar->img);
@@ -283,7 +295,8 @@ class EtudiantController
 	        $_SESSION['user']->img = $updatedData['img'];
         }
 
-        if($etudiant = $this->etudiantModel->update($updatedData, $this->id_etudiant)){
+		$etudiantModel = new Etudiant;
+        if($etudiant = $etudiantModel->update($updatedData, $this->id_etudiant)){
         	return Response::json($etudiant, 200, 'Updated successfuly.');
         }
         return Response::json(null, 500, "Coudn't update your account, please try again later.");
@@ -308,15 +321,15 @@ class EtudiantController
         ]);
 
 
-        if($this->etudiantModel->update(['mot_de_passe' => $validator->validated()['password']], $this->id_etudiant)){
+		$etudiantModel = new Etudiant;
+        if($etudiantModel->update(['mot_de_passe' => $validator->validated()['password']], $this->id_etudiant)){
         	return Response::json(null, 200, 'Updated successfuly.');
         }
         return Response::json(null, 500, "Coudn't update your password, please try again later.");
     }
 
-	public function changeEmail()
+	public function changeEmail($request)
     {
-    	$request = new Request;
     	if ($request->getMethod() === 'PUT') {
 			// Check CSRF token
             if(!csrf_token($request->post('_token'))){
@@ -332,7 +345,8 @@ class EtudiantController
 	        ]);			
 
 	        $token = bin2hex(random_bytes(16));
-            $this->etudiantModel->updateToken(session('user')->get()->email, hash('sha256', $token), 30);
+			$etudiantModel = new Etudiant;
+            $etudiantModel->updateToken(session('user')->get()->email, hash('sha256', $token), 30);
 	        session('new_email')->set($validator->validated()['email']);
 
             try {
@@ -359,9 +373,8 @@ class EtudiantController
 		return Response::json(null, 405, "Method Not Allowed");	
     }
 
-    public function confirmEmail()
+    public function confirmEmail($request)
     {
-    	$request = new Request;
     	if($request->getMethod() !== 'GET'){
     		return Response::json(null, 405, "Method Not Allowed");
     	}
@@ -391,7 +404,8 @@ class EtudiantController
             return view('errors/token_expired');
         }
 
-        $this->etudiantModel->update(["email" => session('new_email')->get()], $this->id_etudiant);
+		$etudiantModel = new Etudiant;
+        $etudiantModel->update(["email" => session('new_email')->get()], $this->id_etudiant);
         $_SESSION['user']->email = session('new_email')->get();
         session('email')->remove();
         flash("emailChanged", '<i class="material-icons text-success mr-3">check_circle</i><div class="text-body">You\'re email changed successfuly</div>', "alert alert-light border-1 border-left-3 border-left-success d-flex");

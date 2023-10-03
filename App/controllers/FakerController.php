@@ -2,12 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Seeders\CategorieSeeder;
-use App\Seeders\EtudiantSeeder;
-use App\Seeders\FormateurSeeder;
-use App\Seeders\FormationSeeder;
-use App\Seeders\InscriptionSeeder;
-use App\Seeders\VideoSeeder;
+use App\Seeders\{
+    CategorieSeeder,
+    EtudiantSeeder,
+    FormateurSeeder,
+    FormationSeeder,
+    InscriptionSeeder,
+    VideoSeeder
+};
+
 
 class FakerController {
 

@@ -6,13 +6,11 @@ use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use Intervention\Image\ImageManagerStatic as Image;
 
-use App\Controllers\Api\ApiController;
-
 use App\Models\Video;
-use App\Libraries\Response;
-use App\Libraries\Validator;
 
-class VideoController extends ApiController
+use App\Libraries\{Response, Validator};
+
+class VideoController extends \App\Controllers\Api\ApiController
 {
     private $videoModel;
 

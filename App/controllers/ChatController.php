@@ -2,9 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Libraries\Request;
-use App\Libraries\Response;
-use App\Libraries\Validator;
+use App\Libraries\{Response, Validator};
 
 use App\Models\Message;
 
@@ -13,7 +11,7 @@ class ChatController
     public function __construct()
     {
         if(!auth()){
-            return Response::json(null, 401);
+            return Response::json(null, 401, "Unauthorized");
         }
 
         if(!session('user')->get()->email_verified_at) {
@@ -21,9 +19,8 @@ class ChatController
         }
     }
 
-    public function index($from_user = null)
+    public function index($request, $from_user = null)
     {
-        $request = new Request;
         if($request->getMethod() !== 'GET'){
             return Response::json(null, 405, "Method Not Allowed");
         }
@@ -66,7 +63,7 @@ class ChatController
 
         // Get the last message
         $last_message = $messageModel->getLastMessage($from_user, session('user')->get()->{"id_$currentUserType"});
-        // ["1695869776","1695869759"] => [$last_message->unix_timestamp, $last_message_time]
+        
         if ($last_message && $last_message->unix_timestamp > $last_message_time) {
             return Response::json($last_message);
         }

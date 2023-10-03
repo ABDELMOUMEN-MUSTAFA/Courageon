@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\Formation;
-use App\Models\Formateur;
-use App\Models\Stocked;
+use App\Models\{
+    Formation,
+    Formateur,
+    Stocked
+};
 
 class HomeController
 {
@@ -19,8 +21,12 @@ class HomeController
 		$this->stockedModel = new Stocked;
 	}
 
-	public function index()
+	public function index($request)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
 		$data = [
 			'formations' => $this->formationModel->getPopularCourses(),
 			'categories' => $this->stockedModel->getPopularCategories(),

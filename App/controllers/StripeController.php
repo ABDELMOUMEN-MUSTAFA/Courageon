@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\Formation;
-use App\Models\Inscription;
-use App\Models\Formateur;
+use App\Models\{
+    Formation,
+    Inscription,
+    Formateur
+};
 
 class StripeController
 {
@@ -21,8 +23,12 @@ class StripeController
 		$this->inscriptionModel = new Inscription;
 	}
 
-	public function payment($id_formation = null)
+	public function payment($request, $id_formation = null)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
 		$formation = $this->formationModel->select($id_formation, [
             'id_formation', 
             'prix', 
@@ -89,8 +95,12 @@ class StripeController
 		exit;
 	}
 
-	public function success($id_formation = null)
+	public function success($request, $id_formation = null)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
         if (!auth() || !session('user')->get()->type === 'etudiant') {
 			return view('errors/page_404');
 		}
@@ -109,8 +119,12 @@ class StripeController
 		return view('payments/paymentSuccess', ["id_formation" => $id_formation]);
 	}
 
-	public function cancel($id_formation = null)
+	public function cancel($request, $id_formation = null)
 	{
+		if($request->getMethod() !== 'GET'){
+			return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+		}
+
         if (!auth() || !session('user')->get()->type === 'etudiant') {
 			return view('errors/page_404');
 		}

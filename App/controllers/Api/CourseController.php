@@ -2,20 +2,19 @@
 
 namespace App\Controllers\Api;
 
-use App\Controllers\Api\ApiController;
-
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use Intervention\Image\ImageManagerStatic as Image;
 
-use App\Models\Formation;
-use App\Models\Video;
-use App\Models\Preview;
+use App\Models\{
+    Formation,
+    Video,
+    Preview
+};
 
-use App\Libraries\Response;
-use App\Libraries\Validator;
+use App\Libraries\{Response, Validator};
 
-class CourseController extends ApiController
+class CourseController extends \App\Controllers\Api\ApiController
 {
     private $formationModel;
 

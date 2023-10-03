@@ -2,21 +2,18 @@
 
 namespace App\Controllers\Api;
 
-use App\Controllers\Api\ApiController;
-
 use App\Models\Message;
 
-use App\Libraries\Response;
-use App\Libraries\Validator;
+use App\Libraries\{Response, Validator};
 
-class MessageController extends ApiController
+class MessageController extends \App\Controllers\Api\ApiController
 {
     private $messageModel;
 
     public function __construct()
     {
         if(!auth()){
-            return Response::json(null, 401);
+            return Response::json(null, 401, "Unauthorized");
         }
 
         $this->messageModel = new Message;

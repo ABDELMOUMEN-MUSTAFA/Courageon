@@ -2,18 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Models\Formateur;
-use App\Models\Etudiant;
+use App\Libraries\Response;
 
 class AjaxController
 {
-    private $formateurModel;
-    private $etudiantModel;
-
     public function __construct()
     {
-        $this->formateurModel = new Formateur;
-        $this->etudiantModel = new Etudiant; 
+        if(auth()){
+            return Response::json(null, 400, "Bad Request");
+        }
     }
 
     public function checkEmail()
@@ -23,21 +20,22 @@ class AjaxController
             $isThisEmailNew  = true;
 
             if(!$request->post('email')){
-                return \App\Libraries\Response::json(null, 400, "The email is field is requied.");
+                return Response::json(null, 400, "The email is field is requied.");
             }
 
-            if ($this->etudiantModel->whereEmail($request->post('email'))) {
+            $etudiantModel = new \App\Models\Etudiant; 
+            if ($etudiantModel->whereEmail($request->post('email'))) {
                 $isThisEmailNew = false;
             }
 
-            if ($this->formateurModel->whereEmail($request->post('email'))) {
+            $formateurModel = new \App\Models\Formateur;
+            if ($formateurModel->whereEmail($request->post('email'))) {
                 $isThisEmailNew = false;
             }
 
-            echo json_encode($isThisEmailNew);
-            return;
+            exit(json_encode($isThisEmailNew));
         }
 
-        return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+        return Response::json(null, 405, "Method Not Allowed");
     }
 }
