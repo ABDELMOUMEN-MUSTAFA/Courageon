@@ -8,7 +8,8 @@ use App\Models\{
     Preview,
     Formation,
     Video,
-    Inscription
+    Inscription,
+    Langue
 };
 
 use App\Libraries\{Response, Validator};
@@ -109,10 +110,11 @@ class CoursesController
         }
 
         $stockedModel = new Stocked;
-        $categorieModel = new Categorie; 
+        $categorieModel = new Categorie;
+        $langueModel = new Langue;
         $categories = $categorieModel->all();
+        $langues = $langueModel->all();
         $niveaux = $stockedModel->getAllLevels();
-        $langues = $stockedModel->getAllLangues();
 
         return view("courses/add", compact('categories', 'niveaux', 'langues'));
     }
@@ -142,11 +144,12 @@ class CoursesController
         $formationModel = new Formation;
         $stockedModel = new Stocked;
         $categorieModel = new Categorie;
+        $langueModel = new Langue;
 
         $formation = $formationModel->find($id_formation);
         $categories = $categorieModel->all();
+        $langues = $langueModel->all();
         $niveaux = $stockedModel->getAllLevels();
-        $langues = $stockedModel->getAllLangues();
 
         return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues')); 
     }
