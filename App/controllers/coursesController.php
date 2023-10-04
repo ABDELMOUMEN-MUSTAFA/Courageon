@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\{
     Stocked,
+    Categorie,
     Preview,
     Formation,
     Video,
@@ -89,8 +90,8 @@ class CoursesController
 			return view("courses/show", $data);
         }
 
-        $stockedModel = new Stocked;
-        return view('formateurs/courses/index', ['categories' => $stockedModel->getAllCategories()]);
+        $categorieModel = new Categorie;
+        return view('formateurs/courses/index', ['categories' => $categorieModel->all()]);
     }
 
     public function add($request)
@@ -108,7 +109,8 @@ class CoursesController
         }
 
         $stockedModel = new Stocked;
-        $categories = $stockedModel->getAllCategories();
+        $categorieModel = new Categorie; 
+        $categories = $categorieModel->all();
         $niveaux = $stockedModel->getAllLevels();
         $langues = $stockedModel->getAllLangues();
 
@@ -139,9 +141,10 @@ class CoursesController
 
         $formationModel = new Formation;
         $stockedModel = new Stocked;
+        $categorieModel = new Categorie;
 
         $formation = $formationModel->find($id_formation);
-        $categories = $stockedModel->getAllCategories();
+        $categories = $categorieModel->all();
         $niveaux = $stockedModel->getAllLevels();
         $langues = $stockedModel->getAllLangues();
 

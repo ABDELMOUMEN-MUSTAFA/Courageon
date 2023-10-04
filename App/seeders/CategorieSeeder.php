@@ -2,6 +2,7 @@
 
 namespace App\Seeders;
 
+use App\Models\Categorie;
 use App\Models\Stocked;
 
 class CategorieSeeder extends Seed {
@@ -13,8 +14,8 @@ class CategorieSeeder extends Seed {
 		    'image' => $this->getRandomImage(800, 533, 'categories'),
 		];
 
-		$categorie = new Stocked;
-		return $categorie->insertCategorie($data);
+		$categorieModel = new Categorie;
+		return $categorieModel->create($data);
 	}
 
 	public function seed($records = 10)

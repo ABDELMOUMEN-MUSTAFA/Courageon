@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use App\Models\{
+    Categorie,
     Formateur,
     Inscription,
-    Stocked,
     Message,
     Video,
     Etudiant
@@ -183,11 +183,11 @@ class FormateurController
 	{
 		if($request->getMethod() === 'GET'){
 			$formateurModel = new Formateur;
-			$stockedModel = new Stocked;
+			$categorieModel = new Categorie;
 
 			$data = [
 				'formateur' => $formateurModel->formateur($this->id_formateur),
-				'categories' => $stockedModel->getAllCategories(),
+				'categories' => $categorieModel->all(),
 			];
 
 			return view('formateurs/edit-profil', $data);

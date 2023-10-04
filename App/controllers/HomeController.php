@@ -5,20 +5,20 @@ namespace App\Controllers;
 use App\Models\{
     Formation,
     Formateur,
-    Stocked
+    Categorie
 };
 
 class HomeController
 {
 	private $formationModel;
 	private $formateurModel;
-	private $stockedModel;
+	private $categorieModel;
 
 	public function __construct()
 	{
 		$this->formationModel = new Formation;
 		$this->formateurModel = new Formateur;
-		$this->stockedModel = new Stocked;
+		$this->categorieModel = new Categorie;
 	}
 
 	public function index($request)
@@ -29,7 +29,7 @@ class HomeController
 
 		$data = [
 			'formations' => $this->formationModel->getPopularCourses(),
-			'categories' => $this->stockedModel->getPopularCategories(),
+			'categories' => $this->categorieModel->getPopularCategories(),
 			'formateurs' => $this->formateurModel->getPopularFormateurs(),
 			'totalFormations' => $this->formationModel->count(),
 		];

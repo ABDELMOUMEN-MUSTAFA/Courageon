@@ -14,9 +14,9 @@ use App\Libraries\{
 };
 
 use App\Models\{
+    Categorie,
     Formateur,
     Etudiant,
-    Stocked,
     Formation,
     Inscription
 };
@@ -681,8 +681,8 @@ class UserController
                     return Response::json(null, 500, "Something went wrong, please try again later!");
                 }
 
-                $stockedModel = new Stocked;
-                return view('formateurs/continue', ['categories' => $stockedModel->getAllCategories()]);
+                $categorieModel = new Categorie;
+                return view('formateurs/continue', ['categories' => $categorieModel->all()]);
             }
 
             return redirect('formateur');
