@@ -3,13 +3,13 @@
 namespace App\Controllers;
 
 use App\Models\{
-    Stocked,
     Categorie,
     Preview,
     Formation,
     Video,
     Inscription,
-    Langue
+    Langue,
+    Level
 };
 
 use App\Libraries\{Response, Validator};
@@ -109,12 +109,13 @@ class CoursesController
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
-        $stockedModel = new Stocked;
         $categorieModel = new Categorie;
         $langueModel = new Langue;
+        $levelModel = new Level;
+
         $categories = $categorieModel->all();
         $langues = $langueModel->all();
-        $niveaux = $stockedModel->getAllLevels();
+        $niveaux = $levelModel->all();
 
         return view("courses/add", compact('categories', 'niveaux', 'langues'));
     }
@@ -142,14 +143,15 @@ class CoursesController
         ]);
 
         $formationModel = new Formation;
-        $stockedModel = new Stocked;
+        $formation = $formationModel->find($id_formation);
+
         $categorieModel = new Categorie;
         $langueModel = new Langue;
+        $levelModel = new Level;
 
-        $formation = $formationModel->find($id_formation);
         $categories = $categorieModel->all();
         $langues = $langueModel->all();
-        $niveaux = $stockedModel->getAllLevels();
+        $niveaux = $levelModel->all();
 
         return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues')); 
     }
