@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./Public/images/logos/light-logo.png" alt="Courageon logo" />
+  <img width="200px" src="./Public/images/logos/light-logo.png" alt="Courageon logo" />
 </div>
 
 ## About Courageon
@@ -19,7 +19,7 @@ including seamless media storage, integrated payment options and more.
 2. Install FFmpeg (used for extracting thumbnail from the video): [Guide to Install FFmpeg](https://phoenixnap.com/kb/ffmpeg-windows).
 3. Import the database schema placed in the root `database_schema.sql`.
 4. Run the controller faker to populate the database with fake data `http://localhost/courageon/faker`.
-5. Make copy of `.env.exemple` and rename it to `.env`, set your SMTP configuration, set Third-party applications in order to login users with social media accounts and link you payment gateway accounts (Paypal & Stripe).
+5. Make copy of `.env.exemple` and rename it to `.env`, set your SMTP configuration, set Third-party applications in order to login users with social media accounts and link your payment gateway accounts (Paypal & Stripe).
 
 ## Screenshots
 
