@@ -161,8 +161,13 @@ class UserController
                     }
                 }
 
-                $this->{$newUser['type'].'Model'}->create($newUser);
-                $user = $this->{$newUser['type'].'Model'}->whereEmail($userProfile->email);
+                $users = [
+                    'etudiant' => new Etudiant,
+                    'formateur' => new Formateur
+                ];
+
+                $users[$newUser['type']]->create($newUser);
+                $user = $users[$newUser['type']]->whereEmail($userProfile->email);
                 
                 session('user_type')->remove();
                 session('provider')->remove();
@@ -265,11 +270,16 @@ class UserController
 
             // Generate token and hash it, after store it in DB and SESSION.
             $token = bin2hex(random_bytes(16));
-            $this->{$user['type'].'Model'}->create($user, hash('sha256', $token));
+            $users = [
+                'etudiant' => new Etudiant,
+                'formateur' => new Formateur
+            ];
+
+            $users[$user['type']]->create($user, hash('sha256', $token));
             session('token')->set($token);
 
             // Get created user and authenticate him.
-            $user = $this->{$user['type'].'Model'}->whereEmail($user['email']);
+            $user = $users[$user['type']]->whereEmail($user['email']);
             session('user')->set($user);
 
             // send email verification to the authenticated user.
