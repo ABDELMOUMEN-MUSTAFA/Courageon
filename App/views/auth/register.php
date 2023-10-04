@@ -10,7 +10,7 @@
     <meta name="description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
     <meta property="og:title" content="Inscrivez-vous et commencez à apprendre | <?= SITENAME ?>">
     <meta property="og:type" content="article">
-    <meta property="og:image" content="<?= IMAGEROOT ?>/logo.png">
+    <meta property="og:image" content="<?= IMAGEROOT ?>/logos/dark-logo.png">
     <meta property="og:url" content="<?= URLROOT ?>/user/register">
     <meta property="og:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
     <meta property="og:site_name" content="<?= SITENAME ?>">
@@ -18,7 +18,7 @@
     <meta name="twitter:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ..." />
     <meta name="twitter:title" content="Inscrivez-vous et commencez à apprendre | <?= SITENAME ?>" />
     <meta name="twitter:site" content="<?= URLROOT ?>/user/register" />
-    <meta name="twitter:image" content="<?= IMAGEROOT ?>/logo.png" />
+    <meta name="twitter:image" content="<?= IMAGEROOT ?>/logos/dark-logo.png" />
     <title>Inscrivez-vous et commencez à apprendre | <?= SITENAME ?></title>
     <!-- GOOGLE WEB FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -43,7 +43,7 @@
     <div id="register">
         <aside>
             <figure>
-                <a href="<?= URLROOT ?>"><img src="<?= IMAGEROOT ?>/logo.png" width="149" height="42" alt="logo platform e-learning"></a>
+                <a href="<?= URLROOT ?>"><img src="<?= IMAGEROOT ?>/logos/dark-logo.png" width="149" height="42" alt="logo platform e-learning"></a>
             </figure>
             <form method="POST" id="register-form">
                 <div class="form-group">

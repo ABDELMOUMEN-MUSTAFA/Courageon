@@ -310,7 +310,7 @@ class UserController
                 [
                     URLROOT."/user/confirm/?token=".$token,
                     '2 heures',
-                ])->attach(['images/logo.png' => 'logo'])
+                ])->attach(['images/logos/dark-logo.png' => 'logo'])
                 ->send();
 
                 return Response::json(null, 200, "Nous avons envoyé votre lien de vérification par e-mail.");
@@ -461,7 +461,7 @@ class UserController
                 [
                     URLROOT."/user/reset/?token=$token",
                     '60 Minutes',
-                ])->attach(['images/logo.png' => 'logo'])
+                ])->attach(['images/logos/dark-logo.png' => 'logo'])
                 ->send();
 
                 return Response::json(null, 200, "Nous avons envoyé votre lien de réinitialisation par e-mail.");

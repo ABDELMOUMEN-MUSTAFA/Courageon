@@ -37,7 +37,7 @@
     
     <div id="form_container">
         <figure>
-            <a href="<?= URLROOT ?>"><img src="<?= IMAGEROOT ?>/logo.png" width="149" height="42" alt="logo platform e-learning"></a>
+            <a href="<?= URLROOT ?>"><img src="<?= IMAGEROOT ?>/logos/dark-logo.png" width="149" height="42" alt="logo platform e-learning"></a>
         </figure>
         <div id="wizard_container">
             <div id="top-wizard">

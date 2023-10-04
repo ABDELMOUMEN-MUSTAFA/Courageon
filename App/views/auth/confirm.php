@@ -25,7 +25,7 @@
         <div class="wrapper">
             <h1 class="logo mb-3">
                 <a href="<?= URLROOT ?>">
-                    <img src="<?= IMAGEROOT ?>/logo.png" alt="logo platform e-learning">
+                    <img src="<?= IMAGEROOT ?>/logos/dark-logo.png" alt="logo platform e-learning">
                 </a>
             </h1>
             <div>

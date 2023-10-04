@@ -433,7 +433,7 @@ class FormateurController
                 [
                     URLROOT."/formateur/confirmEmail/?token=".$token,
                     '30 minutes',
-                ])->attach(['images/logo.png' => 'logo'])
+                ])->attach(['images/logos/dark-logo.png' => 'logo'])
                 ->send();
 
                 return Response::json(null, 200, "Nous avons envoyé votre lien de vérification par e-mail.");

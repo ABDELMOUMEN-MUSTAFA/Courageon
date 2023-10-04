@@ -3,7 +3,7 @@
         <div data-loader="circle-side"></div>
     </div><!-- /Preload -->
     <div id="logo">
-        <a href="<?= URLROOT ?>"><img class="logo" src="<?= IMAGEROOT ?>/logo.png" width="149" height="42" alt="logo platform e-learning"></a>
+        <a href="<?= URLROOT ?>"><img class="logo" src="<?= IMAGEROOT ?>/logos/dark-logo.png" width="149" height="42" alt="logo platform e-learning"></a>
     </div>
     <ul id="top_menu">
         <li><a href="javascript:void(0)" class="search-overlay-menu-btn">Search</a></li>

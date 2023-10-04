@@ -18,7 +18,7 @@
                 <!-- Brand -->
                 <a href="<?= URLROOT ?>"
                    class="navbar-brand">
-                    <img class="logo" src="<?= IMAGEROOT ?>/logo.png" width="149" height="42" alt="logo platform e-learning">
+                    <img class="logo" src="<?= IMAGEROOT ?>/logos/dark-logo.png" width="149" height="42" alt="logo platform e-learning">
                 </a>
 
                 <!-- Search -->

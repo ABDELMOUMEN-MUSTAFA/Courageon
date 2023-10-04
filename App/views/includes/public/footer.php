@@ -2,7 +2,7 @@
     <div class="container p-4">
         <div class="row justify-content-between">
             <div class="col-lg-5 col-md-12">
-                <p><img src="<?= IMAGEROOT ?>/logo.png" width="149" height="42" alt="logo platform e-learning"></p>
+                <p><img src="<?= IMAGEROOT ?>/logos/dark-logo.png" width="149" height="42" alt="logo platform e-learning"></p>
                 <p>
                     <?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos
                     d'apprentissage

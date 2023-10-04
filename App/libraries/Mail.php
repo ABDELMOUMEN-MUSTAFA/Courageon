@@ -71,7 +71,7 @@ class Mail
 
     public function attach($files)
     {
-    	// e.g: ['images/logo.png' => 'logo']
+    	// e.g: ['images/logos/dark-logo.png' => 'logo']
     	$publicFolder = dirname(dirname(__DIR__)).'/public/';
 
     	foreach ($files as $name => $src) {

@@ -9,7 +9,7 @@
     <meta name="description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
     <meta property="og:title" content="Cours en ligne - Apprenez ce que vous voulez, à votre rythme | <?= SITENAME ?>">
     <meta property="og:type" content="article">
-    <meta property="og:image" content="<?= IMAGEROOT ?>/logo.png">
+    <meta property="og:image" content="<?= IMAGEROOT ?>/logos/dark-logo.png">
     <meta property="og:url" content="<?= URLROOT ?>">
     <meta property="og:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ...">
     <meta property="og:site_name" content="<?= SITENAME ?>">
@@ -17,7 +17,7 @@
     <meta name="twitter:description" content="<?= SITENAME ?> Est Un Site Internet De Formation En Ligne Qui Contient Des Cours Et Des Vidéos d'apprentissage Dans Plusieur Domains Tels Que Le Web Development, E-commerce, Digital Marketing ..." />
     <meta name="twitter:title" content="Cours en ligne - Apprenez ce que vous voulez, à votre rythme | <?= SITENAME ?>" />
     <meta name="twitter:site" content="<?= URLROOT ?>" />
-    <meta name="twitter:image" content="<?= IMAGEROOT ?>/logo.png" />
+    <meta name="twitter:image" content="<?= IMAGEROOT ?>/logos/dark-logo.png" />
     <title>Cours en ligne - Apprenez ce que vous voulez, à votre rythme | <?= SITENAME ?></title>
     <!-- Font Icons -->
     <link href="<?= CSSROOT ?>/icons/elegant-icons.css" rel="stylesheet" />

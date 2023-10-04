@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./Public/images/dark-logo.png" alt="Courageon logo" />
+  <img src="./Public/images/logos/light-logo.png" alt="Courageon logo" />
 </div>
 
 ## About Courageon
