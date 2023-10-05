@@ -16,9 +16,6 @@
         <!-- Material Design Icons -->
         <link rel="stylesheet" href="<?= CSSROOT ?>/icons/material-icons.css" />
 
-        <!-- Font Awesome Icons -->
-        <link rel="stylesheet" href="<?= CSSROOT ?>/icons/fontawesome.css" />
-
         <!-- Preloader -->
         <link rel="stylesheet" href="<?= CSSROOT ?>/plugins/spinkit.css" />
 
