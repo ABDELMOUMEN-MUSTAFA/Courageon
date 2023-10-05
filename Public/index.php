@@ -9,7 +9,7 @@ use App\Libraries\ErrorHandler;
 require_once '../vendor/autoload.php';
 
 // Global Constants
-require_once '../app/Config/global_constants.php';
+require_once '../app/config/global_constants.php';
 
 // Require all helpers
 require_once '../App/helpers/redirect.php';
@@ -145,4 +145,5 @@ class Router
 set_exception_handler([ErrorHandler::class, 'handleException']);
 set_error_handler([ErrorHandler::class, 'handleError']);
 
+date_default_timezone_set("Africa/Casablanca");
 $init = new Router(new Request);
