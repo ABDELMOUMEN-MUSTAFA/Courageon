@@ -175,7 +175,7 @@ class EtudiantController
 		$relationship = [
 			"from" => "inscriptions",
 			"join" => "videos",
-			"using" => "id_formation",
+			"on" => "id_formation",
 			"where" => [
 				"id_video" => $id_video,
 				"id_etudiant" => $this->id_etudiant,

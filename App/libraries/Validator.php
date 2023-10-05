@@ -293,11 +293,14 @@ class Validator
         $columns = array_keys($where);
         foreach($columns as $key => $column) $columns[$key] = "$column = :$column";
 
+        $on = explode('=', $on);
+        $on[1] = $on[1] ?? $n[0];
+
         $query = "
             SELECT 
                 COUNT(*)
             FROM {$from}
-            JOIN {$join} USING ($using)
+            JOIN {$join} ON {$from}.{$on[0]} = {$join}.{$on[1]}
             WHERE ".implode(' AND ', $columns);
 
         $statement = Database::getConnection()->prepare($query);

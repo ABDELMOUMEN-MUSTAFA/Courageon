@@ -263,7 +263,7 @@ class CoursesController
         $relationship = [
             "from" => "formations",
             "join" => "videos",
-            "using" => "id_formation",
+            "on" => "id_formation",
             "where" => [
                 "id_video" => $id_video,
                 "id_formateur" => session('user')->get()->id_formateur

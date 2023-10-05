@@ -76,7 +76,7 @@ class VideoController extends \App\Controllers\Api\ApiController
         $relationship = [
             "from" => "formations",
             "join" => "videos",
-            "using" => "id_formation",
+            "on" => "id_formation",
             "where" => [
                 "id_video" => $id,
                 "id_formateur" => session('user')->get()->id_formateur
@@ -138,7 +138,7 @@ class VideoController extends \App\Controllers\Api\ApiController
         $relationship = [
             "from" => "formations",
             "join" => "videos",
-            "using" => "id_formation",
+            "on" => "id_formation",
             "where" => [
                 "id_video" => $id,
                 "id_formateur" => session('user')->get()->id_formateur

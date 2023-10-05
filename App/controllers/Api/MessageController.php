@@ -55,7 +55,7 @@ class MessageController extends \App\Controllers\Api\ApiController
         $relationship = [
 			"from" => "inscriptions",
 			"join" => "formateurs",
-			"using" => "id_formateur",
+			"on" => "id_formateur",
 			"where" => [
 				"id_etudiant" => session('user')->get()->id_etudiant,
 				"id_formateur" => $request->post('to')
@@ -105,7 +105,7 @@ class MessageController extends \App\Controllers\Api\ApiController
         $relationship = [
 			"from" => "inscriptions",
 			"join" => "etudiants",
-			"using" => "id_etudiant",
+			"on" => "id_etudiant",
 			"where" => [
 				"id_formateur" => session('user')->get()->id_formateur,
 				"id_etudiant" => $request->post('to')
