@@ -58,7 +58,7 @@ class MessageController extends \App\Controllers\Api\ApiController
 			"on" => "id_formateur",
 			"where" => [
 				"id_etudiant" => session('user')->get()->id_etudiant,
-				"id_formateur" => $request->post('to')
+				"inscriptions->id_formateur" => $request->post('to')
 			]
 		];
         
@@ -108,7 +108,7 @@ class MessageController extends \App\Controllers\Api\ApiController
 			"on" => "id_etudiant",
 			"where" => [
 				"id_formateur" => session('user')->get()->id_formateur,
-				"id_etudiant" => $request->post('to')
+				"inscriptions->id_etudiant" => $request->post('to')
 			]
 		];
         
