@@ -291,10 +291,12 @@ class Validator
     {
         extract($relationship);
         $columns = array_keys($where);
-        foreach($columns as $key => $column) $columns[$key] = "$column = :$column";
-
+        foreach($columns as $key => $column) {
+            $columns[$key] = str_replace('->', '.', $column)." = :".str_replace('->', '_', $column);
+        }
+        
         $on = explode('=', $on);
-        $on[1] = $on[1] ?? $n[0];
+        $on[1] = $on[1] ?? $on[0];
 
         $query = "
             SELECT 
@@ -304,7 +306,7 @@ class Validator
             WHERE ".implode(' AND ', $columns);
 
         $statement = Database::getConnection()->prepare($query);
-        foreach ($where as $column => $value) $statement->bindValue(":$column", $value);
+        foreach ($where as $column => $value) $statement->bindValue(str_replace('->', '_', $column), $value);
         $statement->execute();
         $count = $statement->fetchColumn();
 
