@@ -225,22 +225,7 @@ class Validator
             if($fileType !== $value['type']){
                 $this->addError($field, "Only file type `$fileType` allowed.");
             }
-        } elseif (strpos($rule, 'check_etudiant:') === 0) {
-            $tableName = explode(':', $rule)[1]; 
-            $columnName = $field; 
-
-            // Check if etudiant have a record in giving table
-            $query = "SELECT COUNT(*) FROM {$tableName} WHERE {$columnName} = :value AND id_etudiant = :id_etudiant";
-            $statement = Database::getConnection()->prepare($query);
-            $statement->bindValue(':value', $value);
-            $statement->bindValue(':id_etudiant', session('user')->get()->id_etudiant);
-            $statement->execute();
-            $count = $statement->fetchColumn();
-
-            if ($count < 1) {
-                $this->addError($field, "You don't have access to this ".substr($tableName, 0, -1).".");
-            }
-        }
+        } 
 
         // Add more validation rules as needed...
     }

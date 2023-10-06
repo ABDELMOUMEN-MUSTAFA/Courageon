@@ -157,8 +157,21 @@ class EtudiantController
 		]);
 
 		$validator->validate([
-			'id_formation' => 'required|numeric|exists:formations|check_etudiant:inscriptions'
+			'id_formation' => 'required|numeric|exists:formations'
 		]);
+
+		// CHECK IF THE AUTH ETUDIANT OWEN THIS COURSE.
+        $relationship = [
+            "from" => "inscriptions",
+            "join" => "etudiants",
+            "on" => "id_etudiant",
+            "where" => [
+                "id_formation" => $id_formation,
+                "etudiants->id_etudiant" => session('user')->get()->id_etudiant
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
 		$formationModel = new Formation;
 		$notificationModel = new Notification;
