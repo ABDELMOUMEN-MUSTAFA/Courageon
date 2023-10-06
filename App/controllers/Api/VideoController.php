@@ -45,9 +45,22 @@ class VideoController extends \App\Controllers\Api\ApiController
         $validator->validate([
             'nom' => 'required|min:3|max:80',
             'description' => 'required|min:3|max:800',
-            'id_formation' => 'required|exists:formations|check:formations',
+            'id_formation' => 'required|exists:formations',
             'url' => 'required|size:1024|video|video_duration:50',
         ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $request->post('id_formation'),
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         $video = $validator->validated();
         unset($video['type']);

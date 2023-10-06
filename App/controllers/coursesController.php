@@ -58,8 +58,21 @@ class CoursesController
             $validator = new Validator(['id_formation' => $search]);
 
 	    	$validator->validate([
-	            'id_formation' => 'numeric|exists:formations|check:formations',
+	            'id_formation' => 'numeric|exists:formations',
 	        ]);
+
+            // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+            $relationship = [
+                "from" => "formateurs",
+                "join" => "formations",
+                "on" => "id_formateur",
+                "where" => [
+                    "id_formation" => $search,
+                    "formateurs->id_formateur" => session('user')->get()->id_formateur
+                ]
+            ];
+
+            $validator->checkPermissions($relationship);
 
 
             $videoModel = new Video;
@@ -150,8 +163,21 @@ class CoursesController
         ]);
 
         $validator->validate([
-            'id_formation' => 'required|exists:formations|check:formations',
+            'id_formation' => 'required|exists:formations',
         ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         $formationModel = new Formation;
         $formation = $formationModel->find($id_formation);
@@ -188,8 +214,21 @@ class CoursesController
         ]);
 
         $validator->validate([
-            'id_formation' => 'required|exists:formations|check:formations',
+            'id_formation' => 'required|exists:formations',
         ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         $formationModel = new Formation;
         $file = $formationModel->select($id_formation, ['fichier_attache']);
@@ -226,8 +265,21 @@ class CoursesController
 
         $validator->validate([
             'order' => 'required|array',
-            'id_formation' => 'required|exists:formations|check:formations',
+            'id_formation' => 'required|exists:formations',
         ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         $this->_validateArray($order);
 
@@ -268,11 +320,24 @@ class CoursesController
         ]);
 
         $validator->validate([
-            'id_formation' => 'required|numeric|exists:formations|check:formations',
+            'id_formation' => 'required|numeric|exists:formations',
             'id_video' => 'required|numeric|exists:videos',
         ]);
 
-        // CHECK IF THE VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
+
+        // CHECK IF THIS VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
         $relationship = [
             "from" => "formations",
             "join" => "videos",

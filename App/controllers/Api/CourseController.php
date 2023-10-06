@@ -239,7 +239,7 @@ class CourseController extends \App\Controllers\Api\ApiController
         ]);
 
         $validator->validate([
-            'id_formation' => 'required|exists:formations|check:formations',
+            'id_formation' => 'required|exists:formations',
             'nom' => 'required|min:3|max:80',
             'description' => 'required|min:15|max:700',
             'prix' => 'required|numeric|numeric_min:10|numeric_max:1000',
@@ -248,6 +248,19 @@ class CourseController extends \App\Controllers\Api\ApiController
             'id_niveau' => 'required|exists:niveaux',
             'id_langue' => 'required|exists:langues',
         ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         $formation = $validator->validated();
         unset($formation['type']);
@@ -355,8 +368,21 @@ class CourseController extends \App\Controllers\Api\ApiController
         ]);
 
         $validator->validate([
-            'id_formation' => 'required|exists:formations|check:formations',
+            'id_formation' => 'required|exists:formations',
         ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
 
         if($this->formationModel->delete($id_formation)){
             return Response::json(null, 200, 'Deleted successfuly.');

@@ -204,21 +204,6 @@ class Validator
             if ($fileInfo && isset($fileInfo['playtime_seconds']) && $fileInfo['playtime_seconds'] > $maxDuration) {
                 $this->addError($field, 'The ' . $field . ' video duration must not exceed ' . $durationInMinutes . ' minutes.');
             }
-        } elseif (strpos($rule, 'check:') === 0) {
-            $tableName = explode(':', $rule)[1]; 
-            $columnName = $field; 
-
-            // Check if formateur have a record in giving table
-            $query = "SELECT COUNT(*) FROM {$tableName} WHERE {$columnName} = :value AND id_formateur = :id_formateur";
-            $statement = Database::getConnection()->prepare($query);
-            $statement->bindValue(':value', $value);
-            $statement->bindValue(':id_formateur', session('user')->get()->id_formateur);
-            $statement->execute();
-            $count = $statement->fetchColumn();
-
-            if ($count < 1) {
-                $this->addError($field, "You don't have access to this ".substr($tableName, 0, -1).".");
-            }
         } elseif ($rule === 'array') {
             if(!is_array($value)){
                 $this->addError($field, 'The ' . $field . ' field must not be an array.');
