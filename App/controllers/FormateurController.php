@@ -8,7 +8,8 @@ use App\Models\{
     Inscription,
     Message,
     Video,
-    Etudiant
+    Etudiant,
+    Notification
 };
 
 use App\Libraries\{Response, Validator};
@@ -16,6 +17,7 @@ use App\Libraries\{Response, Validator};
 class FormateurController
 {
 	private $id_formateur;
+	private $notifications;
 
 	public function __construct()
 	{
@@ -36,6 +38,13 @@ class FormateurController
 		}
 
 		$this->id_formateur = session('user')->get()->id_formateur;
+		$this->notifications = $this->_getNotifications();
+	}
+
+	private function _getNotifications()
+	{
+		$notificationModel = new Notification;
+		return $notificationModel->whereRecipient($this->id_formateur);
 	}
 
 	public function index($request)
@@ -48,7 +57,8 @@ class FormateurController
 		$data = [
 			'inscriptions' => json_encode($inscriptionModel->getLast7DaysRevenus($this->id_formateur)),
 			'latestTransactions' => $inscriptionModel->getTransactions($this->id_formateur),
-			'salesToday' => $inscriptionModel->getSalesToday($this->id_formateur)
+			'salesToday' => $inscriptionModel->getSalesToday($this->id_formateur),
+			'notifications' => $this->notifications,
 		];
 
 		return view('formateurs/index', $data);
@@ -60,7 +70,7 @@ class FormateurController
 			return Response::json(null, 405, "Method Not Allowed");
 		}
 
-		return view('formateurs/earnings');
+		return view('formateurs/earnings', ['notifications' => $this->notifications]);
 	}
 
 	public function getEarnings($request)
@@ -115,7 +125,7 @@ class FormateurController
 			return Response::json(null, 405, "Method Not Allowed");
 		}
 
-		return view('formateurs/transactions');
+		return view('formateurs/transactions', ['notifications' => $this->notifications]);
 	}
 
 	public function getTransactionsInSpecificDates($request)
@@ -188,6 +198,7 @@ class FormateurController
 			$data = [
 				'formateur' => $formateurModel->formateur($this->id_formateur),
 				'categories' => $categorieModel->all(),
+				'notifications' => $this->notifications,
 			];
 
 			return view('formateurs/edit-profil', $data);
@@ -564,8 +575,9 @@ class FormateurController
 		if(is_null($slug)){
 			$conversations = false;
 			$etudiant = false;
+			$notifications = $this->notifications;
 
-			return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants'));
+			return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants', 'notifications'));
 		}
 		
 		$conversations = $messageModel->conversations($slug, session('user')->get()->slug);
@@ -586,7 +598,7 @@ class FormateurController
 		$last_message = $messageModel->getLastMessage($etudiant->id_etudiant, $this->id_formateur);
 		$last_message_time = $last_message->unix_timestamp ?? '0000000000';
 		
-
-        return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants', 'last_message_time'));
+		$notifications = $this->notifications;
+        return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants', 'last_message_time', 'notifications'));
     }
 }

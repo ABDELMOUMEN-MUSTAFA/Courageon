@@ -197,5 +197,6 @@
         
         <script>const URLROOT = `<?= URLROOT ?>`;</script>
         <script src="<?= JSROOT ?>/formateurs/courses/index.js"></script>
+        <script src="<?= JSROOT ?>/formateurs/notifications.js"></script>
     </body>
 </html>

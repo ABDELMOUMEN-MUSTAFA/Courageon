@@ -5,7 +5,8 @@ namespace App\Controllers;
 use App\Models\{
     Formation,
     Inscription,
-    Formateur
+    Formateur,
+    Notification
 };
 
 class StripeController
@@ -111,11 +112,17 @@ class StripeController
 			return view('errors/page_404');
 		}
 
-        $formation = $this->formationModel->select($id_formation, ['slug', 'id_formateur', 'prix']);
+        $formation = $this->formationModel->select($id_formation, ['slug', 'nom', 'id_formateur', 'prix']);
         $this->inscriptionModel->updatePaymentState($_GET['paymentId'], "approved");
 		$formateurModel = new Formateur;
 		$formateurProfit = (100 - $_ENV['PLATFORM_PROFIL']) / 100;
 		$formateurModel->updateBalance($formation->id_formateur, $formation->prix * $formateurProfit);
+		$notificationModel = new Notification;
+		$notificationModel->create([
+			'content' => "Joined Your Course <strong>{$formation->nom}</strong>",
+			'sender_id' => session('user')->get()->id_etudiant,
+			'recipient_id' => $formation->id_formateur
+		]);
 		return view('payments/paymentSuccess', ["id_formation" => $id_formation]);
 	}
 

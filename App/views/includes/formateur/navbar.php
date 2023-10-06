@@ -45,118 +45,40 @@
                                 data-dropdown-disable-document-scroll
                                 data-caret="false">
                             <i class="material-icons">notifications</i>
-                            <span class="badge badge-notifications badge-danger">2</span>
+                            <span id="notification-counter" class="badge badge-notifications badge-danger">
+                                <?= array_reduce($notifications, fn($acc, $n) => !$n->is_read ? $acc + 1 : $acc, 0) ?>
+                            </span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <div data-perfect-scrollbar
                                  class="position-relative">
-                                <div class="dropdown-header"><strong>Messages</strong></div>
-                                <div class="list-group list-group-flush mb-0">
-
-                                    <a href="instructor-messages.html"
-                                       class="list-group-item list-group-item-action unread">
-                                        <span class="d-flex align-items-center mb-1">
-                                            <small class="text-muted">5 minutes ago</small>
-
-                                            <span class="ml-auto unread-indicator bg-primary"></span>
-
-                                        </span>
-                                        <span class="d-flex">
-                                            <span class="avatar avatar-xs mr-2">
-                                                <img src="#"
-                                                     alt="people"
-                                                     class="avatar-img rounded-circle">
-                                            </span>
-                                            <span class="flex d-flex flex-column">
-                                                <strong>Michelle</strong>
-                                                <span class="text-black-70">Clients loved the new design.</span>
-                                            </span>
-                                        </span>
-                                    </a>
-
-                                    <a href="instructor-messages.html"
-                                       class="list-group-item list-group-item-action unread">
-                                        <span class="d-flex align-items-center mb-1">
-                                            <small class="text-muted">5 minutes ago</small>
-
-                                            <span class="ml-auto unread-indicator bg-primary"></span>
-
-                                        </span>
-                                        <span class="d-flex">
-                                            <span class="avatar avatar-xs mr-2">
-                                                <img src="#"
-                                                     alt="people"
-                                                     class="avatar-img rounded-circle">
-                                            </span>
-                                            <span class="flex d-flex flex-column">
-                                                <strong>Michelle</strong>
-                                                <span class="text-black-70">🔥 Superb job..</span>
-                                            </span>
-                                        </span>
-                                    </a>
-
+                                <div class="dropdown-header d-flex justify-content-between">
+                                    <strong>Notifications</strong>
+                                    <a id="btn-clear-notifications" href="javascript:void(0)">clear seen</a>
                                 </div>
-
-                                <div class="dropdown-header"><strong>System notifications</strong></div>
-                                <div class="list-group list-group-flush mb-0">
-
-                                    <a href="instructor-messages.html"
-                                       class="list-group-item list-group-item-action border-left-3 border-left-danger">
-                                        <span class="d-flex align-items-center mb-1">
-                                            <small class="text-muted">3 minutes ago</small>
-
-                                        </span>
-                                        <span class="d-flex">
-                                            <span class="avatar avatar-xs mr-2">
-                                                <span class="avatar-title rounded-circle bg-light">
-                                                    <i class="material-icons font-size-16pt text-danger">account_circle</i>
-                                                </span>
-                                            </span>
-                                            <span class="flex d-flex flex-column">
-
-                                                <span class="text-black-70">Your profile information has not been synced correctly.</span>
-                                            </span>
-                                        </span>
+                                <div class="notifications list-group list-group-flush mb-0">
+                                    <?php foreach($notifications as $n): ?>
+                                    <a data-is-read="<?= $n->is_read ?>" data-id="<?= $n->id_notification ?>" class="notification list-group-item list-group-item-action unread d-block" href="<?= URLROOT ?>/formateur/messages/<?= $n->slug ?>"
+                                       class="list-group-item list-group-item-action unread">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <small class="text-muted"><?= $n->created_at ?></small>
+                                            <?php if(!$n->is_read): ?>
+                                                <span class="ml-auto unread-indicator bg-primary"></span>
+                                            <?php endif ?>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="avatar avatar-xs mr-2">
+                                                <img src="<?= IMAGEROOT ?>/<?= $n->img ?>" alt="etudiant avatar" class="avatar-img rounded-circle">
+                                            </div>
+                                            <div class="flex d-flex flex-column">
+                                                <strong><?= $n->prenom.' '.$n->nom ?></strong>
+                                                <span class="text-black-70"><?= $n->content ?></span>
+                                            </div>
+                                        </div>
                                     </a>
-
-                                    <a href="instructor-messages.html"
-                                       class="list-group-item list-group-item-action">
-                                        <span class="d-flex align-items-center mb-1">
-                                            <small class="text-muted">5 hours ago</small>
-
-                                        </span>
-                                        <span class="d-flex">
-                                            <span class="avatar avatar-xs mr-2">
-                                                <span class="avatar-title rounded-circle bg-light">
-                                                    <i class="material-icons font-size-16pt text-success">group_add</i>
-                                                </span>
-                                            </span>
-                                            <span class="flex d-flex flex-column">
-                                                <strong>Adrian. D</strong>
-                                                <span class="text-black-70">Wants to join your private group.</span>
-                                            </span>
-                                        </span>
-                                    </a>
-
-                                    <a href="instructor-messages.html"
-                                       class="list-group-item list-group-item-action">
-                                        <span class="d-flex align-items-center mb-1">
-                                            <small class="text-muted">1 day ago</small>
-
-                                        </span>
-                                        <span class="d-flex">
-                                            <span class="avatar avatar-xs mr-2">
-                                                <span class="avatar-title rounded-circle bg-light">
-                                                    <i class="material-icons font-size-16pt text-warning">storage</i>
-                                                </span>
-                                            </span>
-                                            <span class="flex d-flex flex-column">
-
-                                                <span class="text-black-70">Your deploy was successful.</span>
-                                            </span>
-                                        </span>
-                                    </a>
-
+                                    <?php endforeach ?>
+                                    <input type="hidden" name="last_notification" value="<?= $notifications[0]->unix_timestamp ?? '0000000000' ?>" />
+                                    <button id="btn-play-notify-sound" class="d-none">Play Sound</button>
                                 </div>
                             </div>
                         </div>

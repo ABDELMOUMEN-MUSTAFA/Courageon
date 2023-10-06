@@ -5,7 +5,8 @@ namespace App\Controllers;
 use App\Models\{
     Formation,
     Inscription,
-    Formateur
+    Formateur,
+    Notification
 };
 
 class PaypalController
@@ -180,7 +181,7 @@ class PaypalController
 			return view('errors/page_404');
 		}
 
-		$formation = $this->formationModel->select($id_formation, ['slug']);
+		$formation = $this->formationModel->select($id_formation, ['slug', 'nom']);
 		if (!isset($_GET['paymentId'], $_GET['token'], $_GET['PayerID'])) {
 			return view('errors/page_404');
 		}
@@ -216,6 +217,12 @@ class PaypalController
 		$formateurModel = new Formateur;
 		$formateurProfit = (100 - $_ENV['PLATFORM_PROFIL']) / 100;
 		$formateurModel->updateBalance($inscription->id_formateur, $inscription->prix * $formateurProfit);
+		$notificationModel = new Notification;
+		$notificationModel->create([
+			'content' => "Joined Your Course <strong>{$formation->nom}</strong>",
+			'sender_id' => session('user')->get()->id_etudiant,
+			'recipient_id' => $inscription->id_formateur
+		]);
 		return view('payments/paymentSuccess', ["id_formation" => $id_formation]);
 	}
 

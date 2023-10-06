@@ -257,6 +257,7 @@
 
         <script> const URLROOT = `<?= URLROOT ?>`; </script>
         <script src="<?= JSROOT ?>/formateurs/messages.js"></script>
+        <script src="<?= JSROOT ?>/formateurs/notifications.js"></script>
         <?php if($etudiant): ?>
             <script src="<?= JSROOT ?>/common/realtimeChat.js"></script>
         <?php else: ?>

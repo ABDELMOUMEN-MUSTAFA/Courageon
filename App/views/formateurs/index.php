@@ -307,8 +307,10 @@
         
         <script src="<?= JSROOT ?>/plugins/apexcharts.min.js"></script>
         <script>
+            const URLROOT = `<?= URLROOT ?>`;
             const data = JSON.parse(`<?= $inscriptions ?>`);
         </script>
         <script src="<?= JSROOT ?>/formateurs/index.js"></script>
+        <script src="<?= JSROOT ?>/formateurs/notifications.js"></script>
     </body>
 </html>

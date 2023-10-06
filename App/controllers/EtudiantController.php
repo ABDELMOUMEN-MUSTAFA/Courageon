@@ -8,7 +8,8 @@ use App\Models\{
     Inscription,
     Etudiant,
     Message,
-    Formateur
+    Formateur,
+    Notification
 };
 
 use App\Libraries\{
@@ -103,6 +104,13 @@ class EtudiantController
             }
         }
 
+		$notificationModel = new Notification;
+		$notificationModel->create([
+			'content' => "Joined Your Private Courses",
+			'sender_id' => session('user')->get()->id_etudiant,
+			'recipient_id' => $formation->id_formateur
+		]);
+		
         return Response::json(null, 200, "Congrats! vous avez rejoindre toutes les formations de formateur <strong>{$formations[0]->nom} {$formations[0]->prenom}</strong>.");
     }
 
@@ -153,7 +161,15 @@ class EtudiantController
 		]);
 
 		$formationModel = new Formation;
+		$notificationModel = new Notification;
 		$isLiked = $formationModel->toggleLike($this->id_etudiant, $id_formation);
+		# (:content, :is_read, :url, :icon, :created_at, :sender_id, :recipient_id)
+		$formation = $formationModel->select($id_formation, ['nom', 'id_formateur']);
+		$notificationModel->create([
+			'content' => ($isLiked['isLiked'] ? 'Liked' : 'Unliked')." Your Course <strong>{$formation->nom}</strong>",
+			'sender_id' => $this->id_etudiant,
+			'recipient_id' => $formation->id_formateur
+		]);
         $newLikes = $formationModel->getLikes($id_formation);
         return Response::json(array_merge($newLikes, $isLiked));
     }

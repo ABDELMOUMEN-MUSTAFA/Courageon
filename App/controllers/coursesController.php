@@ -9,7 +9,8 @@ use App\Models\{
     Video,
     Inscription,
     Langue,
-    Level
+    Level,
+    Notification
 };
 
 use App\Libraries\{Response, Validator};
@@ -63,7 +64,8 @@ class CoursesController
 
             $videoModel = new Video;
             $videos = $videoModel->getVideosOfFormation($search);
-            return view('videos/index', compact('videos'));
+            $notifications = $this->_getNotifications();
+            return view('videos/index', compact('videos', 'notifications'));
         }
 
         if(!is_null($search)){
@@ -91,8 +93,16 @@ class CoursesController
 			return view("courses/show", $data);
         }
 
+        if(!auth()){
+            return redirect('user/login');
+        }
+
+        if(session('user')->get()->type !== 'formateur'){
+           return view('errors/page_404', [], 404);
+        }
+
         $categorieModel = new Categorie;
-        return view('formateurs/courses/index', ['categories' => $categorieModel->all()]);
+        return view('formateurs/courses/index', ['categories' => $categorieModel->all(), 'notifications' => $this->_getNotifications()]);
     }
 
     public function add($request)
@@ -116,8 +126,9 @@ class CoursesController
         $categories = $categorieModel->all();
         $langues = $langueModel->all();
         $niveaux = $levelModel->all();
+        $notifications = $this->_getNotifications();
 
-        return view("courses/add", compact('categories', 'niveaux', 'langues'));
+        return view("courses/add", compact('categories', 'niveaux', 'langues', 'notifications'));
     }
 
     public function edit($request, $id_formation = null)
@@ -152,8 +163,10 @@ class CoursesController
         $categories = $categorieModel->all();
         $langues = $langueModel->all();
         $niveaux = $levelModel->all();
+        $notifications = $this->_getNotifications();
 
-        return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues')); 
+
+        return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues', 'notifications')); 
     }
 
     public function removeAttachedFile($request, $id_formation)
@@ -278,4 +291,10 @@ class CoursesController
         }
         return Response::json(null, 500, "Coudn't update the preview, please try again later.");
     }
+
+    private function _getNotifications()
+	{
+		$notificationModel = new Notification;
+		return $notificationModel->whereRecipient(session('user')->get()->id_formateur);
+	}
 }
