@@ -224,7 +224,7 @@ class CourseController extends \App\Controllers\Api\ApiController
 
         // Check CSRF token
         if(!csrf_token($request->post('_token'))){
-            return Response::json(null, 498, "Invalid Token");
+            return Response::json(null, 403, "Invalid Token");
         }
         
         $validator = new Validator([
