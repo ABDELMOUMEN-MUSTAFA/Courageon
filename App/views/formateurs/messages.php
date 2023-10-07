@@ -170,7 +170,6 @@
                                                 </div>
                                             </div>
                                             <input type="hidden" name="to" value="<?= $etudiant->id_etudiant ?>" />
-                                            <input type="hidden" name="sender" value="formateur" />
                                             <input type="hidden" name="last_message_time" value="<?= $last_message_time ?>" />
                                         </form>
                                     </div>

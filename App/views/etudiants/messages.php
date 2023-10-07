@@ -159,7 +159,7 @@
                                         </div>
                                     </div>
                                     <div class="container-fluid page__container">
-                                        <form action="#" id="message-reply">
+                                        <form id="message-reply">
                                             <div class="input-group input-group-merge">
                                                 <input type="text"
                                                     class="form-control form-control-appended"
@@ -171,7 +171,6 @@
                                                     <button style="width: 3rem;" class="btn btn-sm btn-primary" type="submit"><i class="material-icons">send</i></button>
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="sender" value="etudiant" />
                                             <input type="hidden" name="to" value="<?= $formateur->id_formateur ?>" />
                                             <input type="hidden" name="last_message_time" value="<?= $last_message_time ?>" />
                                         </form>
