@@ -42,13 +42,6 @@ class VideoController extends \App\Controllers\Api\ApiController
             'url' => $_FILES['lesson_video'] ?? ''
         ]);
 
-        $validator->validate([
-            'nom' => 'required|min:3|max:80',
-            'description' => 'required|min:3|max:800',
-            'id_formation' => 'required|exists:formations',
-            'url' => 'required|size:1024|video|video_duration:50',
-        ]);
-
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
         $relationship = [
             "from" => "formateurs",
@@ -61,6 +54,13 @@ class VideoController extends \App\Controllers\Api\ApiController
         ];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'nom' => 'required|min:3|max:80',
+            'description' => 'required|min:3|max:800',
+            'id_formation' => 'required|exists:formations',
+            'url' => 'required|size:1024|video|video_duration:50',
+        ]);
 
         $video = $validator->validated();
         unset($video['type']);
@@ -138,14 +138,10 @@ class VideoController extends \App\Controllers\Api\ApiController
     public function delete($id)
     {
     	if(!is_numeric($id)){
-    		return Response::json(null, 400);
+    		return Response::json(null, 400, "Bad Request");
     	}
 
     	$validator = new Validator(['id_video' => $id]);
-
-    	$validator->validate([
-            'id_video' => 'exists:videos',
-        ]);
 
     	// CHECK IF THE VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
         $relationship = [
@@ -159,6 +155,10 @@ class VideoController extends \App\Controllers\Api\ApiController
         ];
 
         $validator->checkPermissions($relationship);
+
+    	$validator->validate([
+            'id_video' => 'exists:videos',
+        ]);
         
         $video = $this->videoModel->find($id);
 

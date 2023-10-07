@@ -156,10 +156,6 @@ class EtudiantController
 			'id_formation' => strip_tags(trim($id_formation))
 		]);
 
-		$validator->validate([
-			'id_formation' => 'required|numeric|exists:formations'
-		]);
-
 		// CHECK IF THE AUTH ETUDIANT OWEN THIS COURSE.
         $relationship = [
             "from" => "inscriptions",
@@ -172,6 +168,10 @@ class EtudiantController
         ];
 
         $validator->checkPermissions($relationship);
+
+		$validator->validate([
+			'id_formation' => 'required|numeric|exists:formations'
+		]);
 
 		$formationModel = new Formation;
 		$notificationModel = new Notification;
@@ -197,10 +197,7 @@ class EtudiantController
 			'id_video' => strip_tags(trim($id_video))
 		]);
 
-		$validator->validate([
-			'id_video' => 'required|numeric|exists:videos'
-		]);
-
+		// CHECK IF THE ETUDIANT HAS THIS VIDEO
 		$relationship = [
 			"from" => "inscriptions",
 			"join" => "videos",
@@ -212,6 +209,10 @@ class EtudiantController
 		];
 
 		$validator->checkPermissions($relationship);
+
+		$validator->validate([
+			'id_video' => 'required|numeric|exists:videos'
+		]);
 
 		$videoModel = new Video;
         $response = $videoModel->toggleBookmark($this->id_etudiant, $id_video);

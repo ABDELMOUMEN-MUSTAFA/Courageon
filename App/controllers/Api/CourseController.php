@@ -115,14 +115,14 @@ class CourseController extends \App\Controllers\Api\ApiController
            return Response::json(null, 403); 
         }
 
-        // Check CSRF token
+        // Check CSRF token (pass true to trigger the checker if no token provided)
         if(!csrf_token($request->post('_token'))){
             return Response::json(null, 403, "Invalid Token");
         }
 
         $validator = new Validator([
             'nom' => strip_tags(trim($request->post('nom'))),
-            'description' => $this->strip_critical_tags($request->post("description")),
+            'description' => $this->_strip_critical_tags($request->post("description")),
             'prix' => strip_tags(trim($request->post('prix'))),
             'etat' => strip_tags(trim($request->post('etat'))),
             'id_categorie' => strip_tags(trim($request->post('id_categorie'))),
@@ -230,23 +230,12 @@ class CourseController extends \App\Controllers\Api\ApiController
         $validator = new Validator([
             'id_formation' => strip_tags(trim($id_formation)),
             'nom' => strip_tags(trim($request->post('nom'))),
-            'description' => $this->strip_critical_tags($request->post("description")),
+            'description' => $this->_strip_critical_tags($request->post("description")),
             'prix' => strip_tags(trim($request->post('prix'))),
             'etat' => strip_tags(trim($request->post('etat'))),
             'id_categorie' => strip_tags(trim($request->post('id_categorie'))),
             'id_niveau' => strip_tags(trim($request->post('id_niveau'))),
             'id_langue' => strip_tags(trim($request->post('id_langue'))),
-        ]);
-
-        $validator->validate([
-            'id_formation' => 'required|exists:formations',
-            'nom' => 'required|min:3|max:80',
-            'description' => 'required|min:15|max:700',
-            'prix' => 'required|numeric|numeric_min:10|numeric_max:1000',
-            'etat' => 'required|in_array:public,private',
-            'id_categorie' => 'required|exists:categories',
-            'id_niveau' => 'required|exists:niveaux',
-            'id_langue' => 'required|exists:langues',
         ]);
 
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
@@ -261,6 +250,17 @@ class CourseController extends \App\Controllers\Api\ApiController
         ];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_formation' => 'required|exists:formations',
+            'nom' => 'required|min:3|max:80',
+            'description' => 'required|min:15|max:700',
+            'prix' => 'required|numeric|numeric_min:10|numeric_max:1000',
+            'etat' => 'required|in_array:public,private',
+            'id_categorie' => 'required|exists:categories',
+            'id_niveau' => 'required|exists:niveaux',
+            'id_langue' => 'required|exists:langues',
+        ]);
 
         $formation = $validator->validated();
         unset($formation['type']);
@@ -367,10 +367,6 @@ class CourseController extends \App\Controllers\Api\ApiController
             'id_formation' => strip_tags(trim($id_formation)),
         ]);
 
-        $validator->validate([
-            'id_formation' => 'required|exists:formations',
-        ]);
-
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
         $relationship = [
             "from" => "formateurs",
@@ -384,16 +380,20 @@ class CourseController extends \App\Controllers\Api\ApiController
 
         $validator->checkPermissions($relationship);
 
+        $validator->validate([
+            'id_formation' => 'required|exists:formations',
+        ]);
+
         if($this->formationModel->delete($id_formation)){
             return Response::json(null, 200, 'Deleted successfuly.');
         }
         return Response::json(null, 500, "Coudn't delete the course, please try again later."); 
     }
 
-    private function strip_critical_tags($text)
+    private function _strip_critical_tags($text)
     {
         $dom = new \DOMDocument();
-        $dom->loadHTML($text);
+        $dom->loadHTML($text ?: "N");
         $tags_to_remove = ['script', 'style', 'iframe', 'link', 'video', 'img'];
         foreach($tags_to_remove as $tag){
             $element = $dom->getElementsByTagName($tag);

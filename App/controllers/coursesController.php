@@ -57,10 +57,6 @@ class CoursesController
 
             $validator = new Validator(['id_formation' => $search]);
 
-	    	$validator->validate([
-	            'id_formation' => 'numeric|exists:formations',
-	        ]);
-
             // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
             $relationship = [
                 "from" => "formateurs",
@@ -74,6 +70,9 @@ class CoursesController
 
             $validator->checkPermissions($relationship);
 
+	    	$validator->validate([
+	            'id_formation' => 'numeric|exists:formations',
+	        ]);
 
             $videoModel = new Video;
             $videos = $videoModel->getVideosOfFormation($search);
@@ -158,12 +157,12 @@ class CoursesController
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
+        if(!$id_formation){
+            return Response::json(null, 400, 'Bad Request');
+        }
+
         $validator = new Validator([
             'id_formation' => strip_tags(trim($id_formation)),
-        ]);
-
-        $validator->validate([
-            'id_formation' => 'required|exists:formations',
         ]);
 
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
@@ -178,6 +177,10 @@ class CoursesController
         ];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_formation' => 'required|exists:formations',
+        ]);
 
         $formationModel = new Formation;
         $formation = $formationModel->find($id_formation);
@@ -195,7 +198,7 @@ class CoursesController
         return view('courses/edit', compact('formation', 'categories', 'niveaux', 'langues', 'notifications')); 
     }
 
-    public function removeAttachedFile($request, $id_formation)
+    public function removeAttachedFile($request, $id_formation = null)
     {
         if($request->getMethod() !== 'DELETE'){
             return Response::json(null, 405, "Method Not Allowed");
@@ -209,12 +212,12 @@ class CoursesController
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
+        if(!$id_formation){
+            return Response::json(null, 400, 'Bad Request');
+        }
+
         $validator = new Validator([
             'id_formation' => strip_tags(trim($id_formation)),
-        ]);
-
-        $validator->validate([
-            'id_formation' => 'required|exists:formations',
         ]);
 
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
@@ -229,6 +232,10 @@ class CoursesController
         ];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_formation' => 'required|exists:formations',
+        ]);
 
         $formationModel = new Formation;
         $file = $formationModel->select($id_formation, ['fichier_attache']);
@@ -257,15 +264,14 @@ class CoursesController
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
+        if(!$id_formation){
+            return Response::json(null, 400, 'Bad Request');
+        }
+
         $order = $request->post('order');
         $validator = new Validator([
             'order' => $order,
             'id_formation' => strip_tags(trim($id_formation)),
-        ]);
-
-        $validator->validate([
-            'order' => 'required|array',
-            'id_formation' => 'required|exists:formations',
         ]);
 
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
@@ -280,6 +286,11 @@ class CoursesController
         ];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'order' => 'required|array',
+            'id_formation' => 'required|exists:formations',
+        ]);
 
         $this->_validateArray($order);
 
@@ -313,21 +324,21 @@ class CoursesController
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }        
 
+        if(!$id_formation){
+            return Response::json(null, 400, 'Bad Request');
+        }
+
         $id_video = $request->post('id_video');
+
         $validator = new Validator([
             'id_formation' => strip_tags(trim($id_formation)),
             'id_video' => strip_tags(trim($id_video))
         ]);
 
-        $validator->validate([
-            'id_formation' => 'required|numeric|exists:formations',
-            'id_video' => 'required|numeric|exists:videos',
-        ]);
-
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
         $relationship = [
-            "from" => "formateurs",
-            "join" => "formations",
+            "from" => "formations",
+            "join" => "formateurs",
             "on" => "id_formateur",
             "where" => [
                 "id_formation" => $id_formation,
@@ -349,6 +360,11 @@ class CoursesController
         ];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_formation' => 'required|numeric|exists:formations',
+            'id_video' => 'required|numeric|exists:videos',
+        ]);
 
         $previewModel = new Preview;
         if($previewModel->update($id_video, $id_formation)){

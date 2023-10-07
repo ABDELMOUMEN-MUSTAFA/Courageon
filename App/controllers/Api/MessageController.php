@@ -22,13 +22,7 @@ class MessageController extends \App\Controllers\Api\ApiController
 
     public function store($request)
     {
-        $senders = ['etudiant', 'formateur'];
-        $sender = $request->post('sender');
-        if(!in_array($sender, $senders)) {
-            return Response::json(null, 400, 'Bad Request');
-        }
-
-        if($sender === 'etudiant'){
+        if(session("user")->get()->type === 'etudiant'){
             return $this->_storeEtudiantMsg($request);
         }
         return $this->_storeFormateurMsg($request);
@@ -36,22 +30,13 @@ class MessageController extends \App\Controllers\Api\ApiController
 
     private function _storeEtudiantMsg($request)
     {
-        // Check CSRF token
-        if(!csrf_token($request->post('_token'))){
-            return Response::json(null, 498, "Invalid Token");
-        }
-
         $validator = new Validator([
             'from' => session('user')->get()->id_etudiant,
             'id_formateur' => strip_tags(trim($request->post('to'))),
             'message' => htmlspecialchars(trim($request->post('message'))),
         ]);
 
-        $validator->validate([
-            'id_formateur' => 'required|min:4|exists:formateurs',
-            'message' => 'required|max:255',
-        ]);
-
+        // PREVENT SENDING MESSAGE TO NOT AUTORIZED FORMATEUR
         $relationship = [
 			"from" => "inscriptions",
 			"join" => "formateurs",
@@ -62,8 +47,12 @@ class MessageController extends \App\Controllers\Api\ApiController
 			]
 		];
         
-        // PREVENT SENDING MESSAGE TO NOT AUTORIZED FORMATEUR
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_formateur' => 'required|min:4|exists:formateurs',
+            'message' => 'required|max:255',
+        ]);
 
         $message = $validator->validated();
         $nomVideo = strip_tags(trim($request->post('nom_video')));
@@ -85,23 +74,14 @@ class MessageController extends \App\Controllers\Api\ApiController
     }
 
     private function _storeFormateurMsg($request)
-    {
-        // Check CSRF token
-        if(!csrf_token($request->post('_token'))){
-            return Response::json(null, 498, "Invalid Token");
-        }
-        
+    {        
         $validator = new Validator([
             'from' => session('user')->get()->id_formateur,
             'id_etudiant' => strip_tags(trim($request->post('to'))),
             'message' => htmlspecialchars(trim($request->post('message'))),
         ]);
 
-        $validator->validate([
-            'id_etudiant' => 'required|min:4|exists:etudiants',
-            'message' => 'required|max:255',
-        ]);
-
+        // PREVENT SENDING MESSAGE TO NOT AUTORIZED ETUDIANT
         $relationship = [
 			"from" => "inscriptions",
 			"join" => "etudiants",
@@ -112,8 +92,12 @@ class MessageController extends \App\Controllers\Api\ApiController
 			]
 		];
         
-        // PREVENT SENDING MESSAGE TO NOT AUTORIZED FORMATEUR
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_etudiant' => 'required|min:4|exists:etudiants',
+            'message' => 'required|max:255',
+        ]);
 
         $message = $validator->validated();
         $nomVideo = strip_tags(trim($request->post('nom_video')));

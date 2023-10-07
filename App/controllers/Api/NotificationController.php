@@ -45,10 +45,7 @@ class NotificationController extends \App\Controllers\Api\ApiController
             'id_notification' => strip_tags(trim($id))
         ]);
 
-        $validator->validate([
-            'id_notification' => 'required|numeric|exists:notifications',
-        ]);
-
+        // CHECK IF THE NOTIFICATION BELONGS TO AUTH FORMATEUR
         $relationship = [
 			"from" => "notifications",
 			"join" => "formateurs",
@@ -60,6 +57,10 @@ class NotificationController extends \App\Controllers\Api\ApiController
 		];
 
         $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_notification' => 'required|numeric|exists:notifications',
+        ]);
 
         if($this->notificationModel->update(['is_read' => true], $id)){
             return Response::json(null, 200, 'Read successfuly.');
