@@ -379,6 +379,8 @@ class EtudiantController
             $etudiantModel->updateToken(session('user')->get()->email, hash('sha256', $token), 30);
 	        session('new_email')->set($validator->validated()['email']);
 
+			sleep(30);
+
             try {
                 $mail = new \App\Libraries\Mail;
                 $mail->to(session('new_email')->get())

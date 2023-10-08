@@ -101,7 +101,7 @@ class UserController
                     'type' => $user->type
                 ];
 
-                $is_sent = $this->_sendEmail($credentials['email'], $user->type, $params, 0, 'activateUserAccount');
+                $is_sent = $this->_sendEmail($credentials['email'], $user->type, $params, 20, 'activateUserAccount');
                 if($is_sent){
                     $attemptsError = "Too many login attempts. Please check your email to activate your account.";
                 }else{
@@ -367,7 +367,7 @@ class UserController
         return Response::json(null, 405, "Method Not Allowed");
     } 
 
-    private function _sendEmail($email, $typeUser, $params = [], $sleepTime = 12, $userMethod = 'confirm')
+    private function _sendEmail($email, $typeUser, $params = [], $sleepTime = 30, $userMethod = 'confirm')
     {
         $token = bin2hex(random_bytes(16));
             
@@ -800,7 +800,10 @@ class UserController
                 'message' => 'required',
             ]);
 
-            extract($_POST);
+            $validatedData = $validator->validated();
+            extract($validatedData);
+
+            sleep(20);
 
             try {
                 $mail = new \App\Libraries\Mail;
