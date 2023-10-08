@@ -12,6 +12,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="<?= CSSROOT ?>/plugins/bootstrap.min.css" />
     <!-- Font Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="<?= CSSROOT ?>/icons/elegant-icons.css" rel="stylesheet" />
     <link href="<?= CSSROOT ?>/icons/all.min.css" rel="stylesheet" />
     <!-- Style -->
@@ -100,6 +101,7 @@
     <a href="<?= URLROOT ?>/user/logout" class="btn_1 rounded"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
 
     <script src="<?= JSROOT ?>/plugins/jquery-3.6.3.min.js"></script>
+    <script src="<?= JSROOT ?>/plugins/jquery-ui.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.validate.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/quill.min.js"></script>
     <script src="<?= JSROOT ?>/plugins/jquery.wizard.js"></script>
