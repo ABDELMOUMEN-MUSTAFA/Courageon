@@ -60,7 +60,8 @@
                 <div class="divider"><span>Ou</span></div>
                 <div class="form-group mb-3">
                     <?php flash("changePassMsg") ?>
-                    <?php flash("signupMsg") ?> 
+                    <?php flash("signupMsg") ?>
+                    <?php flash("tooManyAttemps") ?>
                     <span class="input">
                         <input id="email" class="input_field" type="email" name="email" value="<?= old('email') ?>"  />
                         <label class="input_label <?= isset($email_error) ? 'input_error' : '' ?>">

@@ -192,20 +192,10 @@ class Formateur
 		$query = $this->connect->prepare("
 			SELECT 
 				id_formateur,
-				nom,
-				tel,
-				date_creation,
-				paypalMail,
-				biographie,
-				balance,
-				specialite,
-				code,
+				attempts,
 				slug,
-				id_categorie,
-				img, 
-				email, 
-				prenom,
-				code,
+				img,
+				email,
 				is_all_info_present,
 				email_verified_at,
 				'formateur' AS `type`

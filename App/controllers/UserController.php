@@ -78,6 +78,9 @@ class UserController
                 'password' => $request->post('mdp'),
             ]);
 
+            // Prevent BruteForce Attack
+            sleep(1);
+
             $validator->validate([
                 'email' => 'required|email|auth',
                 'password' => 'required'
@@ -91,6 +94,25 @@ class UserController
             ];
             
             $user = $users[$credentials['type']]->whereEmail($credentials['email']);
+
+            $loginAttempts = 3;
+            if($user->attempts >= $loginAttempts){
+                $users[$user->type]->update(['is_disabled' => true], $user->{'id_'.$user->type});
+                $params = [
+                    'email' => $credentials['email'],
+                    'type' => $user->type
+                ];
+
+                $is_sent = $this->_sendEmail($credentials['email'], $user->type, $params, 0, 'activateUserAccount');
+                if($is_sent){
+                    $attemptsError = "Too many login attempts. Please check your email to activate your account.";
+                }else{
+                    $attemptsError = "Too many login attempts. Please try again later";
+                }
+
+                flash('tooManyAttemps', $attemptsError, 'alert alert-danger');
+                return view('auth/login'); 
+            }
             return $this->_createUserSession($user);
         }
 
@@ -182,6 +204,62 @@ class UserController
         }
 
         return view("auth/login");
+    }
+
+    public function activateUserAccount($request)
+    {
+        if ($request->getMethod() === 'GET') {
+            if(!$request->get('token') || !$request->get('type') || !$request->get('email')){
+                return view('errors/page_404', [], 404);
+            }
+
+            $users = [
+                'etudiant' => new Etudiant,
+                'formateur' => new Formateur
+            ];
+
+            $userType = $request->get('type');
+            if(!in_array($userType, array_keys($users))){
+                return view('errors/page_404', [], 404); 
+            }
+
+            $statement = \App\Libraries\Database::getConnection()->prepare("
+                SELECT
+                    verification_token,
+                    expiration_token_at
+                FROM ".$userType."s
+                WHERE verification_token = :token
+            ");
+
+            $statement->execute([
+                "token" => hash('sha256', $request->get('token')),
+            ]);
+
+            $user = $statement->fetch(\PDO::FETCH_OBJ);
+            if(!$user) {
+                return view('errors/page_404', [], 404);
+            }
+
+            if(strtotime($user->expiration_token_at) < time()) {
+                return view('errors/token_expired', [], 400);
+            }
+
+            $statement = \App\Libraries\Database::getConnection()->prepare("
+                UPDATE ".$userType."s
+                SET email_verified_at = NOW()
+                WHERE verification_token = :token
+            ");
+
+            $statement->execute([
+                "token" => hash('sha256', $request->get('token')),
+            ]);
+
+            $user = $users[$userType]->whereEmail($request->get('email'));        
+            $users[$userType]->update(['is_disabled' => 0, 'verification_token' => null], $user->{'id_'.$userType});
+
+            return $this->_createUserSession($user);
+        }
+        return Response::json(null, 405, "Method Not Allowed");
     }
 
     private function _revokeToken($provider, $accessToken)
@@ -291,43 +369,60 @@ class UserController
         return Response::json(null, 405, "Method Not Allowed");
     } 
 
+    private function _sendEmail($email, $typeUser, $params = [], $sleepTime = 12, $userMethod = 'confirm')
+    {
+        $token = bin2hex(random_bytes(16));
+            
+        $users = [
+            'etudiant' => new Etudiant,
+            'formateur' => new Formateur
+        ];
+
+        $users[$typeUser]->updateToken($email, hash('sha256', $token));
+
+        $queryString = '';
+        if(!$params !== []){
+            foreach($params as $key => $value) {
+                $queryString .= "&";
+                $queryString .= $key."=".$value;
+            }
+        }
+
+        sleep($sleepTime);
+
+        try {
+            $mail = new \App\Libraries\Mail;
+            $mail->to($email)
+            ->subject("Vérification d'adresse e-mail")
+            ->body(null, 'verify-email.php', [
+                '::tokenLink',
+                '::expirationTime',
+            ],
+            [
+                URLROOT."/user/{$userMethod}/?token={$token}{$queryString}",
+                '2 heures',
+            ])->attach(['images/logos/dark-logo.png' => 'logo'])
+            ->send();
+
+            return true;
+        } catch (Exception $e) {
+            // echo json_encode($mail->ErrorInfo);
+            return false;
+        }
+    }
+
     public function sendEmailVerification($request)
     {
         if($request->getMethod() === 'POST') {
             if(!session('user')->get() || session('user')->get()->email_verified_at){
-                Response::json(null, 401, "Unauthorized");
+                return Response::json(null, 401, "Unauthorized");
             }
 
-            $token = bin2hex(random_bytes(16));
-            
-            $users = [
-                'etudiant' => new Etudiant,
-                'formateur' => new Formateur
-            ];
-
-            $users[session('user')->get()->type]->updateToken(session('user')->get()->email, hash('sha256', $token));
-
-            sleep(12);
-
-            try {
-                $mail = new \App\Libraries\Mail;
-                $mail->to(session('user')->get()->email)
-                ->subject("Vérification d'adresse e-mail")
-                ->body(null, 'verify-email.php', [
-                    '::tokenLink',
-                    '::expirationTime',
-                ],
-                [
-                    URLROOT."/user/confirm/?token=".$token,
-                    '2 heures',
-                ])->attach(['images/logos/dark-logo.png' => 'logo'])
-                ->send();
-
+            $is_sent = $this->_sendEmail(session('user')->get()->email, session('user')->get()->type);
+            if($is_sent){
                 return Response::json(null, 200, "Nous avons envoyé votre lien de vérification par e-mail.");
-            } catch (Exception $e) {
-                // echo json_encode($mail->ErrorInfo);
-                return Response::json(null, 500, "L'email n'a pas pu être envoyé.");
             }
+            return Response::json(null, 500, "L'email n'a pas pu être envoyé."); 
         }
 
         return Response::json(null, 405, "Method Not Allowed");
@@ -347,33 +442,18 @@ class UserController
 
     public function confirm($request)
     {
-        if ($request->getMethod() === 'GET') {
-            if(!$request->get('token') || 
-                !session('user')->get() || 
-                session('user')->get()->email_verified_at){
-                return view('errors/page_404', [], 404);
-            }
+            if ($request->getMethod() === 'GET') {
+                if(!$request->get('token') || 
+                    !session('user')->get() || 
+                    session('user')->get()->email_verified_at){
+                    return view('errors/page_404', [], 404);
+                }
 
-            $statement = \App\Libraries\Database::getConnection()->prepare("
-                SELECT
-                    verification_token,
-                    expiration_token_at
-                FROM ".session('user')->get()->type."s
-                WHERE verification_token = :token
-            ");
-
-            $statement->execute([
-                "token" => hash('sha256', $request->get('token')),
-            ]);
-
-            $user = $statement->fetch(\PDO::FETCH_OBJ);
-            if(!$user) {
-                return view('errors/page_404', [], 404);
-            }
-
-            if(strtotime($user->expiration_token_at) < time()) {
                 $statement = \App\Libraries\Database::getConnection()->prepare("
-                    DELETE FROM ".session('user')->get()->type."s
+                    SELECT
+                        verification_token,
+                        expiration_token_at
+                    FROM ".session('user')->get()->type."s
                     WHERE verification_token = :token
                 ");
 
@@ -381,30 +461,45 @@ class UserController
                     "token" => hash('sha256', $request->get('token')),
                 ]);
 
-                session()->flush();
-                return view('errors/token_expired', [], 400);
+                $user = $statement->fetch(\PDO::FETCH_OBJ);
+                if(!$user) {
+                    return view('errors/page_404', [], 404);
+                }
+
+                if(strtotime($user->expiration_token_at) < time()) {
+                    $statement = \App\Libraries\Database::getConnection()->prepare("
+                        DELETE FROM ".session('user')->get()->type."s
+                        WHERE verification_token = :token
+                    ");
+
+                    $statement->execute([
+                        "token" => hash('sha256', $request->get('token')),
+                    ]);
+
+                    session()->flush();
+                    return view('errors/token_expired', [], 400);
+                }
+
+                $statement = \App\Libraries\Database::getConnection()->prepare("
+                    UPDATE ".session('user')->get()->type."s
+                    SET email_verified_at = NOW()
+                    WHERE verification_token = :token
+                ");
+
+                $statement->execute([
+                    "token" => hash('sha256', $request->get('token')),
+                ]);
+
+                $users = [
+                    'etudiant' => new Etudiant,
+                    'formateur' => new Formateur
+                ];
+
+                $user = $users[session('user')->get()->type]->whereEmail(session('user')->get()->email);
+                session('user')->set($user);
+                return view('auth/confirm');
             }
-
-            $statement = \App\Libraries\Database::getConnection()->prepare("
-                UPDATE ".session('user')->get()->type."s
-                SET email_verified_at = NOW()
-                WHERE verification_token = :token
-            ");
-
-            $statement->execute([
-                "token" => hash('sha256', $request->get('token')),
-            ]);
-
-            $users = [
-                'etudiant' => new Etudiant,
-                'formateur' => new Formateur
-            ];
-
-            $user = $users[session('user')->get()->type]->whereEmail(session('user')->get()->email);
-            session('user')->set($user);
-            return view('auth/confirm');
-        }
-        return Response::json(null, 405, "Method Not Allowed");
+            return Response::json(null, 405, "Method Not Allowed");
     }
 
     public function forgot($request)
@@ -605,7 +700,7 @@ class UserController
             'formateur' => new Formateur
         ];    
         
-        $users[$user->type]->update(['is_active' => true], $user->{'id_'.$user->type});
+        $users[$user->type]->update(['is_active' => true, 'attempts' => 0], $user->{'id_'.$user->type});
 
         if ($user->type === 'formateur') {
             if($user->is_all_info_present) {

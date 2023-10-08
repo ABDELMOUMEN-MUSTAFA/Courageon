@@ -169,14 +169,25 @@ class Validator
 
             foreach ($tablesName as $table) {
                 $isExist = false;
-                $query = "SELECT mot_de_passe FROM {$table} WHERE email = :email";
+                $query = "SELECT mot_de_passe, attempts FROM {$table} WHERE email = :email";
                 $statement = Database::getConnection()->prepare($query);
                 $statement->bindParam(':email', $value);
                 $statement->execute();
-                $hashed_password = $statement->fetchColumn();
-                if(!password_verify($this->data['password'], $hashed_password ?? '')) {
+                $user = $statement->fetch(\PDO::FETCH_OBJ);
+                // Check if this email exists.
+                if(!isset($user->mot_de_passe)){
                     continue;
                 }
+
+                // Check user password.
+                if(!password_verify($this->data['password'], $user->mot_de_passe)) {
+                    $query = "UPDATE {$table} SET attempts = attempts + 1 WHERE email = :email";
+                    $statement = Database::getConnection()->prepare($query);
+                    $statement->bindParam(':email', $value);
+                    $statement->execute();
+                    break;
+                }
+
                 $isExist = true;
                 $this->data['type'] = rtrim($table, 's');
                 break;

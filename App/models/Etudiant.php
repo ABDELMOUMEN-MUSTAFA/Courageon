@@ -88,11 +88,9 @@ class Etudiant
 		$query = $this->connect->prepare("
 			SELECT
 				id_etudiant,
-				nom,
-				date_creation,
+				attempts,
 				img, 
 				email, 
-				prenom,
 				email_verified_at,
 				slug,
 				'etudiant' AS `type`
