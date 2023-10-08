@@ -93,6 +93,7 @@ class Etudiant
 				email, 
 				email_verified_at,
 				slug,
+				is_disabled,
 				'etudiant' AS `type`
 			FROM etudiants 
 			WHERE email = :email

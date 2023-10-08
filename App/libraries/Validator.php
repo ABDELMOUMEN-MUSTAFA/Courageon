@@ -32,8 +32,7 @@ class Validator
             if (explode('/', $_GET['url'])[0] !== "api") {
                 if($setOldValue) $this->setOldValuesInSession();
                 if(!is_null($view)) {
-                    view($view, $this->errors);
-                    exit;
+                    return view($view, $this->errors);
                 }
             }
             return Response::json(null, 412, $this->errors);
@@ -174,9 +173,20 @@ class Validator
                 $statement->bindParam(':email', $value);
                 $statement->execute();
                 $user = $statement->fetch(\PDO::FETCH_OBJ);
-                // Check if this email exists.
+                // Check if this email exists in current table.
                 if(!isset($user->mot_de_passe)){
                     continue;
+                }
+
+                $loginAttempts = 3;
+                if($user->attempts >= $loginAttempts){
+                    $query = "UPDATE {$table} SET is_disabled = 1 WHERE email = :email";
+                    $statement = Database::getConnection()->prepare($query);
+                    $statement->bindParam(':email', $value);
+                    $statement->execute();
+                    $isExist = true;
+                    $this->data['type'] = rtrim($table, 's');
+                    break;
                 }
 
                 // Check user password.

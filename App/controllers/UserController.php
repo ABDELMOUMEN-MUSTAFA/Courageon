@@ -95,9 +95,7 @@ class UserController
             
             $user = $users[$credentials['type']]->whereEmail($credentials['email']);
 
-            $loginAttempts = 3;
-            if($user->attempts >= $loginAttempts){
-                $users[$user->type]->update(['is_disabled' => true], $user->{'id_'.$user->type});
+            if($user->is_disabled){
                 $params = [
                     'email' => $credentials['email'],
                     'type' => $user->type

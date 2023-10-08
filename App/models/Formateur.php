@@ -195,6 +195,7 @@ class Formateur
 				attempts,
 				slug,
 				img,
+				is_disabled,
 				email,
 				is_all_info_present,
 				email_verified_at,
