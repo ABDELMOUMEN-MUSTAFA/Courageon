@@ -162,8 +162,11 @@
                                 </div>
                             </div>
                             <!--/collapse -->
+                            <!--/filters col-->
+                            <div class="d-grid mt-4">
+                                <button id="clear-filters" class="btn btn-secondary btn-sm d-block">Clear filters</button>
+                            </div>
                         </div>
-                        <!--/filters col-->
                     </aside>
                     <!-- /aside -->
 

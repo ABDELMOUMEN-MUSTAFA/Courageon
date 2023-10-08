@@ -6,8 +6,8 @@ $(function(){
     const $courses = $('#courses');
     const $sortBy = $('input[name="sort"]');
 
-    function addLoadMoreBtn(nextPage, currentPage, totalPages) {
-        if(currentPage === totalPages) return;
+    function addLoadMoreBtn(nextPage, currentPage, totalPages, totalRecords) {
+        if(currentPage === totalPages || totalRecords === 0) return;
 
         $courses.append(`
             <p class="text-center">
@@ -50,7 +50,7 @@ $(function(){
             success: function ({data}) {
                 const { courses, totalRecords, currentPage, nextPage, totalPages } = data;
                 renderCourses(courses, totalRecords, currentPage, nextPage);
-                addLoadMoreBtn(nextPage, currentPage, totalPages);
+                addLoadMoreBtn(nextPage, currentPage, totalPages, totalRecords);
             },
             error: function(){
                 $courses.html('');
@@ -169,6 +169,12 @@ $(function(){
             const width = $(window).width();
             if(width > 991) $(window).scrollTop(100);
         });
+    });
+
+    // Clear filters
+    $('#clear-filters').click(function(){
+        history.replaceState(null, null, URLROOT + '/courses/search');
+        fetch();
     });
 
     $('.searchForm').submit(function (event) {
