@@ -50,10 +50,19 @@ class CoursesController
 	           return view('errors/page_404', [], 404);
 	        }
 
+            if(!session('user')->get()->email_verified_at) {
+                return redirect('user/verify');
+            }
+    
+            if(!session('user')->get()->is_all_info_present){
+                return redirect('user/continue');
+            }
+
             $formationRelationships = ['videos'];
             if(!in_array($relationship, $formationRelationships)){
                 return view('errors/page_404', [], 404);
             }
+
 
             $validator = new Validator(['id_formation' => $search]);
 
@@ -113,6 +122,14 @@ class CoursesController
            return view('errors/page_404', [], 404);
         }
 
+        if(!session('user')->get()->email_verified_at) {
+            return redirect('user/verify');
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
+
         $categorieModel = new Categorie;
         return view('formateurs/courses/index', ['categories' => $categorieModel->all(), 'notifications' => $this->_getNotifications()]);
     }
@@ -130,6 +147,14 @@ class CoursesController
         if(session('user')->get()->type !== 'formateur'){
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
+
+        if(!session('user')->get()->email_verified_at) {
+            return redirect('user/verify');
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
 
         $categorieModel = new Categorie;
         $langueModel = new Langue;
@@ -156,6 +181,14 @@ class CoursesController
         if(session('user')->get()->type !== 'formateur'){
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
+
+        if(!session('user')->get()->email_verified_at) {
+            return redirect('user/verify');
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
 
         if(!$id_formation){
             return Response::json(null, 400, 'Bad Request');
@@ -212,6 +245,14 @@ class CoursesController
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
 
+        if(!session('user')->get()->email_verified_at) {
+            return redirect('user/verify');
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
+
         if(!$id_formation){
             return Response::json(null, 400, 'Bad Request');
         }
@@ -263,6 +304,14 @@ class CoursesController
         if(session('user')->get()->type !== 'formateur'){
            return Response::json(null, 403, "You don't have permission to access this resource."); 
         }
+
+        if(!session('user')->get()->email_verified_at) {
+            return redirect('user/verify');
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
 
         if(!$id_formation){
             return Response::json(null, 400, 'Bad Request');
@@ -322,7 +371,15 @@ class CoursesController
 
         if(session('user')->get()->type !== 'formateur'){
            return Response::json(null, 403, "You don't have permission to access this resource."); 
-        }        
+        }
+        
+        if(!session('user')->get()->email_verified_at) {
+            return redirect('user/verify');
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
 
         if(!$id_formation){
             return Response::json(null, 400, 'Bad Request');

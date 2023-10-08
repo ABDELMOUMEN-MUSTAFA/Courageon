@@ -115,6 +115,14 @@ class CourseController extends \App\Controllers\Api\ApiController
            return Response::json(null, 403); 
         }
 
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403);
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403); 
+		}
+
         // Check CSRF token (pass true to trigger the checker if no token provided)
         if(!csrf_token($request->post('_token'))){
             return Response::json(null, 403, "Invalid Token");
@@ -221,6 +229,14 @@ class CourseController extends \App\Controllers\Api\ApiController
         if(session('user')->get()->type !== 'formateur'){
            return Response::json(null, 403); 
         }
+
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403);
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403); 
+		}
 
         // Check CSRF token
         if(!csrf_token($request->post('_token'))){
@@ -362,6 +378,14 @@ class CourseController extends \App\Controllers\Api\ApiController
         if(session('user')->get()->type !== 'formateur'){
            return Response::json(null, 403); 
         }
+
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403);
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403); 
+		}
 
         $validator = new Validator([
             'id_formation' => strip_tags(trim($id_formation)),

@@ -16,6 +16,10 @@ class MessageController extends \App\Controllers\Api\ApiController
             return Response::json(null, 401, "Unauthorized");
         }
 
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403);
+        }
+
         $this->messageModel = new Message;
         parent::__construct();
     }
@@ -25,6 +29,11 @@ class MessageController extends \App\Controllers\Api\ApiController
         if(session("user")->get()->type === 'etudiant'){
             return $this->_storeEtudiantMsg($request);
         }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403); 
+		}
+        
         return $this->_storeFormateurMsg($request);
     }
 

@@ -21,6 +21,10 @@ class PaypalController
 			return redirect('user/login');
 		}
 
+		if(!session('user')->get()->email_verified_at) {
+			return redirect('user/verify');
+		}
+
 		$this->formationModel = new Formation;
 		$this->inscriptionModel = new Inscription;
 		$this->access_token = $this->_getAccessToken();

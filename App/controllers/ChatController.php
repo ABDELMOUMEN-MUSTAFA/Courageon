@@ -17,6 +17,10 @@ class ChatController
         if(!session('user')->get()->email_verified_at) {
             return redirect('user/verify');
         }
+
+        if(!session('user')->get()->is_all_info_present){
+			return redirect('user/continue');
+		}
     }
 
     public function index($request, $from_user = null)

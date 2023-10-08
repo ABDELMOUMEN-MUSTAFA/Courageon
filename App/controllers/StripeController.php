@@ -20,6 +20,10 @@ class StripeController
 			return redirect('user/login');
 		}
 
+		if(!session('user')->get()->email_verified_at) {
+			return redirect('user/verify');
+		}
+
 		$this->formationModel = new Formation;
 		$this->inscriptionModel = new Inscription;
 	}

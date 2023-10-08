@@ -16,6 +16,18 @@ class NotificationController extends \App\Controllers\Api\ApiController
             return Response::json(null, 401, "Unauthorized");
         }
 
+        if(session('user')->get()->type !== 'formateur'){
+            return Response::json(null, 403); 
+        }
+
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403);
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403); 
+		}
+
         $this->notificationModel = new Notification;
         parent::__construct();
     }
