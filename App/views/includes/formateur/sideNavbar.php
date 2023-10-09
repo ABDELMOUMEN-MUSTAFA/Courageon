@@ -54,6 +54,12 @@
                             <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">message</i> Messages
                         </a>
                     </li>
+                    <li class="sidebar-menu-item <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === "/{$sitename}/formateur/privateCourses" ? 'active' : '' ?>">
+                        <a class="sidebar-menu-button"
+                           href="<?= URLROOT ?>/formateur/privateCourses">
+                            <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">lock</i> Manage Private Courses
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

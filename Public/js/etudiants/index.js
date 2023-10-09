@@ -166,6 +166,7 @@ $(function () {
     $('#join-form').submit(function(event){
     	event.preventDefault();
     	const code = $(this).serializeArray()[0];
+		const csrfToken = $(this).serializeArray()[1];
     	const format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
     	if(code.value.length < 30 || code.value.length > 60 || format.test(code.value)){
@@ -173,7 +174,7 @@ $(function () {
  			return;
     	}
 
-    	$.post(`${URLROOT}/etudiant/joinCourse`, {code: code.value}, function({messages}){
+    	$.post(`${URLROOT}/etudiant/joinCourse`, {code: code.value, _token: csrfToken.value}, function({messages}){
     		$('#join-course').modal('toggle');
     		$('#message').html(`
     			<div class="alert alert-light border-1 border-left-3 border-left-success d-flex justify-content-between">

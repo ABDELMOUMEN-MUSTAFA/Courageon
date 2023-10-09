@@ -254,91 +254,7 @@ class Formation
         }
         return [];
     }
-
-    public function whereNomFormateur($nomFormateur)
-    {
-        $query = $this->connect->prepare("
-            SELECT
-                fore.id_formation,
-                image AS imgFormation,
-                mass_horaire,
-                fore.nom AS nomFormation,
-                fore.date_creation,
-                prix,
-                description,
-                jaimes,
-                description,
-                f.id_formateur,
-                f.nom AS nomFormateur,
-                f.prenom,
-                f.img AS imgFormateur,
-                c.id_categorie,
-                c.nom AS nomCategorie,
-                l.id_langue,
-                l.nom AS nomLangue,
-                n.id_niveau,
-                n.nom AS nomNiveau
-            FROM formations fore
-            JOIN formateurs f ON fore.id_formateur = f.id_formateur
-            JOIN categories c ON fore.id_categorie = c.id_categorie
-            JOIN langues l ON fore.id_langue = l.id_langue
-            JOIN niveaux n ON fore.id_niveau = n.id_niveau
-            WHERE fore.etat = 'public'
-            AND f.nom LIKE CONCAT('%', :nomFormateur, '%')
-        ");
-
-        $query->bindValue(":nomFormateur", $nomFormateur);
-        $query->execute();
-
-        $formations = $query->fetchAll(\PDO::FETCH_OBJ);
-        if ($query->rowCount() > 0) {
-            return $formations;
-        }
-        return [];
-    }
-
-    public function whereNom($nom)
-    {
-        $query = $this->connect->prepare("
-            SELECT
-                fore.id_formation,
-                image AS imgFormation,
-                mass_horaire,
-                fore.nom AS nomFormation,
-                fore.date_creation,
-                prix,
-                description,
-                jaimes,
-                description,
-                f.id_formateur,
-                f.nom AS nomFormateur,
-                f.prenom,
-                f.img AS imgFormateur,
-                c.id_categorie,
-                c.nom AS nomCategorie,
-                l.id_langue,
-                l.nom AS nomLangue,
-                n.id_niveau,
-                n.nom AS nomNiveau
-            FROM formations fore
-            JOIN formateurs f ON fore.id_formateur = f.id_formateur
-            JOIN categories c ON fore.id_categorie = c.id_categorie
-            JOIN langues l ON fore.id_langue = l.id_langue
-            JOIN niveaux n ON fore.id_niveau = n.id_niveau
-            WHERE fore.etat = 'public'
-            AND fore.nom LIKE CONCAT('%', :q, '%')
-        ");
-
-        $query->bindValue(":nom", $nom);
-        $query->execute();
-
-        $formations = $query->fetchAll(\PDO::FETCH_OBJ);
-        if ($query->rowCount() > 0) {
-            return $formations;
-        }
-        return [];
-    }
-
+    
     public function find($id)
     {
         $query = $this->connect->prepare("
@@ -458,7 +374,7 @@ class Formation
         return [];
     }
 
-    public function getPrivateFormations($code)
+    public function getCanJoinCourses($code)
     {
         $query = $this->connect->prepare("
             SELECT 
@@ -469,7 +385,9 @@ class Formation
                 prix
             FROM formations 
             JOIN formateurs AS f USING (id_formateur)
-            WHERE BINARY `code` = :code AND etat = 'private'
+            WHERE BINARY `code` = :code 
+            AND etat = 'private'
+            AND can_join = 1
         ");
 
         $query->execute([
@@ -723,5 +641,29 @@ class Formation
             return true;
         }
         return false;
+    }
+
+    public function where($columns, $conditions)
+    {
+        $filters = array_keys($conditions);
+        foreach($filters as $key => $column){
+            $filters[$key] = "{$column} = :{$column}";
+        }
+        
+        $query = $this->connect->prepare("
+            SELECT 
+                ".implode(', ', $columns)."
+            FROM formations
+            WHERE ".implode(' AND ', $filters)
+        );
+
+        foreach ($conditions as $column => $value) $query->bindValue($column, $value);
+        $query->execute();
+
+        $formations = $query->fetchAll(\PDO::FETCH_OBJ);
+        if ($query->rowCount() > 0) {
+            return $formations;
+        }
+        return [];
     }
 }

@@ -435,4 +435,57 @@ class CoursesController
 		$notificationModel = new Notification;
 		return $notificationModel->whereRecipient(session('user')->get()->id_formateur);
 	}
+
+    public function toggleCanJoin($request, $id_formation)
+    {
+        if($request->getMethod() !== 'PUT'){
+            return Response::json(null, 405, "Method Not Allowed");
+        }
+
+        if(!auth()){
+            return Response::json(null, 401, "Unauthorized");
+        }
+
+        if(session('user')->get()->type !== 'formateur'){
+           return Response::json(null, 403, "You don't have permission to access this resource."); 
+        }
+        
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403, "You don't have permission to access this resource.");
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403, "You don't have permission to access this resource.");
+		}
+
+        if(!$id_formation){
+            return Response::json(null, 400, 'Bad Request');
+        }
+
+        $validator = new Validator([
+            'id_formation' => strip_tags(trim($id_formation)),
+        ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formations",
+            "join" => "formateurs",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id_formation,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
+
+        $validator->validate([
+            'id_formation' => 'required|numeric|exists:formations',
+        ]);
+
+        $formationModel = new Formation;
+        $can_join = (bool) $formationModel->where(['can_join'], ['id_formation' => $id_formation])[0]->can_join;
+        $formationModel->update(['can_join' => intval(!$can_join)], $id_formation);
+        return Response::json(null, 204);
+    }
 }

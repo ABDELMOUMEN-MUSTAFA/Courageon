@@ -9597,7 +9597,7 @@ a.close.disabled {
 }
 
 [dir] .bg-danger {
-    background-color: #f44336!important
+    background-color: #f44336!important;
 }
 
 [dir] a.bg-danger:focus,[dir] a.bg-danger:hover,[dir] button.bg-danger:focus,[dir] button.bg-danger:hover {

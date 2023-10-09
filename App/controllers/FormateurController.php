@@ -9,6 +9,7 @@ use App\Models\{
     Message,
     Video,
     Etudiant,
+    Formation,
     Notification
 };
 
@@ -603,4 +604,17 @@ class FormateurController
 		$notifications = $this->notifications;
         return view('formateurs/messages', compact('conversations', 'etudiant', 'myEtudiants', 'last_message_time', 'notifications'));
     }
+
+	public function privateCourses($request)
+	{
+		if($request->getMethod() === 'GET'){
+			$formationModel = new Formation;
+			$privateCourses = $formationModel->where(
+				['id_formation', 'nom', 'prix', 'image', 'mass_horaire', 'can_join'], 
+				['etat' => 'private', 'id_formateur' => $this->id_formateur]
+			);
+			$notifications = $this->notifications;
+			return view("formateurs/private-courses", compact('privateCourses', 'notifications'));
+		}
+	}
 }

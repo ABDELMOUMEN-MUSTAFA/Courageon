@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="icon" type="image/x-icon" href="<?= IMAGEROOT ?>/favicon.ico" />
-        <title>Bookmarks | <?= SITENAME ?></title>
+        <title>Private Course | <?= SITENAME ?></title>
 
         <!-- Custom Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:400,500,700%7CRoboto:400,500%7CRoboto:400,500&display=swap" />
@@ -24,55 +24,6 @@
 
         <!-- Nestable CSS -->
         <link rel="stylesheet" href="<?= CSSROOT ?>/plugins/nestable.css" />
-
-        <!-- Plyr CSS -->
-        <link rel="stylesheet" href="<?= CSSROOT ?>/plugins/plyr.min.css" />
-
-        <style>
-            /* Video Modal */
-            #overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 999;
-                display:none;
-            }
-
-            .overlay-content {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, 1000%);
-                width: 85%;
-                z-index: 9999;
-                transition: transform 0.4s ease-in-out;
-                padding: 6px;
-                background-color: #662d91;
-                border-radius: 8px;
-            }
-
-            #closeBtn {
-                border: none;
-                background-color: #662d91;
-                width: 2.3rem;
-                height: 2.3rem;
-                border-radius: 50%;
-                position: absolute;
-                top: -15px;
-                color: #ffffff;
-                right: -15px;
-                font-size: 1.3rem;
-                transition: background-color 0.3s;
-            }
-
-            #closeBtn:hover {
-                background-color: #f31e1e;
-            }
-            /* End Modal */
-        </style>    
     </head>
 
     <body class=" layout-fluid">
@@ -98,7 +49,7 @@
         <!-- Header Layout -->
         <div class="mdk-header-layout js-mdk-header-layout">
             <!-- require navbar header -->
-            <?php require_once APPROOT . "/views/includes/etudiant/navbar.php" ?>
+            <?php require_once APPROOT . "/views/includes/formateur/navbar.php" ?>
 
             <!-- Header Layout Content -->
             <div class="mdk-header-layout__content">
@@ -108,38 +59,39 @@
                     <div class="mdk-drawer-layout__content page">
                     <div class="container-fluid page__container">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                                <li class="breadcrumb-item"><a href="<?= URLROOT ?>/etudiant">Mes cours</a></li>
-                                <li class="breadcrumb-item active">Bookmarks</li>
+                                <li class="breadcrumb-item"><a href="<?= URLROOT ?>/formateur">Home</a></li>
+                                <li class="breadcrumb-item"><a href="<?= URLROOT ?>/courses">Courses</a></li>
+                                <li class="breadcrumb-item active">Private Courses</li>
                             </ol>
                             <div class="media align-items-center mb-headings">
                                 <div class="media-body">
-                                    <h1 class="h2">Bookmarks</h1>
+                                    <h1 class="h2">Manage Private Courses</h1>
                                 </div>
+                                <a href="<?= URLROOT ?>/courses/add" class="btn btn-success">Add course</a>
                             </div>
                             <div class="row">
                                 <div class="col">
                                     <div class="nestable" id="nestable-handles-primary">
                                         <ul class="nestable-list">
-                                            <?php foreach($bookmarks as $video): ?>
+                                            <?php foreach($privateCourses as $course): ?>
                                             <li class="nestable-item nestable-item-handle">
-                                                <div class="nestable-content mx-0">
+                                                <div style="border-width: 2px;" class="nestable-content mx-0 <?= $course->can_join ? 'border-success' : 'border-danger' ?>">
                                                     <div class="media align-items-center">
                                                         <div class="media-left">
-                                                            <img src="<?= IMAGEROOT ?>/<?= $video->thumbnail ?>"
-                                                                    alt="thumbnail video"
+                                                            <img src="<?= IMAGEROOT ?>/<?= $course->image ?>"
+                                                                    alt="thumbnail formation"
                                                                     width="100"
                                                                     class="rounded">
                                                         </div>
                                                         <div class="media-body">
                                                             <h5 class="card-title h6 mb-0">
-                                                                <a href="instructor-lesson-add.html"><?= $video->nom ?></a>
+                                                                <a href="<?= URLROOT ?>/courses/edit/<?= $course->id_formation ?>"><?= $course->nom ?></a>
                                                             </h5>
-                                                            <small class="text-muted"><?= $video->duree ?></small>
+                                                            <small class="text-muted"><?= $course->mass_horaire ?></small>
                                                         </div>
                                                         <div class="media-right">
-                                                            <button data-url="<?= $video->url ?>" class="btn btn-white btn-sm watch-video"><i class="material-icons">visibility</i></button>
-                                                            <a href="<?= URLROOT ?>/etudiant/formation/<?= $video->id_formation ?>" class="btn btn-white btn-sm watch-video"><i class="material-icons">ondemand_video</i></a>
+                                                            <button <?= $course->can_join ? 'disabled' : '' ?> data-id-formation="<?= $course->id_formation ?>" class="btn btn-success btn-sm toggle-join" data-toggle="tooltip" data-placement="top" title="Student can join this course by Code"><i class="material-icons">check_circle</i></button>
+                                                            <button <?= !$course->can_join ? 'disabled' : '' ?> data-id-formation="<?= $course->id_formation ?>" class="btn btn-danger btn-sm toggle-join" data-toggle="tooltip" data-placement="top" title="Student can't join this course by Code"><i class="material-icons">cancel</i></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -152,18 +104,10 @@
                         </div>
                     </div>
                     <!-- require sidebar -->
-                    <?php require_once APPROOT . "/views/includes/etudiant/sideNavbar.php" ?>
+                    <?php require_once APPROOT . "/views/includes/formateur/sideNavbar.php" ?>
                 </div>
             </div>
         </div>
-
-        <!-- Popup Preview Video -->
-        <div class="overlay-content">
-            <video style="--plyr-color-main: #662d91;" class="object-fit-cover" id="player" playsinline controls></video>
-            <button id="closeBtn" class="d-flex align-items-center justify-content-center"><i class="material-icons">clear</i></button>
-        </div>
-        <div id="overlay" class="hidden"></div>
-        <!-- End Popup -->
 
         <!-- Scripts -->
         <!-- jQuery -->
@@ -185,36 +129,25 @@
         <!-- App JS -->
         <script src="<?= JSROOT ?>/plugins/app.js"></script>
 
-        <!-- Plyr -->
-        <script src="<?= JSROOT ?>/plugins/plyr.min.js"></script>
-
         <script>
             const URLROOT = `<?= URLROOT ?>`;
-            const player = new Plyr('#player', {captions: {active: true}});
-            
-            // Open the overlay when the button is clicked
-            $(".watch-video").click(function(event) {
-                $("#overlay").fadeIn();
-                $(".overlay-content").css({ transform: "translate(-50%, -50%)" });
-                $("body").css({
-                    overflow : 'hidden'
+            $('.toggle-join').click(function(event){
+                const currentButton = $(this);
+
+                $.ajax({
+                    url: `${URLROOT}/courses/toggleCanJoin/${currentButton.data('idFormation')}`,
+                    type: 'PUT',
+                    success: function(){
+                        currentButton.prop('disabled', true);
+                        currentButton.siblings().prop('disabled', false);
+                    },
+                    error: function({responseJSON: {messages}}){
+                        alert(messages);
+                    }
                 });
 
-                $('#player').prop('src', `${URLROOT}/public/videos/${$(this).data('url')}`);
-                player.play();
-            });
 
-            function hideOverlay() {
-                $("#overlay").fadeOut();
-                $(".overlay-content").css({ transform: "translate(-50%, 1000%)" });
-                $("body").css({
-                    overflow : 'auto'
-                });
-                
-                player.pause();
-            }
-
-            $("#closeBtn, #overlay").click(hideOverlay);
+            })
         </script>
     </body>
 </html>

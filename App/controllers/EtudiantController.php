@@ -79,9 +79,9 @@ class EtudiantController
 		]);
 
 		$formationModel = new Formation;
-		$formations = $formationModel->getPrivateFormations($validator->validated()["code"]);
+		$formations = $formationModel->getCanJoinCourses($validator->validated()["code"]);
 		if(!$formations){
-			return Response::json(null, 400, "Sorry! this instractor doesn't have any courses yet.");
+			return Response::json(null, 400, "Sorry! this instractor doesn't have any private courses.");
 		}
 
 		$inscriptionModel = new Inscription;
@@ -111,7 +111,7 @@ class EtudiantController
 			'recipient_id' => $formation->id_formateur
 		]);
 		
-        return Response::json(null, 200, "Congrats! vous avez rejoindre toutes les formations de formateur <strong>{$formations[0]->nom} {$formations[0]->prenom}</strong>.");
+        return Response::json(null, 200, "Congrats! vous avez rejoindre les formations privés autorisés par <strong>{$formations[0]->nom} {$formations[0]->prenom}</strong>.");
     }
 
     public function formation($request, $id_formation = null)
