@@ -31,10 +31,10 @@
                     <li class="hidden_tablet"><a href="<?= URLROOT . "/user/login" ?>" class="btn_1 rounded">Se Connecter</a></li>
                 <?php else: ?>
                     <?php if (session('user')->get()->type === 'formateur') : ?>
-                        <li class="hidden_tablet"><a href="<?= URLROOT . "/formateur/dashboard" ?>" class="btn_1 rounded">Dashboard</a>
+                        <li class="hidden_tablet"><a href="<?= URLROOT . "/formateur" ?>" class="btn_1 rounded">Dashboard</a>
                         </li>
                     <?php else: ?>
-                        <li class="hidden_tablet"><a href="<?= URLROOT . "/etudiant/dashboard" ?>" class="btn_1 rounded">Mes Cours</a>
+                        <li class="hidden_tablet"><a href="<?= URLROOT . "/etudiant" ?>" class="btn_1 rounded">Mes Cours</a>
                         </li>
                     <?php endif ?>
                 <?php endif ?>
@@ -52,19 +52,16 @@
                     <li><span><a href="<?= URLROOT ?>">Accueil</a></span></li>
                     <li><span><a href="<?= URLROOT ?>/courses/search">Formations</a></span></li>
                     <li><span><a href="<?= URLROOT ?>/#contact-us">Contactez-nous</a></span></li>
-                    <?php if (!isset($_SESSION['user'])) : ?>
-                        <li><span><a href="<?= URLROOT ?>/user/register">S'inscrire</a></span></li>
-                    <?php endif ?>
-                    <?php if (!isset($_SESSION['user'])) : ?>
-                        <li class="d-lg-none"><a href="<?= URLROOT . "/user/login" ?>">Se Connecter</a></li>
-                    <?php endif ?>
-                    <?php if (isset($_SESSION['id_formateur'])) : ?>
-                        <li class="d-lg-none"><a href="<?= URLROOT . "/formateur/dashboard" ?>">Dashboard</a>
-                        </li>
-                    <?php endif ?>
-                    <?php if (isset($_SESSION['id_etudiant'])) : ?>
-                        <li class="d-lg-none"><a href="<?= URLROOT . "/etudiant/dashboard" ?>">Mes Cours</a>
-                        </li>
+                    <?php if (!session('user')->get()) : ?>
+                        <li class="hidden_desktop"><a href="<?= URLROOT . "/user/login" ?>" class="btn_1 rounded">Se Connecter</a></li>
+                    <?php else: ?>
+                        <?php if (session('user')->get()->type === 'formateur') : ?>
+                            <li class="hidden_desktop"><a href="<?= URLROOT . "/formateur/dashboard" ?>" class="btn_1 rounded">Dashboard</a>
+                            </li>
+                        <?php else: ?>
+                            <li class="hidden_desktop"><a href="<?= URLROOT . "/etudiant/dashboard" ?>" class="btn_1 rounded">Mes Cours</a>
+                            </li>
+                        <?php endif ?>
                     <?php endif ?>
                 </ul>
             </nav>

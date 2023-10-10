@@ -51,7 +51,7 @@
                         <div id="intro">
                             <figure><img src="<?= IMAGEROOT ?>/home/wizard.svg" alt="addmission icon"></figure>
                             <h1>Commencer l'enseignement</h1>
-                            <p>Bonjour <strong><?= $_SESSION['user']->nom ?></strong>, avant de commencer à enseigner sur notre plateforme, vous devez nous fournir des informations supplémentaires sur votre parcours professionnel.</p>
+                            <p>Bonjour <strong><?= session('user')->get()->nom ?></strong>, avant de commencer à enseigner sur notre plateforme, vous devez nous fournir des informations supplémentaires sur votre parcours professionnel.</p>
                             <p><strong>Veuillez remplir tous les champs pour continuer.</strong></p>
                         </div>
                     </div>

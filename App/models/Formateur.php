@@ -192,6 +192,7 @@ class Formateur
 		$query = $this->connect->prepare("
 			SELECT 
 				id_formateur,
+				nom,
 				attempts,
 				slug,
 				img,
