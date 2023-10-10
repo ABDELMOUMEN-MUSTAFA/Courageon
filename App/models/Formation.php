@@ -37,7 +37,7 @@ class Formation
     public function create($formation)
     {
         $query = $this->connect->prepare("
-            INSERT INTO formations (id_niveau, id_formateur, id_categorie, nom, image, mass_horaire, prix, description, etat, id_langue, background_img, fichier_attache) VALUES (:id_niveau, :id_formateur, :id_categorie, :nom, :image, SEC_TO_TIME(:mass_horaire), :prix, :description, :etat, :id_langue, :background_img, :fichier_attache)
+            INSERT INTO formations (id_niveau, id_formateur, id_categorie, nom, image, mass_horaire, prix, description, etat, id_langue, background_img, fichier_attache) VALUES (:id_niveau, :id_formateur, :id_categorie, :nom, :image, :mass_horaire, :prix, :description, :etat, :id_langue, :background_img, :fichier_attache)
         ");
 
         $query->bindValue(":id_niveau", $formation["id_niveau"]);

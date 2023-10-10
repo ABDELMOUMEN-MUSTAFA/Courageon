@@ -11,7 +11,7 @@ class FormationSeeder extends Seed {
 		$data = [
 			'nom' => str_replace('.', '', $this->faker->sentence(5)),
 			'image' => $this->getRandomImage(600, 400, 'formations', 'formation'),
-			'masse_horaire' => $this->faker->time('H:i:s'),
+			'masse_horaire' => $this->faker->time(),
 			'prix' => $this->faker->randomFloat(2, 10, 1000),
 			'description' => $this->faker->paragraph(9),
 			'etat' => $this->faker->randomElement(['public', 'private']),

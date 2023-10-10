@@ -146,4 +146,14 @@ set_exception_handler([ErrorHandler::class, 'handleException']);
 set_error_handler([ErrorHandler::class, 'handleError']);
 
 date_default_timezone_set("Africa/Casablanca");
-$init = new Router(new Request);
+
+$request = new Request;
+
+$categories = (new \App\Models\Categorie)->all();
+
+if($categories === []){
+    $fakerController = new \App\Controllers\FakerController;
+    return call_user_func_array([$fakerController, 'index'], [$request]);
+}
+
+$init = new Router($request);

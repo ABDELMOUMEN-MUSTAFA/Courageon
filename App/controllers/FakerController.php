@@ -14,7 +14,22 @@ use App\Seeders\{
 
 class FakerController {
 
-	public function __construct(){
+	public function index($request)
+	{
+		if($request->getMethod() === 'GET'){
+			return view('faker/index');
+		}
+		
+		if($request->getMethod() === 'POST'){
+			$data = $this->_generate();
+			return \App\Libraries\Response::json($data);
+		}
+
+		return \App\Libraries\Response::json(null, 405, "Method Not Allowed");
+	}
+
+	private function _generate()
+	{
 		$numberRecords = 10;
 		
 		// Create Categories
@@ -48,6 +63,16 @@ class FakerController {
 		$video = new VideoSeeder;
 		$videoIDs = $video->seed($formationIDs);
 
-		print_r2('<h1 style="text-align: center">DATA GENERATED SUCCESSFULLY!</h1>');
+		$data = [
+			'categories' => count($categorieIDs),
+			'etudiants' => count($etudiantIDs),
+			'formateurs' => count($formateurIDs),
+			'formations' => count($formationIDs),
+			'inscriptions' => count($inscriptionIDs),
+			'videos' => count($videoIDs),
+		];
+
+		return $data;
 	}
+
 }
