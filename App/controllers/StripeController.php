@@ -38,11 +38,12 @@ class StripeController
             'id_formation', 
             'prix', 
             'nom',
-            'id_formateur'
+            'id_formateur',
+			'etat',
         ]);
 
-		if (!$formation) {
-			// cette formation n'existe pas
+		if (!$formation || $formation->etat === 'private') {
+			// cette formation n'existe pas ou prive
 			return view('errors/page_404');
 		}
 
