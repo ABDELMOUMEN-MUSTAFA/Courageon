@@ -246,7 +246,10 @@
         <!-- Jquery Validator -->
         <script src="<?= JSROOT ?>/plugins/jquery.validate.min.js"></script>
 
-        <script>const URLROOT = `<?= URLROOT ?>`;</script>
+        <script>
+            const URLROOT = `<?= URLROOT ?>`;
+            const firstVideo = `<?= $videos[0]->id_video ?>`;
+        </script>
         <script src="<?= JSROOT ?>/etudiants/formation.js"></script>
     </body>
 </html>

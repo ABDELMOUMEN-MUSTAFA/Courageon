@@ -9,6 +9,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 use App\Models\Video;
 
 use App\Libraries\{Response, Validator};
+use App\Models\Subtitle;
 
 class VideoController extends \App\Controllers\Api\ApiController
 {
@@ -47,7 +48,7 @@ class VideoController extends \App\Controllers\Api\ApiController
             'nom' => strip_tags(trim($request->post('v_title'))),
             'description' => strip_tags($request->post("v_description")),
             'id_formation' => strip_tags(trim($request->post('id_formation'))),
-            'url' => $_FILES['lesson_video'] ?? ''
+            'url' => $request->file('lesson_video')
         ]);
 
         // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
@@ -72,10 +73,48 @@ class VideoController extends \App\Controllers\Api\ApiController
 
         $video = $validator->validated();
         unset($video['type']);
-        $video['url'] = uploader($_FILES['lesson_video'], "videos");
+        
+        $video['url'] = uploader($request->file('lesson_video'), "videos");
         $video['thumbnail'] = $this->getThumbnail('videos/'.$video['url']);
         $id_video = $this->videoModel->create($video);
         $video = $this->videoModel->find($id_video);
+
+
+        $langues = $request->post('langues');
+        $subtitles = $request->file('subtitles');
+
+        if($langues && $subtitles){
+            if(!is_array($langues) || !is_array($subtitles)){
+                return Response::json(null, 400, "Bad Request");
+            }
+
+            foreach($langues as $langue){
+                $validator = new Validator([
+                    'id_langue' => $langue
+                ]);
+
+                $validator->validate([
+                    'id_langue' => 'numeric|exists:langues'
+                ]);
+            }
+
+            $validator = new Validator([
+                'subtitles' => $subtitles
+            ]);
+
+            $validator->validate([
+                'subtitles' => 'file:application/octet-stream'
+            ]);
+
+            $subtitles = multiUploader($subtitles, 'subtitles');
+            foreach ($subtitles as $key => $subtitle) {
+                (new Subtitle)->create([
+                    'source' => 'subtitles/'.$subtitle,
+                    'id_video' => $video->id_video,
+                    'id_langue' => $langues[$key]
+                ]);
+            }
+        }
 
         return Response::json($video, 201, 'Created successfuly.');
     }
@@ -136,11 +175,45 @@ class VideoController extends \App\Controllers\Api\ApiController
         		unset($oldVideo);
         	}
         }
-        
-        if($this->videoModel->update($video, $id)){
-        	return Response::json($this->videoModel->find($id), 200, 'Updated successfuly.');
+
+        $langues = $request->post('langues');
+        $subtitles = $request->file('subtitles');
+
+        if($langues && $subtitles){
+            if(!is_array($langues) || !is_array($subtitles)){
+                return Response::json(null, 400, "Bad Request");
+            }
+
+            foreach($langues as $langue){
+                $validator = new Validator([
+                    'id_langue' => $langue
+                ]);
+
+                $validator->validate([
+                    'id_langue' => 'numeric|exists:langues'
+                ]);
+            }
+
+            $validator = new Validator([
+                'subtitles' => $subtitles
+            ]);
+
+            $validator->validate([
+                'subtitles' => 'file:application/octet-stream'
+            ]);
+
+            $subtitles = multiUploader($subtitles, 'subtitles');
+            foreach ($subtitles as $key => $subtitle) {
+                (new Subtitle)->create([
+                    'source' => 'subtitles/'.$subtitle,
+                    'id_video' => $id,
+                    'id_langue' => $langues[$key]
+                ]);
+            }
         }
-        return Response::json(null, 500, "Coudn't update the video, please try again later."); 
+        
+        $this->videoModel->update($video, $id);
+        return Response::json($this->videoModel->find($id), 200, 'Updated successfuly.');
     }
 
     public function delete($id)
@@ -151,7 +224,7 @@ class VideoController extends \App\Controllers\Api\ApiController
 
     	$validator = new Validator(['id_video' => $id]);
 
-    	// CHECK IF THE VIDEO BELONGS TO GIVING FORMATION ID AND THE AUTH FORMATEUR OWNED IT.
+    	// CHECK IF THE VIDEO BELONGS TO THE AUTH FORMATEUR.
         $relationship = [
             "from" => "formations",
             "join" => "videos",
@@ -163,10 +236,6 @@ class VideoController extends \App\Controllers\Api\ApiController
         ];
 
         $validator->checkPermissions($relationship);
-
-    	$validator->validate([
-            'id_video' => 'exists:videos',
-        ]);
         
         $video = $this->videoModel->find($id);
 

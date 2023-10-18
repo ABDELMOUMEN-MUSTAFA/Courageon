@@ -1,5 +1,5 @@
 $(function () {
-    const player = new Plyr('#player', {captions: {active: false}});
+    const player = new Plyr('#player', {captions: {active: false, update: true}});
     
     $(window).keypress(function(event){
         if($(".modal").hasClass('show')){
@@ -27,7 +27,7 @@ $(function () {
     $('.video').click(function(){
         const video = $(this).data('video');
         const videoPlayer = $('#player');
-
+   
         const sourceVideo = `${URLROOT}/public/videos/${video.url}`;
         const previousVideo = videoPlayer.attr('src');
         
@@ -36,6 +36,7 @@ $(function () {
         }
 
         videoPlayer.prop('src', sourceVideo);
+        getSubtitlesOfVideo(video.id_video);
         $('#video-description').text(video.description);
         $('#video-nom').text(video.nomVideo);
         $('.video.active').removeClass('active')
@@ -48,6 +49,26 @@ $(function () {
         $('html, body').animate({ scrollTop: 30 }, 'slow');
         player.play();
     });
+
+    function getSubtitlesOfVideo(id_video){
+        $("#player").empty();
+        
+        $.get(`${URLROOT}/api/subtitles`, {id_video}, function({data: subtitles}){
+            for(let subtitle of subtitles){
+                const track = document.createElement('track');
+                Object.assign(track, {
+                    label: subtitle.nom,
+                    srclang: subtitle.nom.slice(0, 2).toLowerCase(),
+                    default: true,
+                    src: `${URLROOT}/public/${subtitle.source}`
+                });
+
+                $("#player").append(track);
+            }
+        });
+    }
+
+    getSubtitlesOfVideo(firstVideo);
 
     // toggle Like
     $('#like').click(function(){

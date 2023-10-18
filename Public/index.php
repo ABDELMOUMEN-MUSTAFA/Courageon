@@ -142,8 +142,8 @@ class Router
     }
 }
 
-set_exception_handler([ErrorHandler::class, 'handleException']);
-set_error_handler([ErrorHandler::class, 'handleError']);
+// set_exception_handler([ErrorHandler::class, 'handleException']);
+// set_error_handler([ErrorHandler::class, 'handleError']);
 
 date_default_timezone_set("Africa/Casablanca");
 

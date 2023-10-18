@@ -1,5 +1,5 @@
 $(function(){
-    const player = new Plyr('#player', {captions: {active: true}});
+    const player = new Plyr('#player', {captions: {active: true, update: true}});
     const videoPlayer = document.getElementById('player');
 
     // Expose player so it can be used from the console
@@ -11,6 +11,20 @@ $(function(){
         $(".overlay-content").css({ transform: "translate(-50%, -50%)" });
         $("body").css({
             overflow : 'hidden'
+        });
+
+        $.get(`${URLROOT}/api/subtitles`, {id_video: $(this).data('idVideo')}, function({data: subtitles}){
+            for(let subtitle of subtitles){
+                const track = document.createElement('track');
+                Object.assign(track, {
+                    label: subtitle.nom,
+                    srclang: subtitle.nom.slice(0, 2).toLowerCase(),
+                    default: true,
+                    src: `${URLROOT}/public/${subtitle.source}`
+                });
+
+                $("#player").append(track);
+            }
         });
 
         videoPlayer.play();

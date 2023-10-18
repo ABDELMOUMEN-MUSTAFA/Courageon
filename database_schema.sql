@@ -360,6 +360,18 @@ CREATE TABLE IF NOT EXISTS `videos` (
 
 -- Dumping data for table e_learning.videos: ~252 rows (approximately)
 
+-- Dumping structure for table e_learning.sous_titres
+CREATE TABLE `sous_titres` (
+	`id_sous_titre` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`source` VARCHAR(255) NOT NULL,
+	`id_video` INT(10) NOT NULL,
+	`id_langue` INT(10) NULL DEFAULT NULL,
+	PRIMARY KEY (`id_sous_titre`),
+	CONSTRAINT `fk_langues_sous_titres` FOREIGN KEY (`id_langue`) REFERENCES `langues` (`id_langue`) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_videos_sous_titres` FOREIGN KEY (`id_video`) REFERENCES `videos` (`id_video`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+
 -- Dumping structure for trigger e_learning.demande_paiements_after_update
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
