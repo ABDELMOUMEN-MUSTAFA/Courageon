@@ -28,9 +28,6 @@
         <!-- Nestable -->
         <link rel="stylesheet"  href="<?= CSSROOT ?>/plugins/nestable.css">
 
-        <!-- SweetAlert -->
-        <link rel="stylesheet"  href="<?= CSSROOT ?>/plugins/sweetalert.css">
-
         <!-- Plyr CSS -->
         <link rel="stylesheet" href="<?= CSSROOT ?>/plugins/plyr.min.css" /> 
 
@@ -65,7 +62,6 @@
 
             <!-- Header Layout Content -->
             <div class="mdk-header-layout__content">
-
                 <div data-push
                      data-responsive-width="992px"
                      class="mdk-drawer-layout js-mdk-drawer-layout">
@@ -78,7 +74,7 @@
                             </ol>
                             <div class="media align-items-center mb-headings">
                                 <div class="media-body">
-                                    <h1 class="h2"><?= $videos[0]->nomFormation ?></h1>
+                                    <h1 class="h2" id="nom-formation"></h1>
                                 </div>
                                 <div class="media-right">
                                     <button id="add-course" data-target="#add-lesson" data-toggle="modal" class="btn btn-success">AJOUTER</button>
@@ -86,48 +82,10 @@
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <div class="nestable" data-id-formation="<?= $videos[0]->id_formation ?>"
+                                    <div class="nestable" data-id-formation="<?= $search ?>"
                                          id="nestable-handles-primary">
-                                        <ul class="nestable-list">
-                                            <?php foreach($videos as $video) : ?>
-                                            <li class="nestable-item nestable-item-handle"
-                                                data-id="<?= $video->id_video ?>">
-                                                <div class="nestable-handle"><i class="material-icons">menu</i></div>
-                                                <div class="nestable-content">
-                                                    <div class="media align-items-center">
-                                                        <div class="media-left">
-                                                            <img src="<?= IMAGEROOT ?>/<?= $video->thumbnail ?>"
-                                                                 alt="thumbnail video"
-                                                                 width="100"
-                                                                 class="rounded">
-                                                        </div>
-                                                        <div class="media-body">
-                                                            <h5 class="card-title h6 mb-0">
-                                                                <a data-url="<?= VIDEOROOT ?>/<?= $video->url ?>" href="javascript:void(0)" class="video-name"><?= $video->nomVideo ?></a>
-                                                            </h5>
-                                                            <small class="text-muted created-at">created <?= $video->created_at ?></small>
-                                                        </div>
-                                                        <div class="media-right d-flex gap-3 align-items-center">
-                                                            <?php if(!$video->is_preview) : ?>
-                                                                <button data-id-formation="<?= $videos[0]->id_formation ?>" data-id-video="<?= $video->id_video ?>" class="btn btn-white btn-sm set-preview-btn" data-toggle="tooltip" data-placement="top" title="Make it Preview"><i class="material-icons">play_circle_outline</i></button>
-                                                            <?php else: ?>
-                                                                <span data-id-formation="<?= $videos[0]->id_formation ?>" data-id-video="<?= $video->id_video ?>" class="badge badge-pill badge-light preview-badge">Preview</span>
-                                                            <?php endif ?>
-                                                            <div class="dropdown">
-                                                                <a href="#" class="dropdown-toggle text-muted" data-caret="false" data-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="material-icons">more_vert</i>
-                                                                </a>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a href="javascript:void(0)" data-video='<?= json_encode($video) ?>' data-target="#edit-lesson" data-toggle="modal" class="dropdown-item edit-lesson"><i class="material-icons">edit</i> Edit</a>
-                                                                    <div class="dropdown-divider"></div>
-                                                                    <a data-id="<?= $video->id_video ?>" class="dropdown-item text-danger delete-video" href="javascript:void(0)"><i class="material-icons">delete</i> Delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <?php endforeach ?>
+                                        <ul id="wrapper-videos" class="nestable-list">
+                                            <!-- Videos -->
                                         </ul>
                                     </div>
                                         </div>
@@ -165,20 +123,20 @@
                             </div>
                           </div>  
                         <!-- endvideo -->
-                        <form id="create-lesson-form" action="<?= URLROOT ?>/api/videos" method="POST" enctype="multipart/form-data">
+                        <form id="create-lesson-form" method="POST" enctype="multipart/form-data">
                             <div class="form-group row">
                                 <label
                                        class="col-form-label form-label col-md-3">Lesson:</label>
                                 <div class="col-md-9">
                                     <div class="custom-file">
-                                                <input type="file"
-                                                    name="lesson_video" 
-                                                           id="add-lesson-video"
-                                                           accept="video/*" 
-                                                           class="custom-file-input video-input">
-                                                <label for="add-lesson-video"
-                                                           class="custom-file-label">Choose video</label>
-                                            </div>
+                                        <input type="file"
+                                            name="lesson_video" 
+                                            id="add-lesson-video"
+                                            accept="video/*" 
+                                            class="custom-file-input video-input">
+                                        <label for="add-lesson-video"
+                                                class="custom-file-label">Choose video</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -197,22 +155,26 @@
                                        class="col-form-label form-label col-md-3">Description:</label>
                                 <div class="col-md-9">
                                    <div class="form-group">
-                                        <textarea class="form-control" name="v_description" id="v-description-add" rows="3" placeholder="Type here to reply to Matney ..."></textarea>
+                                        <textarea class="form-control" name="v_description" id="v-description-add" rows="3" placeholder="Description"></textarea>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="d-flex justify-content-end mb-3">
+                                <button id="subtitle-add" class="d-flex align-items-center justify-content-center add-subtitle" type="button"><i class="material-icons">add</i></button>
+                            </div>
                             
-                            
-                            <div class="form-group row mb-0">
-                                <div class="col-md-8 offset-md-3">
-                                    <button type="submit"
-                                            class="btn btn-success"
-                                            id="create-lesson-btn">Add</button>
-                                </div>
+                            <div class="subtitles-add">
+                                <!-- subtitles inputs -->
                             </div>
 
-                            <!-- input hidden ID formation -->
-                            <input type="hidden" name="id_formation" value="<?= $videos[0]->id_formation ?>" />
+                            <div class="form-group row mb-0 mt-3">
+                                <div class="col-12 d-grid">
+                                    <button type="submit"
+                                            class="btn btn-success btn-block"
+                                            id="create-lesson-btn">Add Video</button>
+                                </div>
+                            </div>
 
                             <input type="hidden" name="_token" value="<?= csrf_token() ?>" />
                         </form>
@@ -277,12 +239,19 @@
                                        class="col-form-label form-label col-md-3">Description:</label>
                                 <div class="col-md-9">
                                    <div class="form-group">
-                                        <textarea class="form-control" name="v_description" id="v-description-edit" rows="3" placeholder="Type here to reply to Matney ..."></textarea>
+                                        <textarea class="form-control" name="v_description" id="v-description-edit" rows="3" placeholder="Description ..."></textarea>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="d-flex justify-content-end mb-3">
+                                <button id="subtitle-edit" class="d-flex align-items-center justify-content-center add-subtitle" type="button"><i class="material-icons">add</i></button>
+                            </div>
                             
-                            
+                            <div class="subtitles-edit">
+                                <!-- subtitles inputs -->
+                            </div>
+                                                        
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-3">
                                     <button type="submit"
@@ -354,7 +323,12 @@
         <!-- SweetAlert -->
         <script src="<?= JSROOT ?>/plugins/sweetalert.min.js"></script>
         
-        <script>const URLROOT = `<?= URLROOT ?>`;</script>
+        <script>
+            const URLROOT = `<?= URLROOT ?>`;
+            const langues = JSON.parse(`<?= json_encode($langues) ?>`);
+            const courseID = `<?= $search ?>`;            
+        </script>
+
         <script src="<?= JSROOT ?>/videos/index.js"></script>
     </body>
 </html>

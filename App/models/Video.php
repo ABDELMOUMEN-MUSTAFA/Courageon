@@ -109,49 +109,6 @@ class Video
 		}
 	}
 
-	public function getVideosOfFormation($idFormation)
-	{
-		$query = $this->connect->prepare("
-			SELECT 
-				v.id_video,
-				f.id_formation,
-				v.nom AS nomVideo,
-				url,
-				duree,
-				v.description,
-				v.created_at,
-				date_creation,
-				f.nom AS nomFormation,
-				mass_horaire,
-				IF(a.id_video = v.id_video, 1, 0) AS is_preview,
-				ordre,
-				thumbnail,
-				IF(b.id_video = v.id_video, 1, 0) AS is_bookmarked
-			FROM videos v
-			LEFT JOIN apercus a ON v.id_video = a.id_video
-			LEFT JOIN bookmarks b ON v.id_video = b.id_video
-			JOIN formations f ON v.id_formation = f.id_formation
-			WHERE f.id_formation = :id_formation
-			ORDER BY ordre
-		");
-
-		$query->bindParam(':id_formation', $idFormation);
-		$query->execute();
-
-		$videos = $query->fetchAll(\PDO::FETCH_OBJ);
-		if ($query->rowCount() > 0) {
-			foreach ($videos as $video) {
-				$datetime = new Carbon($video->created_at);
-				$video->created_at = $datetime->diffForHumans();
-				$duree = explode(":", $video->duree);
-				$video->duree = $duree[1].":".$duree[2];
-			}
-			
-			return $videos;
-		}
-		return [];
-	}
-
 	public function update($video, $id)
 	{
 		$columnsToUpdate = array_keys($video);
@@ -343,6 +300,7 @@ class Video
 				DATE_FORMAT(videos.duree, '%i:%s') AS duree
 			FROM videos
 			WHERE id_formation = :id_formation
+			ORDER BY ordre
 		");
 
 		$query->bindParam(':id_formation', $id_formation);
@@ -386,7 +344,8 @@ class Video
                     CONCAT(TIME_FORMAT(duree, '%H'), 'H ', TIME_FORMAT(duree, '%i'), 'Min'), 
                     TIME_FORMAT(duree, '%i Min')
                 ) AS duree,
-				thumbnail
+				thumbnail,
+				id_video
 			FROM bookmarks
 			JOIN videos USING (id_video)
 			WHERE id_etudiant = :id_etudiant

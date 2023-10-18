@@ -63,7 +63,6 @@ class CoursesController
                 return view('errors/page_404', [], 404);
             }
 
-
             $validator = new Validator(['id_formation' => $search]);
 
             // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
@@ -83,10 +82,9 @@ class CoursesController
 	            'id_formation' => 'numeric|exists:formations',
 	        ]);
 
-            $videoModel = new Video;
-            $videos = $videoModel->getVideosOfFormation($search);
+            $langues = (new Langue)->all();
             $notifications = $this->_getNotifications();
-            return view('videos/index', compact('videos', 'notifications'));
+            return view('videos/index', compact('notifications', 'langues', 'search'));
         }
 
         if(!is_null($search)){

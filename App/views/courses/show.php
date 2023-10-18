@@ -118,7 +118,7 @@
                         <!-- /col -->
                         <aside class="col-lg-5 col-xl-4" id="sidebar-course">
                             <div class="box_detail shadow">
-                                <figure id="show-preview" >
+                                <figure id="show-preview" data-id-video="<?= $previewVideo->id_video ?>">
                                     <a href="javascript:void(0)" rel="noindex" class="video"><i style="color:#FFC107;" class="fa-solid fa-play fs-2"></i><img src="<?= IMAGEROOT ?>/<?= $formation->imgFormation ?>" alt="course image" class="img-fluid"><span>Voir l'aperçu du cours</span></a>
                                 </figure>
                                 <div class="price-wrapper d-flex justify-content-between">
@@ -185,6 +185,9 @@
     <script src="<?= JSROOT ?>/plugins/jquery.mmenu.js"></script>
     <script src="<?= JSROOT ?>/plugins/sticky-kit.min.js"></script>
     <script src="<?= JSROOT ?>/common/publicNavbar.js"></script>
+    <script>
+        const URLROOT = `<?= URLROOT ?>`;
+    </script>
     <script src="<?= JSROOT ?>/courses/show.js"></script>
 </body>
 </html>

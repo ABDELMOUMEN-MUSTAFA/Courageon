@@ -82,3 +82,42 @@ body::-webkit-scrollbar-track {
 .to-top-btn:hover {
   background-color: #1e1e1e;
 }
+
+.add-subtitle {
+  border: none;
+  background-color: #2196f3;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50% !important;
+  transition: 0.3s transform;
+}
+
+.add-subtitle:hover {
+  transform: rotateZ(90deg);
+}
+
+.subtitle {
+  position: relative;
+  border: 2px solid #2196f3;
+  border-radius: 8px;
+}
+
+.delete-subtitle {
+  position: absolute;
+  right: -13px;
+  top: -13px;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #2196f3;
+  color: #fff;
+  z-index: 999;
+  cursor: pointer;
+  transition: .3s background-color;
+}
+
+.delete-subtitle:hover {
+  background-color: #C70039;
+}

@@ -3,6 +3,7 @@ vendor/
 .env
 /Public/images/formations
 /Public/images/categories
+/Public/subtitles
 /Public/files/formations
 /Public/images/users/avatars/*
 !/public/images/users/avatars/default.png

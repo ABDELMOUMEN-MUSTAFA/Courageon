@@ -133,12 +133,12 @@
                                                         </div>
                                                         <div class="media-body">
                                                             <h5 class="card-title h6 mb-0">
-                                                                <a href="instructor-lesson-add.html"><?= $video->nom ?></a>
+                                                                <a href="<?= URLROOT ?>/etudiant/formation/<?= $video->id_formation ?>"><?= $video->nom ?></a>
                                                             </h5>
                                                             <small class="text-muted"><?= $video->duree ?></small>
                                                         </div>
                                                         <div class="media-right">
-                                                            <button data-url="<?= $video->url ?>" class="btn btn-white btn-sm watch-video"><i class="material-icons">visibility</i></button>
+                                                            <button data-id-video="<?= $video->id_video ?>" data-url="<?= $video->url ?>" class="btn btn-white btn-sm watch-video"><i class="material-icons">visibility</i></button>
                                                             <a href="<?= URLROOT ?>/etudiant/formation/<?= $video->id_formation ?>" class="btn btn-white btn-sm watch-video"><i class="material-icons">ondemand_video</i></a>
                                                         </div>
                                                     </div>
@@ -190,7 +190,7 @@
 
         <script>
             const URLROOT = `<?= URLROOT ?>`;
-            const player = new Plyr('#player', {captions: {active: true}});
+            const player = new Plyr('#player', {captions: {active: true, update: true}});
             
             // Open the overlay when the button is clicked
             $(".watch-video").click(function(event) {
@@ -201,8 +201,27 @@
                 });
 
                 $('#player').prop('src', `${URLROOT}/public/videos/${$(this).data('url')}`);
+                getSubtitlesOfVideo($(this).data('idVideo'));
                 player.play();
             });
+
+            function getSubtitlesOfVideo(id_video){
+                $("#player").empty();
+                
+                $.get(`${URLROOT}/api/subtitles`, {id_video}, function({data: subtitles}){
+                    for(let subtitle of subtitles){
+                        const track = document.createElement('track');
+                        Object.assign(track, {
+                            label: subtitle.nom,
+                            srclang: subtitle.nom.slice(0, 2).toLowerCase(),
+                            default: true,
+                            src: `${URLROOT}/public/${subtitle.source}`
+                        });
+
+                        $("#player").append(track);
+                    }
+                });
+            }
 
             function hideOverlay() {
                 $("#overlay").fadeOut();

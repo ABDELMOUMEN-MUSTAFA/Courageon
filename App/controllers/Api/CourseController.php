@@ -460,4 +460,58 @@ class CourseController extends \App\Controllers\Api\ApiController
         imagejpeg($img->getCore(), 'images/'.$thumbnailPath, 50);
         return $thumbnailPath;
     }
+
+    public function show($request, $id)
+    {
+        if(!auth()){
+            return Response::json(null, 401);
+        }
+
+        if(session('user')->get()->type !== 'formateur'){
+           return Response::json(null, 403); 
+        }
+
+        if(!session('user')->get()->email_verified_at) {
+            return Response::json(null, 403);
+        }
+
+        if(!session('user')->get()->is_all_info_present){
+			return Response::json(null, 403); 
+		}
+
+        $validator = new Validator([
+            'id_formation' => strip_tags(trim($id)),
+        ]);
+
+        // CHECK IF THIS COURSE BELONGS TO THE AUTH FORMATEUR.
+        $relationship = [
+            "from" => "formateurs",
+            "join" => "formations",
+            "on" => "id_formateur",
+            "where" => [
+                "id_formation" => $id,
+                "formateurs->id_formateur" => session('user')->get()->id_formateur
+            ]
+        ];
+
+        $validator->checkPermissions($relationship);
+
+        $childTables = ['videos'];
+        $childTable = $request->getUri()[3] ?? null;
+        if(in_array($childTable, $childTables)){
+            switch ($childTable) {
+                case 'videos':
+                    $numberVideos = (new Video)->countVideosOfFormation($id);
+                    $videos = paginator($numberVideos, 10, 'videos', $this->formationModel, 'videos', [
+                        'idFormation' => $id,
+                    ]);
+                    return Response::json($videos);
+                    break;
+                
+                default:
+                    return Response::json(null, 404, "Not Found");
+                    break;
+            }
+        }
+    }
 }
