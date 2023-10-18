@@ -57,6 +57,21 @@ class Request
     public function file($field)
     {
         if (array_key_exists($field, $this->files)) {
+            if(is_array($this->files[$field]['name'])){
+                $i = 0;
+                foreach($this->files[$field]['error'] as $error){
+                    if($error === UPLOAD_ERR_OK){
+                        $i++;
+                    }
+                }
+
+                if(count($this->files[$field]['name']) === $i){
+                    return $this->files[$field];
+                }
+
+                return "";
+            }
+
             if($this->files[$field]['error'] === UPLOAD_ERR_OK){
                 return $this->files[$field];
             }
