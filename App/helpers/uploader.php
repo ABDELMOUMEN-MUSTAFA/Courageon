@@ -19,3 +19,20 @@ function uploader($file, $destinationPath) {
     }
     return null;
 }
+
+function multiUploader($files, $destinationPath) {
+    $paths = [];
+
+    for ($i=0; $i < count($files['name']); $i++) { 
+        $originalName = $files['name'][$i];
+        $uniqueFileName = generateUniqueName($originalName);
+        $uploadedFilePath = $destinationPath . '/' . $uniqueFileName;
+        $prefixToRemove = explode('/', $destinationPath)[0].'/';
+
+        if (move_uploaded_file($files['tmp_name'][$i], $uploadedFilePath)) {
+            array_push($paths, str_replace($prefixToRemove, '', $uploadedFilePath));
+        }
+    }
+
+    return $paths;
+}
