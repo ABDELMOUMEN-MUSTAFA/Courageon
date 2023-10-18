@@ -243,6 +243,16 @@ class Validator
         } elseif (strpos($rule, 'file:') === 0) {
             $fileType = explode(':', $rule)[1];
 
+            if(is_array($value['type'])){
+                foreach($value['type'] as $type){
+                    if($fileType !== $type){
+                        $this->addError($field, "Only file type `$fileType` allowed.");
+                    }
+                }
+
+                return;
+            }
+
             if($fileType !== $value['type']){
                 $this->addError($field, "Only file type `$fileType` allowed.");
             }
