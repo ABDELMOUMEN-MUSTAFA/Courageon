@@ -14,6 +14,7 @@ use App\Models\{
 };
 
 use App\Libraries\{Response, Validator};
+use stdClass;
 
 class FormateurController
 {
@@ -616,5 +617,13 @@ class FormateurController
 			$notifications = $this->notifications;
 			return view("formateurs/private-courses", compact('privateCourses', 'notifications'));
 		}
+	}
+
+	public function promotions($request)
+	{
+		$notifications = $this->notifications;
+		$promotions = (new Formation)->promotions($this->id_formateur);
+
+		return view('formateurs/promotions', compact('promotions', 'notifications'));
 	}
 }

@@ -36,6 +36,12 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="sidebar-menu-item <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === "/{$sitename}/formateur/promotions" ? 'active' : '' ?>">
+                        <a class="sidebar-menu-button"
+                           href="<?= URLROOT ?>/formateur/promotions">
+                            <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">local_offer</i> Promotions
+                        </a>
+                    </li>
                     <li class="sidebar-menu-item <?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === "/{$sitename}/formateur/earnings" ? 'active' : '' ?>">
                         <a class="sidebar-menu-button"
                            href="<?= URLROOT ?>/formateur/earnings">

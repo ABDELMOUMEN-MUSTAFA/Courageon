@@ -712,4 +712,31 @@ class Formation
 		}
 		return [];
 	}
+
+    public function promotions($id_formateur)
+    {
+        $query = $this->connect->prepare("
+            SELECT
+                f.id_formation,
+                id_promotion,
+                nom AS nomFormation,
+                image AS imgFormation,
+                prix,
+                reduction,
+                date_start,
+                date_end
+            FROM formations f
+            JOIN promotions USING (id_formation)
+            WHERE etat = 'public' AND id_formateur = :id_formateur
+		");
+
+		$query->bindParam(':id_formateur', $id_formateur);
+		$query->execute();
+
+		$promotions = $query->fetchAll(\PDO::FETCH_OBJ);
+		if ($query->rowCount() > 0) {
+			return $promotions;
+		}
+		return [];
+    }
 }
